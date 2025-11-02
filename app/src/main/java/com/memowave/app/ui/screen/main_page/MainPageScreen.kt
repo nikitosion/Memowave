@@ -1,4 +1,13 @@
 package com.memowave.app.ui.screen.main_page
 
-class MainPageScreen {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun MainPageRoute() {
+    MainPageScreen()
+}
+
+@Composable
+fun MainPageScreen() {
+
 }
