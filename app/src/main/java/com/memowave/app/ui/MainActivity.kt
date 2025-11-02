@@ -1,4 +1,4 @@
-package com.memowave.app
+package com.memowave.app.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
