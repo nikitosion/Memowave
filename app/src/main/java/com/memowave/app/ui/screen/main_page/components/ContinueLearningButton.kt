@@ -77,7 +77,7 @@ fun ContinueLearningButton(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Icon(
-                        painter = painterResource(id = R.drawable.playing_cards_24dp),
+                        painter = painterResource(id = R.drawable.playing_cards_24),
                         contentDescription = "Продолжить",
                         tint = textColor,
                         modifier = Modifier.padding(horizontal = 4.dp).size(20.dp).rotate(180f)
