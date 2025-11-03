@@ -27,7 +27,7 @@ fun WordStatistics(
         Text(
             modifier = modifier.width(80.dp).background(color = boxColor, shape = RoundedCornerShape(30.dp)).padding(vertical = 20.dp),
             text = countText,
-            color = MaterialTheme.colorScheme.primaryContainer,
+            color = Color(0xFF9EEFFE),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = Center
         )

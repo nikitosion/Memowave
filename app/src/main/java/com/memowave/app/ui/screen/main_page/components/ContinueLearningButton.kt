@@ -32,7 +32,7 @@ import com.memowave.app.ui.theme.MemowaveTheme
 fun ContinueLearningButton(
     modifier: Modifier = Modifier
 ) {
-    val textColor = MaterialTheme.colorScheme.primaryContainer
+    val textColor = Color(0xFF9EEFFE)
 
     Button(
         onClick = { /* TODO: Обработчик нажатия */ },

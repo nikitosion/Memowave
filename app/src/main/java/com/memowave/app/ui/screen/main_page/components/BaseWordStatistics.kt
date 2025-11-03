@@ -30,7 +30,7 @@ fun BaseWordStatictics(
     ) {
         WordStatistics(Color(0xFF00363D))
         WordStatistics(Color(0xFF0F4E57), "345", "Изучение")
-        WordStatistics(MaterialTheme.colorScheme.primary, "8", "Повторение")
+        WordStatistics(Color(0xFF006875), "8", "Повторение")
     }
 }
 
