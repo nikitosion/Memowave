@@ -2,7 +2,6 @@ package com.memowave.app.ui.screen.authentification
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,46 +11,57 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.TextObfuscationMode
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedSecureTextField
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.memowave.app.R
+import com.memowave.app.data.remote.api.ApiService
+import com.memowave.app.data.repository.AuthRepositoryImpl
+import com.memowave.app.domain.usecase.auth.LoginUseCase
+import com.memowave.app.ui.screen.authentification.components.AuthActionButton
+import com.memowave.app.ui.screen.authentification.components.DividersWithTextInMiddle
+import com.memowave.app.ui.screen.authentification.components.EmailTextField
+import com.memowave.app.ui.screen.authentification.components.OAuthButtons
+import com.memowave.app.ui.screen.authentification.components.PasswordTextField
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun LoginRoute() {
-    LoginScreen()
+fun LoginRoute(authViewModel: AuthViewModel, navController: NavController) {
+    LoginScreen(viewModel = authViewModel, navController = navController)
 }
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    viewModel: AuthViewModel,
+    navController: NavController
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val isButtonEnabled by viewModel.isLoginButtonEnabled.collectAsState()
+
+    LaunchedEffect(uiState.isLoginSuccess) {
+        if (uiState.isLoginSuccess) {
+            navController.navigate("main_page") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,85 +100,32 @@ fun LoginScreen() {
             textAlign = TextAlign.Center
         )
 
-        val emailState = remember { TextFieldState() }
+        OAuthButtons(modifier = Modifier.padding(top = 24.dp))
 
-        OutlinedTextField(
-            state = emailState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            label = { Text("Email") },
-            placeholder = { Text("Введите ваш email") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(
-                        id = R.drawable.round_alternate_email_24
-                    ),
-                    contentDescription = "Email Icon"
-                )
-            },
-            shape = RoundedCornerShape(30.dp),
+        EmailTextField(
+            value = uiState.email,
+            onValueChange = viewModel::onEmailChanged,
+            error = uiState.emailError,
+            modifier = Modifier.padding(top = 20.dp)
         )
 
-        val passwordState = remember { TextFieldState() }
-        var passwordHidden by rememberSaveable { mutableStateOf(true) }
-
-        OutlinedSecureTextField(
-            state = passwordState,
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            textObfuscationMode = if (passwordHidden) {
-                TextObfuscationMode.RevealLastTyped
-            } else {
-                TextObfuscationMode.Visible
-            },
-            label = { Text("Пароль") },
-            placeholder = { Text("Введите ваш пароль") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(
-                        id = R.drawable.round_lock_24
-                    ),
-                    contentDescription = "Email Icon"
-                )
-            },
-            shape = RoundedCornerShape(30.dp),
-            trailingIcon = {
-                IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                    if (passwordState.text.isEmpty()) {
-                        return@IconButton
-                    }
-                    val iconResId = if (passwordHidden) {
-                        R.drawable.round_visibility_24
-                    } else {
-                        R.drawable.round_visibility_off_24
-                    }
-                    val description = if (passwordHidden) {
-                        "Показать пароль"
-                    } else {
-                        "Скрыть пароль"
-                    }
-                    Icon(
-                        painter = painterResource(
-                            id = iconResId
-                        ), contentDescription = description
-                    )
-                }
-            }
+        PasswordTextField(
+            value = uiState.password,
+            onValueChange = viewModel::onPasswordChanged,
+            error = uiState.passwordError,
+            modifier = Modifier.padding(top = 16.dp)
         )
-        Button(
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .fillMaxWidth()
-                .height(60.dp),
-            onClick = {}
-        ) {
-            Text("Войти")
-        }
+
+        AuthActionButton(
+            onClick = viewModel::onLoginClick,
+            isEnabled = isButtonEnabled,
+            isLoading = uiState.isLoading,
+            modifier = Modifier.padding(top = 20.dp),
+            text = "Войти"
+        )
 
         OutlinedButton(
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = 24.dp),
             onClick = {},
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -177,81 +134,10 @@ fun LoginScreen() {
             Text("Забыли пароль?")
         }
 
-        Row(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            HorizontalDivider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-            Text(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                text = "ИЛИ",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-            HorizontalDivider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-        }
-        Row(modifier = Modifier.padding(top = 24.dp)) {
-            IconButton(
-                modifier = Modifier
-                    .size(65.dp)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = CircleShape
-                    ),
-                onClick = {},
-            ) {
-                Image(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.apple_logo_colored),
-                    contentDescription = "Apple Logo"
-                )
-            }
-            IconButton(
-                modifier = Modifier
-                    .padding(start = 24.dp)
-                    .size(65.dp)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = CircleShape
-                    ),
-                onClick = {},
-            ) {
-                Image(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.yandex_logo_colored),
-                    contentDescription = "Apple Logo"
-                )
-            }
-            IconButton(
-                modifier = Modifier
-                    .padding(start = 24.dp)
-                    .size(65.dp)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = CircleShape
-                    ),
-                onClick = {},
-            ) {
-                Image(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.google_logo_colored),
-                    contentDescription = "Apple Logo"
-                )
-            }
-        }
+        DividersWithTextInMiddle(text = "ИЛИ", modifier = Modifier.padding(top = 16.dp))
+
         OutlinedButton(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 16.dp),
             onClick = {},
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -273,7 +159,7 @@ fun LoginScreenPreview() {
                 .background(color = MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp)
         ) {
-            LoginScreen()
+            LoginScreen(AuthViewModel(loginUseCase = LoginUseCase(AuthRepositoryImpl(ApiService()))), navController = NavController(LocalContext.current))
         }
     }
 }

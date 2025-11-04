@@ -1,7 +1,6 @@
 package com.memowave.app.di
 
-import com.memowave.app.domain.repository.AuthRepository
-import com.memowave.app.domain.usecase.auth.LoginUseCase
+import com.memowave.app.data.remote.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,11 +9,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object UseCaseModule {
-
+object NetworkModule {
     @Provides
     @Singleton
-    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
-        return LoginUseCase(authRepository)
+    fun provideApiService(): ApiService {
+        return ApiService()
     }
 }
