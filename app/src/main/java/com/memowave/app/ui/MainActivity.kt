@@ -33,7 +33,7 @@ fun Memowave() {
 
     MemowaveTheme {
         Surface(
-            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background).padding(horizontal = 8.dp)
+            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background).padding(horizontal = 16.dp)
         ) {
             NavGraph(navController)
         }
