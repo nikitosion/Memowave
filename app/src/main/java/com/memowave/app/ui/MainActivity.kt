@@ -4,48 +4,44 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.memowave.app.ui.navigation.NavGraph
 import com.memowave.app.ui.theme.MemowaveTheme
-import com.memowave.app.ui.theme.MemowaveTypography
-import com.memowave.app.ui.theme.tertiaryLight
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MemowaveTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Memowave",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            Memowave()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-        style = MemowaveTypography.displayLarge,
-        color = tertiaryLight
-    )
+fun Memowave() {
+    val navController = rememberNavController()
+
+    MemowaveTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background).padding(horizontal = 16.dp)
+        ) {
+            NavGraph(navController)
+        }
+    }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
-    MemowaveTheme {
-        Greeting("Android")
-    }
+fun MemowavePreview() {
+    Memowave()
 }
