@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -98,10 +102,25 @@ fun ForgotPasswordScreen(
                 text = "Продолжить"
             )
         }
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 64.dp),
+            onClick = {
+                navController.popBackStack()
+            }
+        ) {
+            Icon(
+                modifier = Modifier.size(60.dp),
+                painter = painterResource(id = R.drawable.round_chevron_left_24),
+                contentDescription = "Back",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 
-@Preview(device = "spec:width=411dp,height=891dp")
+@Preview(device = "spec:width=411dp,height=891dp", showSystemUi = true)
 @Composable
 fun ForgotPasswordScreenPreview() {
     MemowaveTheme {

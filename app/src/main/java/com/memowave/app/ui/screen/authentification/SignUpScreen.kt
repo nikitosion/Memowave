@@ -176,7 +176,7 @@ fun SignUpScreen(
         IconButton(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(top = 48.dp),
+                .padding(top = 64.dp),
             onClick = {
                 navController.popBackStack()
             }
