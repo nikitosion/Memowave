@@ -35,10 +35,10 @@ import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
+import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
+import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.DividersWithTextInMiddle
-import com.memowave.app.ui.screen.authentification.components.EmailTextField
 import com.memowave.app.ui.screen.authentification.components.OAuthButtons
-import com.memowave.app.ui.screen.authentification.components.PasswordTextField
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -102,18 +102,24 @@ fun LoginScreen(
 
         OAuthButtons(modifier = Modifier.padding(top = 24.dp))
 
-        EmailTextField(
+        AuthNotSecuredTextField(
             value = uiState.email,
             onValueChange = viewModel::onEmailChanged,
             error = uiState.emailError,
-            modifier = Modifier.padding(top = 20.dp)
+            modifier = Modifier.padding(top = 20.dp),
+            labelText = "Email",
+            placeholderText = "Введите ваш email",
+            leadingIconResId = R.drawable.round_alternate_email_24
         )
 
-        PasswordTextField(
+        AuthSecuredTextField(
             value = uiState.password,
             onValueChange = viewModel::onPasswordChanged,
             error = uiState.passwordError,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
+            labelText = "Пароль",
+            placeholderText = "Введите ваш пароль",
+            leadingIconResId = R.drawable.round_lock_24
         )
 
         AuthActionButton(

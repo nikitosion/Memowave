@@ -28,7 +28,7 @@ import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
-import com.memowave.app.ui.screen.authentification.components.EmailTextField
+import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -71,11 +71,14 @@ fun ForgotPasswordScreen(
             style = MaterialTheme.typography.headlineLarge,
         )
 
-        EmailTextField(
+        AuthNotSecuredTextField(
             value = uiState.email,
             onValueChange = viewModel::onEmailChanged,
             error = uiState.emailError,
-            modifier = Modifier.padding(top = 20.dp)
+            modifier = Modifier.padding(top = 20.dp),
+            labelText = "Email",
+            placeholderText = "Введите ваш email",
+            leadingIconResId = R.drawable.round_alternate_email_24
         )
         Text(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp),

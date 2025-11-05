@@ -1,5 +1,6 @@
 package com.memowave.app.ui.screen.authentification.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,11 +14,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.memowave.app.R
 
 @Composable
-fun EmailTextField(
+fun AuthNotSecuredTextField(
     value: String,
+    labelText: String,
+    placeholderText: String,
+    @DrawableRes
+    leadingIconResId: Int,
     onValueChange: (String) -> Unit,
     error: String? = null,
     modifier: Modifier = Modifier,
@@ -33,12 +37,12 @@ fun EmailTextField(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            label = { Text("Email") },
-            placeholder = { Text("Введите ваш email") },
+            label = { Text(text = labelText) },
+            placeholder = { Text(text = placeholderText) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(
-                        id = R.drawable.round_alternate_email_24
+                        id = leadingIconResId
                     ),
                     contentDescription = "Email Icon"
                 )

@@ -1,5 +1,6 @@
 package com.memowave.app.ui.screen.authentification.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,8 +28,12 @@ import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun PasswordTextField(
+fun AuthSecuredTextField(
     value: String,
+    labelText: String,
+    placeholderText: String,
+    @DrawableRes
+    leadingIconResId: Int,
     onValueChange: (String) -> Unit,
     error: String? = null,
     modifier: Modifier = Modifier,
@@ -50,12 +55,12 @@ fun PasswordTextField(
                 imeAction = ImeAction.Done
             ),
             isError = error != null,
-            label = { Text("Пароль") },
-            placeholder = { Text("Введите ваш пароль") },
+            label = { Text(text = labelText) },
+            placeholder = { Text(text = placeholderText) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(
-                        id = R.drawable.round_lock_24
+                        id = leadingIconResId
                     ),
                     contentDescription = "Email Icon"
                 )
@@ -96,9 +101,14 @@ fun PasswordTextField(
 @Composable
 fun PasswordTextFieldPreview() {
     MemowaveTheme() {
-        PasswordTextField(
+        AuthSecuredTextField(
             value = "",
-            onValueChange = { }
+            onValueChange = { },
+            labelText = "Пароль",
+            placeholderText = "Введите ваш пароль",
+            leadingIconResId = R.drawable.round_lock_24,
+            error = null,
+            modifier = Modifier
         )
     }
 }
