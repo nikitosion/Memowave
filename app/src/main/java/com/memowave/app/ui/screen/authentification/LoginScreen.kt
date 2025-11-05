@@ -126,7 +126,11 @@ fun LoginScreen(
 
         OutlinedButton(
             modifier = Modifier.padding(top = 24.dp),
-            onClick = {},
+            onClick = {
+                navController.navigate("forgot_password") {
+                    popUpTo("login")
+                }
+            },
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             ),

@@ -9,5 +9,6 @@ data class AuthUiState(
     val authError: String? = null,
     val isEmailValid: Boolean = false,
     val isLoginSuccess: Boolean = false,
+    val isContinuedResetPassword: Boolean = false,
     val isPasswordValid: Boolean = false
 )

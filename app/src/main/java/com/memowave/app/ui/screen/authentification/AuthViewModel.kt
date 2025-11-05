@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,10 @@ class AuthViewModel @Inject constructor(
     val isLoginButtonEnabled: StateFlow<Boolean> = uiState
         .map { it.isEmailValid && it.isPasswordValid && !it.isLoading }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val isForgotPasswordButtonEnabled: StateFlow<Boolean> = uiState
+        .map { it.isEmailValid && !it.isLoading }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
     fun onEmailChanged(newEmail: String) {
         val isValid = validateEmail(newEmail)
@@ -85,6 +90,35 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun onForgotPasswordClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, authError = null) }
+
+            try {
+                delay(1500) // Simulate network delay TODO: Replace with real implementation
+                val result = Result.success(Unit)
+
+                if (result.isSuccess) {
+                    _uiState.update { it.copy(isLoading = false, isContinuedResetPassword = true) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            authError = "Что-то пошло не так при восстановлении пароля",
+                            isLoading = false
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        authError = e.message ?: "Ошибка при входе",
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
     private fun validateEmail(email: String): Boolean {
         return email.isNotEmpty() &&
                 Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -94,3 +128,4 @@ class AuthViewModel @Inject constructor(
         return password.length >= 6
     }
 }
+
