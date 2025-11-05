@@ -1,13 +1,11 @@
 package com.memowave.app.ui.screen.authentification
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,6 +26,7 @@ import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
 import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
+import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -60,11 +58,8 @@ fun ForgotPasswordScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.memowave_logo_colored_no_surface),
-            contentDescription = "Memowave Logo",
-            modifier = Modifier.height(60.dp)
-        )
+        MemowaveLogoColored(size = 60.dp)
+
         Text(
             modifier = Modifier.padding(top = 20.dp),
             text = "Восстановление пароля",
@@ -72,9 +67,9 @@ fun ForgotPasswordScreen(
         )
 
         AuthNotSecuredTextField(
-            value = uiState.email,
-            onValueChange = viewModel::onEmailChanged,
-            error = uiState.emailError,
+            value = uiState.forgotPasswordForm.email,
+            onValueChange = viewModel::onForgotPasswordEmailChanged,
+            error = uiState.forgotPasswordForm.emailError,
             modifier = Modifier.padding(top = 20.dp),
             labelText = "Email",
             placeholderText = "Введите ваш email",

@@ -1,6 +1,5 @@
 package com.memowave.app.ui.screen.authentification
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
@@ -23,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +35,7 @@ import com.memowave.app.ui.screen.authentification.components.AuthActionButton
 import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.DividersWithTextInMiddle
+import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.screen.authentification.components.OAuthButtons
 import com.memowave.app.ui.theme.MemowaveTheme
 
@@ -69,11 +67,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.memowave_logo_colored_no_surface),
-            contentDescription = "Memowave Logo",
-            modifier = Modifier.height(60.dp)
-        )
+        MemowaveLogoColored(size = 60.dp)
 
         Row(
             modifier = Modifier.padding(top = 24.dp),
@@ -103,9 +97,9 @@ fun LoginScreen(
         OAuthButtons(modifier = Modifier.padding(top = 24.dp))
 
         AuthNotSecuredTextField(
-            value = uiState.email,
-            onValueChange = viewModel::onEmailChanged,
-            error = uiState.emailError,
+            value = uiState.loginFormState.email,
+            onValueChange = viewModel::onLoginEmailChanged,
+            error = uiState.loginFormState.emailError,
             modifier = Modifier.padding(top = 20.dp),
             labelText = "Email",
             placeholderText = "Введите ваш email",
@@ -113,9 +107,9 @@ fun LoginScreen(
         )
 
         AuthSecuredTextField(
-            value = uiState.password,
-            onValueChange = viewModel::onPasswordChanged,
-            error = uiState.passwordError,
+            value = uiState.loginFormState.password,
+            onValueChange = viewModel::onLoginPasswordChanged,
+            error = uiState.loginFormState.passwordError,
             modifier = Modifier.padding(top = 16.dp),
             labelText = "Пароль",
             placeholderText = "Введите ваш пароль",
@@ -148,7 +142,11 @@ fun LoginScreen(
 
         OutlinedButton(
             modifier = Modifier.padding(top = 16.dp),
-            onClick = {},
+            onClick = {
+                navController.navigate("sign_up") {
+                    popUpTo("login")
+                }
+            },
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             )
