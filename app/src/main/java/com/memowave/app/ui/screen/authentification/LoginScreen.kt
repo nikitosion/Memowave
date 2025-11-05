@@ -2,13 +2,16 @@ package com.memowave.app.ui.screen.authentification
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -60,104 +63,117 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        MemowaveLogoColored(size = 60.dp)
-
-        Row(
-            modifier = Modifier.padding(top = 24.dp),
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .widthIn(max = 500.dp)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .padding(top = 64.dp, bottom = 64.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            MemowaveLogoColored(size = 60.dp)
+
+            Row(
+                modifier = Modifier.padding(top = 24.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Привет, это ",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Text(
+                    modifier = Modifier.offset(y = (-4).dp),
+                    text = "Memowave",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.bagelfatone_regular
+                            )
+                        )
+                    )
+                )
+                Text(
+                    text = "!",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
             Text(
-                text = "Привет, это ",
-                style = MaterialTheme.typography.headlineLarge
+                modifier = Modifier.padding(top = 4.dp),
+                text = "Лови волну новых слов и погружайся в язык с головой!",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
-            Text(
-                modifier = Modifier.offset(y = (-4).dp),
-                text = "Memowave",
-                style = MaterialTheme.typography.headlineLarge.copy(fontFamily = FontFamily(Font(R.font.bagelfatone_regular)))
+
+            OAuthButtons(modifier = Modifier.padding(top = 24.dp))
+
+            AuthNotSecuredTextField(
+                value = uiState.loginFormState.email,
+                onValueChange = viewModel::onLoginEmailChanged,
+                error = uiState.loginFormState.emailError,
+                modifier = Modifier.padding(top = 20.dp),
+                labelText = "Email",
+                placeholderText = "Введите ваш email",
+                leadingIconResId = R.drawable.round_alternate_email_24
             )
-            Text(
-                text = "!",
-                style = MaterialTheme.typography.headlineLarge
+
+            AuthSecuredTextField(
+                value = uiState.loginFormState.password,
+                onValueChange = viewModel::onLoginPasswordChanged,
+                error = uiState.loginFormState.passwordError,
+                modifier = Modifier.padding(top = 16.dp),
+                labelText = "Пароль",
+                placeholderText = "Введите ваш пароль",
+                leadingIconResId = R.drawable.round_lock_24
             )
-        }
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            text = "Лови волну новых слов и погружайся в язык с головой!",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
 
-        OAuthButtons(modifier = Modifier.padding(top = 24.dp))
-
-        AuthNotSecuredTextField(
-            value = uiState.loginFormState.email,
-            onValueChange = viewModel::onLoginEmailChanged,
-            error = uiState.loginFormState.emailError,
-            modifier = Modifier.padding(top = 20.dp),
-            labelText = "Email",
-            placeholderText = "Введите ваш email",
-            leadingIconResId = R.drawable.round_alternate_email_24
-        )
-
-        AuthSecuredTextField(
-            value = uiState.loginFormState.password,
-            onValueChange = viewModel::onLoginPasswordChanged,
-            error = uiState.loginFormState.passwordError,
-            modifier = Modifier.padding(top = 16.dp),
-            labelText = "Пароль",
-            placeholderText = "Введите ваш пароль",
-            leadingIconResId = R.drawable.round_lock_24
-        )
-
-        AuthActionButton(
-            onClick = viewModel::onLoginClick,
-            isEnabled = isButtonEnabled,
-            isLoading = uiState.isLoading,
-            modifier = Modifier.padding(top = 20.dp),
-            text = "Войти"
-        )
-
-        OutlinedButton(
-            modifier = Modifier.padding(top = 24.dp),
-            onClick = {
-                navController.navigate("forgot_password") {
-                    popUpTo("login")
-                }
-            },
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            ),
-        ) {
-            Text("Забыли пароль?")
-        }
-
-        DividersWithTextInMiddle(text = "ИЛИ", modifier = Modifier.padding(top = 16.dp))
-
-        OutlinedButton(
-            modifier = Modifier.padding(top = 16.dp),
-            onClick = {
-                navController.navigate("sign_up") {
-                    popUpTo("login")
-                }
-            },
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            AuthActionButton(
+                onClick = viewModel::onLoginClick,
+                isEnabled = isButtonEnabled,
+                isLoading = uiState.isLoading,
+                modifier = Modifier.padding(top = 20.dp),
+                text = "Войти"
             )
-        ) {
-            Text("Нет аккаунта? Зарегистрируйтесь")
+
+            OutlinedButton(
+                modifier = Modifier.padding(top = 24.dp),
+                onClick = {
+                    navController.navigate("forgot_password") {
+                        popUpTo("login")
+                    }
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
+            ) {
+                Text("Забыли пароль?")
+            }
+
+            DividersWithTextInMiddle(text = "ИЛИ", modifier = Modifier.padding(top = 16.dp))
+
+            OutlinedButton(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = {
+                    navController.navigate("sign_up") {
+                        popUpTo("login")
+                    }
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            ) {
+                Text("Нет аккаунта? Зарегистрируйтесь")
+            }
         }
     }
 }
 
 
-@Preview
+@Preview(device = "spec:width=411dp,height=891dp")
 @Composable
 fun LoginScreenPreview() {
     MemowaveTheme {
