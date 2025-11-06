@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.ui.screen.authentification.components.ui_state.AuthUiState
+import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.PasswordValidationState
+import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -246,7 +248,8 @@ class AuthViewModel @Inject constructor(
                 if (result.isSuccess) {
                     _uiState.update {
                         it.copy(
-                            isLoading = false, isContinuedResetPassword = true
+                            isLoading = false,
+                            isContinuedResetPassword = true
                         )
                     }
                 } else {
@@ -280,7 +283,13 @@ class AuthViewModel @Inject constructor(
                 val result = Result.success(Unit)
 
                 if (result.isSuccess) {
-                    _uiState.update { it.copy(isLoading = false, isResetPasswordSuccess = true) }
+                    _uiState.update {
+                        it.copy(
+                            forgotPasswordForm = ForgotPasswordFormState(),
+                            isLoading = false,
+                            isResetPasswordSuccess = true
+                        )
+                    }
                 } else {
                     _uiState.update {
                         it.copy(
@@ -309,7 +318,13 @@ class AuthViewModel @Inject constructor(
                 val result = Result.success(Unit)
 
                 if (result.isSuccess) {
-                    _uiState.update { it.copy(isLoading = false, isContinuedSignUp = true) }
+                    _uiState.update {
+                        it.copy(
+                            signUpFormState = SignUpFormState(),
+                            isLoading = false,
+                            isContinuedSignUp = true
+                        )
+                    }
                 } else {
                     _uiState.update {
                         it.copy(
@@ -342,6 +357,24 @@ class AuthViewModel @Inject constructor(
 
     private fun validateRepeatedPassword(password: String, repeatedPassword: String): Boolean {
         return password == repeatedPassword
+    }
+
+    fun resetForgotPasswordState() {
+        _uiState.update {
+            it.copy(isContinuedResetPassword = false)
+        }
+    }
+
+    fun resetSignUpState() {
+        _uiState.update {
+            it.copy(isContinuedSignUp = false)
+        }
+    }
+
+    fun resetResetPasswordState() {
+        _uiState.update {
+            it.copy(isResetPasswordSuccess = false)
+        }
     }
 }
 

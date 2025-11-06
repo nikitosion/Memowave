@@ -22,24 +22,24 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun NavGraph(navController: NavHostController) {
+    val authViewModel = hiltViewModel<AuthViewModel>()
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.MainPage.route) {
             MainPageRoute()
         }
         composable(Screen.Login.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
             LoginRoute(authViewModel = authViewModel, navController = navController)
         }
         composable(Screen.ForgotPassword.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
+            authViewModel.resetForgotPasswordState()
             ForgotPasswordRoute(authViewModel = authViewModel, navController = navController)
         }
         composable(Screen.SignUp.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
+            authViewModel.resetSignUpState()
             SignUpRoute(authViewModel = authViewModel, navController = navController)
         }
         composable(Screen.ResetPassword.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
+            authViewModel.resetResetPasswordState()
             ResetPasswordRoute(authViewModel = authViewModel, navController = navController)
         }
     }
