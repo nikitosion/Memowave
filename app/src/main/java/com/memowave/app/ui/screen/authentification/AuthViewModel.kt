@@ -74,7 +74,7 @@ class AuthViewModel @Inject constructor(
                 loginFormState = it.loginFormState.copy(
                     email = newEmail,
                     isEmailValid = isValid,
-                    emailError = if (isValid || newEmail.isEmpty()) null else "Некорректный email"
+                    emailError = null
                 )
             )
         }
@@ -87,7 +87,7 @@ class AuthViewModel @Inject constructor(
                 forgotPasswordForm = it.forgotPasswordForm.copy(
                     email = newEmail,
                     isEmailValid = isValid,
-                    emailError = if (isValid || newEmail.isEmpty()) null else "Некорректный email"
+                    emailError = null
                 )
             )
         }
@@ -113,7 +113,7 @@ class AuthViewModel @Inject constructor(
                 loginFormState = it.loginFormState.copy(
                     password = newPassword,
                     isPasswordValid = isValid,
-                    passwordError = if (isValid || newPassword.isEmpty()) null else "Пароль должен быть минимум 6 символов"
+                    passwordError = null
                 )
             )
         }
@@ -139,7 +139,7 @@ class AuthViewModel @Inject constructor(
             PasswordValidationState()
         } else {
             PasswordValidationState(
-                hasMinLength = password.length >= 8 ,
+                hasMinLength = password.length >= 8,
                 hasLowercase = password.any { it.isLowerCase() },
                 hasUppercase = password.any { it.isUpperCase() },
                 hasDigit = password.any { it.isDigit() },
@@ -176,6 +176,10 @@ class AuthViewModel @Inject constructor(
                 } else {
                     _uiState.update {
                         it.copy(
+                            loginFormState = it.loginFormState.copy(
+                                emailError = "Неверный email или пароль",
+                                passwordError = "Неверный email или пароль"
+                            ),
                             authError = "Что-то пошло не так при входе",
                             isLoading = false
                         )
@@ -201,10 +205,17 @@ class AuthViewModel @Inject constructor(
                 val result = Result.success(Unit)
 
                 if (result.isSuccess) {
-                    _uiState.update { it.copy(isLoading = false, isContinuedResetPassword = true) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false, isContinuedResetPassword = true
+                        )
+                    }
                 } else {
                     _uiState.update {
                         it.copy(
+                            forgotPasswordForm = it.forgotPasswordForm.copy(
+                                emailError = "Некорректный email"
+                            ),
                             authError = "Что-то пошло не так при восстановлении пароля",
                             isLoading = false
                         )
@@ -258,7 +269,7 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun validatePassword(password: String): Boolean {
-        return password.length >= 6
+        return password.length >= 8
     }
 
     private fun validateRepeatedPassword(repeatedPassword: String): Boolean {
