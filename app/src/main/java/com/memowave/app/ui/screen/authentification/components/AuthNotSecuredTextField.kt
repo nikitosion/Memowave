@@ -25,6 +25,7 @@ fun AuthNotSecuredTextField(
     onValueChange: (String) -> Unit,
     error: String? = null,
     modifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Next
 ) {
     Column(modifier = modifier) {
         OutlinedTextField(
@@ -35,7 +36,7 @@ fun AuthNotSecuredTextField(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
+                imeAction = imeAction
             ),
             label = { Text(text = labelText) },
             placeholder = { Text(text = placeholderText) },

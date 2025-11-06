@@ -37,6 +37,7 @@ fun AuthSecuredTextField(
     onValueChange: (String) -> Unit,
     error: String? = null,
     modifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Done
 ) {
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
     Column(modifier = modifier) {
@@ -52,7 +53,7 @@ fun AuthSecuredTextField(
                 PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = imeAction
             ),
             isError = error != null,
             label = { Text(text = labelText) },

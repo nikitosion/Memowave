@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -114,6 +115,7 @@ fun SignUpScreen(
                 labelText = "Пароль",
                 placeholderText = "Придумайте пароль",
                 leadingIconResId = R.drawable.round_lock_24,
+                imeAction = ImeAction.Next
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp),

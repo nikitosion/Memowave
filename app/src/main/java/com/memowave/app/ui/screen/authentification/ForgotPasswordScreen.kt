@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -86,7 +87,8 @@ fun ForgotPasswordScreen(
                 modifier = Modifier.padding(top = 20.dp),
                 labelText = "Email",
                 placeholderText = "Введите ваш email",
-                leadingIconResId = R.drawable.round_alternate_email_24
+                leadingIconResId = R.drawable.round_alternate_email_24,
+                imeAction = ImeAction.Done
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp),
