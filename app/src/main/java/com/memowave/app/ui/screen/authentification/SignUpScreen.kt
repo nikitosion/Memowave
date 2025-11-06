@@ -54,10 +54,10 @@ fun SignUpScreen(
     val uiState = viewModel.uiState.collectAsState().value
     val isSignUpButtonEnabled = viewModel.isSignUpButtonEnabled.collectAsState().value
 
-    LaunchedEffect(uiState.isResetPasswordSuccess) {
-        if (uiState.isResetPasswordSuccess) {
+    LaunchedEffect(uiState.isContinuedSignUp) {
+        if (uiState.isContinuedSignUp) {
             navController.navigate("login") {
-                popUpTo("sign_up") { inclusive = true }
+                popUpTo("login") { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -173,7 +173,7 @@ fun SignUpScreen(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
                     navController.navigate("login") {
-                        popUpTo("sign_up") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
                     }
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
