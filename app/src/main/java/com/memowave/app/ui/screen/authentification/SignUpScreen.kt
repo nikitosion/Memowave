@@ -108,10 +108,18 @@ fun SignUpScreen(
                 leadingIconResId = R.drawable.round_alternate_email_24,
             )
 
+            var isError: String? = null
+            with (uiState.signUpFormState) {
+                if (!password.isEmpty() && !passwordValidationState.isAllValid) {
+                    isError = "Пароль не соответствует требованиям"
+                }
+            }
+
             AuthSecuredTextField(
                 value = uiState.signUpFormState.password,
                 onValueChange = viewModel::onSignUpPasswordChanged,
                 modifier = Modifier.padding(top = 16.dp),
+                error = isError,
                 labelText = "Пароль",
                 placeholderText = "Придумайте пароль",
                 leadingIconResId = R.drawable.round_lock_24,
