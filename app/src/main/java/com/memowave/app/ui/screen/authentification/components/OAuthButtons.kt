@@ -10,9 +10,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
+import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun OAuthButtons(
@@ -31,8 +35,12 @@ fun OAuthButtons(
         ) {
             Image(
                 modifier = Modifier.size(30.dp),
-                painter = painterResource(id = R.drawable.apple_logo_colored),
-                contentDescription = "Apple Logo"
+                painter = painterResource(id = R.drawable.apple_logo),
+                contentDescription = "Apple Logo",
+                colorFilter = ColorFilter.tint(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    blendMode = BlendMode.SrcIn
+                )
             )
         }
         IconButton(
@@ -69,5 +77,13 @@ fun OAuthButtons(
                 contentDescription = "Google Logo"
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun OAuthButtonsPreview() {
+    MemowaveTheme {
+        OAuthButtons()
     }
 }
