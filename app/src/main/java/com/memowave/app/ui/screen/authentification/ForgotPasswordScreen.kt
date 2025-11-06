@@ -52,10 +52,7 @@ fun ForgotPasswordScreen(
 
     LaunchedEffect(uiState.isContinuedResetPassword) {
         if (uiState.isContinuedResetPassword) {
-            navController.navigate("login") {
-                popUpTo("forgot_password") { inclusive = true }
-                launchSingleTop = true
-            }
+            navController.navigate("reset_password")
         }
     }
 

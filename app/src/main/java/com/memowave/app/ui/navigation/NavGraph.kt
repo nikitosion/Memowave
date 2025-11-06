@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.memowave.app.ui.screen.authentification.AuthViewModel
 import com.memowave.app.ui.screen.authentification.ForgotPasswordRoute
 import com.memowave.app.ui.screen.authentification.LoginRoute
+import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.SignUpRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 
@@ -16,6 +17,7 @@ sealed class Screen(val route: String) {
     object Login : Screen("login")
     object ForgotPassword : Screen("forgot_password")
     object SignUp : Screen("sign_up")
+    object ResetPassword : Screen("reset_password")
 }
 
 @Composable
@@ -35,6 +37,10 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.SignUp.route) {
             val authViewModel = hiltViewModel<AuthViewModel>()
             SignUpRoute(authViewModel = authViewModel, navController = navController)
+        }
+        composable(Screen.ResetPassword.route) {
+            val authViewModel = hiltViewModel<AuthViewModel>()
+            ResetPasswordRoute(authViewModel = authViewModel, navController = navController)
         }
     }
 }

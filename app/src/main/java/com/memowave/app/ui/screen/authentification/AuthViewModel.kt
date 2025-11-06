@@ -45,6 +45,14 @@ class AuthViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 
+    val isResetPasswordButtonEnabled: StateFlow<Boolean> = uiState
+        .map {
+            with(it.forgotPasswordForm) {
+                isNewPasswordValid && isRepeatedNewPasswordValid
+            } && !it.isLoading
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+
     val isSignUpButtonEnabled: StateFlow<Boolean> = uiState
         .map {
             with(it.signUpFormState) {
@@ -107,7 +115,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun onLoginPasswordChanged(newPassword: String) {
-        val isValid = validatePassword(newPassword)
+        val isValid = validatePasswordLength(newPassword)
         _uiState.update {
             it.copy(
                 loginFormState = it.loginFormState.copy(
@@ -120,7 +128,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun onSignUpPasswordChanged(newPassword: String) {
-        val passwordValidation = validateSignUpPassword(newPassword)
+        val passwordValidation = validatePassword(newPassword)
         val isValid = passwordValidation.isAllValid
 
         _uiState.update {
@@ -134,7 +142,38 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun validateSignUpPassword(password: String): PasswordValidationState {
+    fun onResetPasswordNewPasswordChanged(newPassword: String) {
+        val passwordValidation = validatePassword(newPassword)
+        val isValid = passwordValidation.isAllValid
+
+        _uiState.update {
+            it.copy(
+                forgotPasswordForm = it.forgotPasswordForm.copy(
+                    newPassword = newPassword,
+                    isNewPasswordValid = isValid,
+                    passwordValidationState = passwordValidation
+                )
+            )
+        }
+    }
+
+    fun onResetPasswordRepeatedNewPasswordChanged(newRepeatedPassword: String) {
+        val isValid = validateRepeatedPassword(
+            uiState.value.forgotPasswordForm.newPassword,
+            newRepeatedPassword
+        )
+        _uiState.update {
+            it.copy(
+                forgotPasswordForm = it.forgotPasswordForm.copy(
+                    repeatedNewPassword = newRepeatedPassword,
+                    isRepeatedNewPasswordValid = isValid,
+                    repeatedNewPasswordError = if (isValid || newRepeatedPassword.isEmpty()) null else "Пароли не совпадают"
+                )
+            )
+        }
+    }
+
+    private fun validatePassword(password: String): PasswordValidationState {
         return if (password.isEmpty()) {
             PasswordValidationState()
         } else {
@@ -149,7 +188,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun onRepeatedPasswordChanged(newPassword: String) {
-        val isValid = validateRepeatedPassword(newPassword)
+        val isValid = validateRepeatedPassword(uiState.value.signUpFormState.password, newPassword)
         _uiState.update {
             it.copy(
                 signUpFormState = it.signUpFormState.copy(
@@ -232,6 +271,35 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun onResetPasswordClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, authError = null) }
+
+            try {
+                delay(1500) // Simulate network delay TODO: Replace with real implementation
+                val result = Result.success(Unit)
+
+                if (result.isSuccess) {
+                    _uiState.update { it.copy(isLoading = false, isResetPasswordSuccess = true) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            authError = "Что-то пошло не так при сбросе пароля",
+                            isLoading = false
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        authError = e.message ?: "Ошибка при сбросе пароля",
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
     fun onSignUpClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
@@ -268,12 +336,12 @@ class AuthViewModel @Inject constructor(
                 Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    private fun validatePassword(password: String): Boolean {
+    private fun validatePasswordLength(password: String): Boolean {
         return password.length >= 8
     }
 
-    private fun validateRepeatedPassword(repeatedPassword: String): Boolean {
-        return repeatedPassword == _uiState.value.signUpFormState.password
+    private fun validateRepeatedPassword(password: String, repeatedPassword: String): Boolean {
+        return password == repeatedPassword
     }
 }
 
