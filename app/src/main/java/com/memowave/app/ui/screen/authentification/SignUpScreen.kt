@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,7 +100,7 @@ fun SignUpScreenContent(
             MemowaveLogoColored(size = 60.dp)
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = "Регистрация",
+                text = stringResource(R.string.signup_title),
                 style = MaterialTheme.typography.headlineLarge
             )
             OAuthButtons(modifier = Modifier.padding(top = 24.dp))
@@ -108,8 +109,8 @@ fun SignUpScreenContent(
                 onValueChange = onUsernameChange,
                 error = usernameError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Ваше имя",
-                placeholderText = "Введите ваше имя",
+                labelText = stringResource(R.string.signup_name_label),
+                placeholderText = stringResource(R.string.signup_name_placeholder),
                 leadingIconResId = R.drawable.round_person_24,
             )
             AuthNotSecuredTextField(
@@ -117,8 +118,8 @@ fun SignUpScreenContent(
                 onValueChange = onEmailChange,
                 error = emailError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Email",
-                placeholderText = "Введите ваш email",
+                labelText = stringResource(R.string.signup_email_label),
+                placeholderText = stringResource(R.string.signup_email_placeholder),
                 leadingIconResId = R.drawable.round_alternate_email_24,
             )
             AuthSecuredTextField(
@@ -126,34 +127,34 @@ fun SignUpScreenContent(
                 onValueChange = onPasswordChange,
                 error = passwordError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Пароль",
-                placeholderText = "Придумайте пароль",
+                labelText = stringResource(R.string.signup_password_label),
+                placeholderText = stringResource(R.string.signup_password_placeholder),
                 leadingIconResId = R.drawable.round_lock_24,
                 imeAction = ImeAction.Next
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp),
-                rule = "Содержит не менее 8 символов",
+                rule = stringResource(R.string.signup_password_rule_min_length),
                 isSatisfied = passwordValidationState.hasMinLength
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит строчную букву",
+                rule = stringResource(R.string.signup_password_rule_lowercase),
                 isSatisfied = passwordValidationState.hasLowercase
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит заглавную букву",
+                rule = stringResource(R.string.signup_password_rule_uppercase),
                 isSatisfied = passwordValidationState.hasUppercase
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит цифру",
+                rule = stringResource(R.string.signup_password_rule_digit),
                 isSatisfied = passwordValidationState.hasDigit
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит специальный символ",
+                rule = stringResource(R.string.signup_password_rule_special),
                 isSatisfied = passwordValidationState.hasSpecialChar
             )
             AuthSecuredTextField(
@@ -161,12 +162,12 @@ fun SignUpScreenContent(
                 onValueChange = onRepeatedPasswordChange,
                 error = repeatedPasswordError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Подтвердите пароль",
-                placeholderText = "Повторите пароль",
+                labelText = stringResource(R.string.signup_repeat_password_label),
+                placeholderText = stringResource(R.string.signup_repeat_password_placeholder),
                 leadingIconResId = R.drawable.round_lock_24,
             )
             AuthActionButton(
-                text = "Продолжить",
+                text = stringResource(R.string.signup_continue),
                 onClick = onSignUpClick,
                 isEnabled = isButtonEnabled,
                 isLoading = isLoading,
@@ -179,7 +180,7 @@ fun SignUpScreenContent(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
             ) {
-                Text("Уже есть аккаунт? Войти")
+                Text(stringResource(R.string.signup_login))
             }
         }
         IconButton(
@@ -191,7 +192,7 @@ fun SignUpScreenContent(
             Icon(
                 modifier = Modifier.size(60.dp),
                 painter = painterResource(id = R.drawable.round_chevron_left_24),
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }

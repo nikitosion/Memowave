@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,7 +84,7 @@ fun ResetPasswordScreenContent(
             MemowaveLogoColored(size = 60.dp)
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Восстановление пароля",
+                text = stringResource(R.string.reset_password_title),
                 style = MaterialTheme.typography.headlineLarge,
             )
             AuthSecuredTextField(
@@ -91,34 +92,34 @@ fun ResetPasswordScreenContent(
                 onValueChange = onNewPasswordChange,
                 modifier = Modifier.padding(top = 16.dp),
                 error = newPasswordError,
-                labelText = "Новый пароль",
-                placeholderText = "Придумайте новый пароль",
+                labelText = stringResource(R.string.reset_password_new_label),
+                placeholderText = stringResource(R.string.reset_password_new_placeholder),
                 leadingIconResId = R.drawable.round_lock_24,
                 imeAction = ImeAction.Next
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp),
-                rule = "Содержит не менее 8 символов",
+                rule = stringResource(R.string.reset_password_rule_min_length),
                 isSatisfied = passwordValidationState.hasMinLength
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит строчную букву",
+                rule = stringResource(R.string.reset_password_rule_lowercase),
                 isSatisfied = passwordValidationState.hasLowercase
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит заглавную букву",
+                rule = stringResource(R.string.reset_password_rule_uppercase),
                 isSatisfied = passwordValidationState.hasUppercase
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит цифру",
+                rule = stringResource(R.string.reset_password_rule_digit),
                 isSatisfied = passwordValidationState.hasDigit
             )
             PasswordRule(
                 modifier = Modifier.padding(start = 16.dp),
-                rule = "Содержит специальный символ",
+                rule = stringResource(R.string.reset_password_rule_special),
                 isSatisfied = passwordValidationState.hasSpecialChar
             )
             AuthSecuredTextField(
@@ -126,8 +127,8 @@ fun ResetPasswordScreenContent(
                 onValueChange = onRepeatedNewPasswordChange,
                 error = repeatedNewPasswordError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Подтвердите пароль",
-                placeholderText = "Повторите пароль",
+                labelText = stringResource(R.string.reset_password_repeat_label),
+                placeholderText = stringResource(R.string.reset_password_repeat_placeholder),
                 leadingIconResId = R.drawable.round_lock_24,
             )
             AuthActionButton(
@@ -135,7 +136,7 @@ fun ResetPasswordScreenContent(
                 isEnabled = isButtonEnabled,
                 isLoading = isLoading,
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Восстановить пароль"
+                text = stringResource(R.string.reset_password_button)
             )
         }
         IconButton(
@@ -147,7 +148,7 @@ fun ResetPasswordScreenContent(
             Icon(
                 modifier = Modifier.size(60.dp),
                 painter = painterResource(id = R.drawable.round_chevron_left_24),
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -180,7 +181,7 @@ fun ResetPasswordScreen(
         }
     }
 
-    val passwordError = if (!uiState.forgotPasswordForm.newPassword.isEmpty() && !uiState.forgotPasswordForm.passwordValidationState.isAllValid) "Пароль не соответствует требованиям" else null
+    val passwordError = if (!uiState.forgotPasswordForm.newPassword.isEmpty() && !uiState.forgotPasswordForm.passwordValidationState.isAllValid) stringResource(R.string.password_not_valid) else null
 
     ResetPasswordScreenContent(
         newPassword = uiState.forgotPasswordForm.newPassword,

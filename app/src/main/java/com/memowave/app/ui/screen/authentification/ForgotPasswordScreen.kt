@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,7 +75,7 @@ fun ForgotPasswordScreenContent(
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Восстановление пароля",
+                text = stringResource(R.string.forgot_password_title),
                 style = MaterialTheme.typography.headlineLarge,
             )
 
@@ -83,14 +84,14 @@ fun ForgotPasswordScreenContent(
                 onValueChange = onEmailChange,
                 error = emailError,
                 modifier = Modifier.padding(top = 20.dp),
-                labelText = "Email",
-                placeholderText = "Введите ваш email",
+                labelText = stringResource(R.string.forgot_password_email_label),
+                placeholderText = stringResource(R.string.forgot_password_email_placeholder),
                 leadingIconResId = R.drawable.round_alternate_email_24,
                 imeAction = ImeAction.Done
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp),
-                text = "Мы отправим вам письмо с инструкцией по восстановлению",
+                text = stringResource(R.string.forgot_password_info),
                 style = MaterialTheme.typography.bodySmall,
             )
 
@@ -99,7 +100,7 @@ fun ForgotPasswordScreenContent(
                 isEnabled = isButtonEnabled,
                 isLoading = isLoading,
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Продолжить"
+                text = stringResource(R.string.forgot_password_continue)
             )
         }
         IconButton(
@@ -111,7 +112,7 @@ fun ForgotPasswordScreenContent(
             Icon(
                 modifier = Modifier.size(60.dp),
                 painter = painterResource(id = R.drawable.round_chevron_left_24),
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }

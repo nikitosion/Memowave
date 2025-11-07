@@ -23,7 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -90,12 +90,12 @@ fun LoginScreenContent(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Привет, это ",
+                    text = stringResource(R.string.login_greeting),
                     style = MaterialTheme.typography.headlineLarge
                 )
                 Text(
-                    modifier = Modifier.offset(y = (-4).dp),
-                    text = "Memowave",
+                    modifier = Modifier.padding(start = 6.dp).offset(y = (-4).dp),
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontFamily = FontFamily(
                             Font(R.font.bagelfatone_regular)
@@ -103,13 +103,13 @@ fun LoginScreenContent(
                     )
                 )
                 Text(
-                    text = "!",
+                    text = stringResource(R.string.login_greeting_end),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "Лови волну новых слов и погружайся в язык с головой!",
+                text = stringResource(R.string.login_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
@@ -119,8 +119,8 @@ fun LoginScreenContent(
                 onValueChange = onEmailChange,
                 error = emailError,
                 modifier = Modifier.padding(top = 20.dp),
-                labelText = "Email",
-                placeholderText = "Введите ваш email",
+                labelText = stringResource(R.string.login_email_label),
+                placeholderText = stringResource(R.string.login_email_placeholder),
                 leadingIconResId = R.drawable.round_alternate_email_24
             )
             AuthSecuredTextField(
@@ -128,8 +128,8 @@ fun LoginScreenContent(
                 onValueChange = onPasswordChange,
                 error = passwordError,
                 modifier = Modifier.padding(top = 16.dp),
-                labelText = "Пароль",
-                placeholderText = "Введите ваш пароль",
+                labelText = stringResource(R.string.login_password_label),
+                placeholderText = stringResource(R.string.login_password_placeholder),
                 leadingIconResId = R.drawable.round_lock_24
             )
             AuthActionButton(
@@ -137,7 +137,7 @@ fun LoginScreenContent(
                 isEnabled = isButtonEnabled,
                 isLoading = isLoading,
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Войти"
+                text = stringResource(R.string.login_button)
             )
             OutlinedButton(
                 modifier = Modifier.padding(top = 24.dp),
@@ -146,9 +146,9 @@ fun LoginScreenContent(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
             ) {
-                Text("Забыли пароль?")
+                Text(stringResource(R.string.login_forgot_password))
             }
-            DividersWithTextInMiddle(text = "ИЛИ", modifier = Modifier.padding(top = 16.dp))
+            DividersWithTextInMiddle(text = stringResource(R.string.login_or), modifier = Modifier.padding(top = 16.dp))
             OutlinedButton(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = onSignUpClick,
@@ -156,7 +156,7 @@ fun LoginScreenContent(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             ) {
-                Text("Нет аккаунта? Зарегистрируйтесь")
+                Text(stringResource(R.string.login_signup))
             }
         }
     }
