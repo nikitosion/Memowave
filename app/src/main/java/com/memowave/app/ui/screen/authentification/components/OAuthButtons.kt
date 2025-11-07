@@ -18,6 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
+/**
+ * Row of OAuth provider buttons for authentication screens.
+ *
+ * @param modifier Modifier for styling
+ */
 @Composable
 fun OAuthButtons(
     modifier: Modifier = Modifier
@@ -80,6 +85,9 @@ fun OAuthButtons(
     }
 }
 
+/**
+ * Preview for [OAuthButtons].
+ */
 @Preview
 @Composable
 fun OAuthButtonsPreview() {

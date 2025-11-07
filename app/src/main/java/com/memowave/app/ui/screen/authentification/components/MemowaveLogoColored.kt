@@ -13,6 +13,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 
+/**
+ * Colored Memowave logo for authentication screens.
+ *
+ * @param color The color to tint the logo
+ * @param modifier Modifier to be applied to the logo
+ * @param size Size of the logo
+ */
 @Composable
 fun MemowaveLogoColored(
     color: Color = MaterialTheme.colorScheme.primary,
@@ -28,4 +35,12 @@ fun MemowaveLogoColored(
         ),
         modifier = modifier.size(size),
     )
+}
+
+/**
+ * Preview for [MemowaveLogoColored].
+ */
+@Composable
+fun PreviewMemowaveLogoColored() {
+    MemowaveLogoColored()
 }

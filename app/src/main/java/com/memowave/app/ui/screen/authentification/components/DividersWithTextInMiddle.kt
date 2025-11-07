@@ -11,6 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Horizontal divider with centered text, used to separate sections in authentication screens.
+ *
+ * @param text Text to display in the center
+ * @param modifier Modifier for styling
+ */
 @Composable
 fun DividersWithTextInMiddle(
     text: String = "ИЛИ",
@@ -36,4 +42,12 @@ fun DividersWithTextInMiddle(
             color = MaterialTheme.colorScheme.outlineVariant
         )
     }
+}
+
+/**
+ * Preview for [DividersWithTextInMiddle].
+ */
+@Composable
+fun PreviewDividersWithTextInMiddle() {
+    DividersWithTextInMiddle()
 }

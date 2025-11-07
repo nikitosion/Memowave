@@ -1,5 +1,11 @@
 package com.memowave.app.ui.screen.authentification.components.ui_state
 
+/**
+ * State for the sign up form.
+ *
+ * Holds username, email, password, repeated password, and validation state.
+ * @see AuthUiState
+ */
 data class SignUpFormState (
     val username: String = "",
     val email: String = "",

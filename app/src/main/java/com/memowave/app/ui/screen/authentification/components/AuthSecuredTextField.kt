@@ -27,6 +27,20 @@ import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
+/**
+ * Password input field for authentication screens.
+ *
+ * Shows or hides password, and displays an error if [error] is not null.
+ *
+ * @param value Current password value
+ * @param onValueChange Callback for password changes
+ * @param error Error message to display, or null
+ * @param modifier Modifier for styling
+ * @param labelText Label for the text field
+ * @param placeholderText Placeholder text
+ * @param leadingIconResId Resource ID for the leading icon
+ * @param imeAction IME action for the keyboard
+ */
 @Composable
 fun AuthSecuredTextField(
     value: String,
@@ -98,6 +112,9 @@ fun AuthSecuredTextField(
     }
 }
 
+/**
+ * Preview for [AuthSecuredTextField].
+ */
 @Preview
 @Composable
 fun PasswordTextFieldPreview() {

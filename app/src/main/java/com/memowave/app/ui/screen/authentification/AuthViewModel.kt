@@ -1,20 +1,15 @@
 package com.memowave.app.ui.screen.authentification
 
-import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.memowave.app.domain.usecase.auth.GetUserByEmailUseCase
-import com.memowave.app.domain.usecase.auth.LoginUseCase
-import com.memowave.app.domain.usecase.auth.LogoutUseCase
-import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
-import com.memowave.app.domain.usecase.auth.SignUpUseCase
 import com.memowave.app.ui.screen.authentification.components.ui_state.AuthUiState
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
-import com.memowave.app.ui.screen.authentification.components.ui_state.PasswordValidationState
 import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
+import com.memowave.app.ui.screen.authentification.helper.AuthFormValidator
+import com.memowave.app.ui.screen.authentification.helper.AuthOperationHandler
+import com.memowave.app.ui.screen.authentification.helper.AuthResult
+import com.memowave.app.ui.screen.authentification.helper.GetUserResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,23 +20,40 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel responsible for managing UI state and business logic of authentication screens:
+ * - [LoginScreen]
+ * - [SignUpScreen]
+ * - [ForgotPasswordScreen]
+ * - [ResetPasswordScreen]
+ *
+ * Used by all authentication-related screens in the app.
+ *
+ * @property formValidator Validates authentication form fields
+ * @property operationHandler Handles authentication operations
+ */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val getUserByEmailUseCase: GetUserByEmailUseCase,
-    private val loginUseCase: LoginUseCase,
-    private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val signUpUseCase: SignUpUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val formValidator: AuthFormValidator,      // Form validator: field validation logic
+    private val operationHandler: AuthOperationHandler // Operation handler: login, sign up, etc.
 ) : ViewModel() {
 
+    /**
+     * Main authentication UI state, containing all form states and flags.
+     */
     private val _uiState = MutableStateFlow(AuthUiState())
+    /**
+     * StateFlow for observing authentication UI state.
+     */
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    /*// TODO: Remove automatic login on init
-    init {
-        onLoginClick()
-    }*/
+    // ------------------------------ Button enabled states (UI logic) ------------------------------
 
+    /**
+     * Indicates if the login button should be enabled.
+     *
+     * The button is enabled if email and password are valid and loading is not in progress.
+     */
     val isLoginButtonEnabled: StateFlow<Boolean> = uiState
         .map {
             with(it.loginFormState) {
@@ -50,20 +62,35 @@ class AuthViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
+    /**
+     * Indicates if the forgot password button should be enabled.
+     *
+     * The button is enabled if the email is valid and loading is not in progress.
+     */
     val isForgotPasswordButtonEnabled: StateFlow<Boolean> = uiState
         .map {
             it.forgotPasswordForm.isEmailValid && !it.isLoading
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
+    /**
+     * Indicates if the reset password button should be enabled.
+     *
+     * The button is enabled if both password fields are valid and loading is not in progress.
+     */
     val isResetPasswordButtonEnabled: StateFlow<Boolean> = uiState
         .map {
             with(it.forgotPasswordForm) {
                 isNewPasswordValid && isRepeatedNewPasswordValid
             } && !it.isLoading
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
+    /**
+     * Indicates if the sign up button should be enabled.
+     *
+     * The button is enabled if all sign up fields are valid and loading is not in progress.
+     */
     val isSignUpButtonEnabled: StateFlow<Boolean> = uiState
         .map {
             with(it.signUpFormState) {
@@ -72,234 +99,242 @@ class AuthViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    fun onNameChanged(newName: String) {
-        val isValid = validateName(newName)
-        _uiState.update {
-            it.copy(
-                signUpFormState = it.signUpFormState.copy(
-                    username = newName,
-                    isNameValid = isValid,
-                    nameError =
-                        if (isValid || newName.isEmpty()) null else "Имя должно содержать минимум 2 символа"
-                )
-            )
-        }
-    }
+    // ---------------------------------- Form field change handlers ----------------------------------
 
+    /**
+     * Handles email change in the login form.
+     * @param newEmail New email value
+     */
     fun onLoginEmailChanged(newEmail: String) {
-        val isValid = validateEmail(newEmail)
         _uiState.update {
-            it.copy(
-                loginFormState = it.loginFormState.copy(
-                    email = newEmail,
-                    isEmailValid = isValid,
-                    emailError = null
-                )
-            )
+            it.copy(loginFormState = formValidator.validateLoginEmail(it.loginFormState, newEmail))
         }
     }
 
-    fun onForgotPasswordEmailChanged(newEmail: String) {
-        val isValid = validateEmail(newEmail)
-        _uiState.update {
-            it.copy(
-                forgotPasswordForm = it.forgotPasswordForm.copy(
-                    email = newEmail,
-                    isEmailValid = isValid,
-                    emailError = null
-                )
-            )
-        }
-    }
-
-    fun onSignUpEmailChanged(newEmail: String) {
-        val isValid = validateEmail(newEmail)
-        _uiState.update {
-            it.copy(
-                signUpFormState = it.signUpFormState.copy(
-                    email = newEmail,
-                    isEmailValid = isValid,
-                    emailError = if (isValid || newEmail.isEmpty()) null else "Некорректный email"
-                )
-            )
-        }
-    }
-
+    /**
+     * Handles password change in the login form.
+     * @param newPassword New password value
+     */
     fun onLoginPasswordChanged(newPassword: String) {
-        val isValid = validatePasswordLength(newPassword)
         _uiState.update {
             it.copy(
-                loginFormState = it.loginFormState.copy(
-                    password = newPassword,
-                    isPasswordValid = isValid,
-                    passwordError = null
+                loginFormState = formValidator.validateLoginPassword(
+                    it.loginFormState,
+                    newPassword
                 )
             )
         }
     }
 
+    /**
+     * Handles name change in the sign up form.
+     * @param newName New username value
+     */
+    fun onNameChanged(newName: String) {
+        _uiState.update {
+            it.copy(signUpFormState = formValidator.validateSignUpName(it.signUpFormState, newName))
+        }
+    }
+
+    /**
+     * Handles email change in the sign up form.
+     * @param newEmail New email value
+     */
+    fun onSignUpEmailChanged(newEmail: String) {
+        _uiState.update {
+            it.copy(
+                signUpFormState = formValidator.validateSignUpEmail(
+                    it.signUpFormState,
+                    newEmail
+                )
+            )
+        }
+    }
+
+    /**
+     * Handles password change in the sign up form.
+     * @param newPassword New password value
+     */
     fun onSignUpPasswordChanged(newPassword: String) {
-        val passwordValidation = validatePassword(newPassword)
-        val isValid = passwordValidation.isAllValid
-
         _uiState.update {
             it.copy(
-                signUpFormState = it.signUpFormState.copy(
-                    password = newPassword,
-                    isPasswordValid = isValid,
-                    passwordValidationState = passwordValidation
+                signUpFormState = formValidator.validateSignUpPassword(
+                    it.signUpFormState,
+                    newPassword
                 )
             )
         }
     }
 
-    fun onResetPasswordNewPasswordChanged(newPassword: String) {
-        val passwordValidation = validatePassword(newPassword)
-        val isValid = passwordValidation.isAllValid
-
-        _uiState.update {
-            it.copy(
-                forgotPasswordForm = it.forgotPasswordForm.copy(
-                    newPassword = newPassword,
-                    isNewPasswordValid = isValid,
-                    passwordValidationState = passwordValidation
-                )
-            )
-        }
-    }
-
-    fun onResetPasswordRepeatedNewPasswordChanged(newRepeatedPassword: String) {
-        val isValid = validateRepeatedPassword(
-            uiState.value.forgotPasswordForm.newPassword,
-            newRepeatedPassword
-        )
-        _uiState.update {
-            it.copy(
-                forgotPasswordForm = it.forgotPasswordForm.copy(
-                    repeatedNewPassword = newRepeatedPassword,
-                    isRepeatedNewPasswordValid = isValid,
-                    repeatedNewPasswordError = if (isValid || newRepeatedPassword.isEmpty()) null else "Пароли не совпадают"
-                )
-            )
-        }
-    }
-
-    private fun validatePassword(password: String): PasswordValidationState {
-        return if (password.isEmpty()) {
-            PasswordValidationState()
-        } else {
-            PasswordValidationState(
-                hasMinLength = password.length >= 8,
-                hasLowercase = password.any { it.isLowerCase() },
-                hasUppercase = password.any { it.isUpperCase() },
-                hasDigit = password.any { it.isDigit() },
-                hasSpecialChar = password.any { !it.isLetterOrDigit() }
-            )
-        }
-    }
-
+    /**
+     * Handles repeated password change in the sign up form.
+     * @param newPassword New repeated password value
+     */
     fun onRepeatedPasswordChanged(newPassword: String) {
-        val isValid = validateRepeatedPassword(uiState.value.signUpFormState.password, newPassword)
         _uiState.update {
             it.copy(
-                signUpFormState = it.signUpFormState.copy(
-                    repeatedPassword = newPassword,
-                    isRepeatedPasswordValid = isValid,
-                    repeatedPasswordError = if (isValid || newPassword.isEmpty()) null else "Пароли не совпадают"
+                signUpFormState = formValidator.validateSignUpRepeatedPassword(
+                    it.signUpFormState,
+                    newPassword
                 )
             )
         }
     }
 
+    /**
+     * Handles email change in the forgot password form.
+     * @param newEmail New email value
+     */
+    fun onForgotPasswordEmailChanged(newEmail: String) {
+        _uiState.update {
+            it.copy(
+                forgotPasswordForm = formValidator.validateForgotPasswordEmail(
+                    it.forgotPasswordForm,
+                    newEmail
+                )
+            )
+        }
+    }
+
+    /**
+     * Handles new password change in the reset password form.
+     * @param newPassword New password value
+     */
+    fun onResetPasswordNewPasswordChanged(newPassword: String) {
+        _uiState.update {
+            it.copy(
+                forgotPasswordForm = formValidator.validateResetNewPassword(
+                    it.forgotPasswordForm,
+                    newPassword
+                )
+            )
+        }
+    }
+
+    /**
+     * Handles repeated new password change in the reset password form.
+     * @param newRepeatedPassword New repeated password value
+     */
+    fun onResetPasswordRepeatedNewPasswordChanged(newRepeatedPassword: String) {
+        _uiState.update {
+            it.copy(
+                forgotPasswordForm = formValidator.validateResetRepeatedPassword(
+                    it.forgotPasswordForm,
+                    newRepeatedPassword
+                )
+            )
+        }
+    }
+
+    // -------------- Main authentication operations (login, sign up, password recovery) --------------
+
+    /**
+     * Handles login button click. Performs login operation and updates UI state accordingly.
+     */
     fun onLoginClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
 
-            try {
-                delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val result = loginUseCase(
-                    email = _uiState.value.loginFormState.email,
-                    password = _uiState.value.loginFormState.password
-                )
-
-                if (result.isSuccess) {
+            when (val result = operationHandler.performLogin(
+                email = _uiState.value.loginFormState.email,
+                password = _uiState.value.loginFormState.password
+            )) {
+                is AuthResult.Success -> {
                     _uiState.update { it.copy(isLoginSuccess = true, isLoading = false) }
-                } else {
+                }
+
+                is AuthResult.Failure -> {
                     _uiState.update {
                         it.copy(
                             loginFormState = it.loginFormState.copy(
-                                emailError = "Неверный email или пароль",
-                                passwordError = "Неверный email или пароль"
+                                emailError = result.message,
+                                passwordError = result.message
                             ),
-                            authError = "Что-то пошло не так при входе",
+                            authError = result.message,
                             isLoading = false
                         )
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        authError = e.message ?: "Ошибка при входе",
-                        isLoading = false
-                    )
+
+                is AuthResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            authError = result.message,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Handles forgot password button click. Performs user lookup by email and updates UI state.
+     */
     fun onForgotPasswordClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
 
-            try {
-                delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val resultUser = getUserByEmailUseCase(email = uiState.value.forgotPasswordForm.email)
-
-                if (resultUser.isSuccess) {
+            when (val result = operationHandler.performGetUserByEmail(
+                email = uiState.value.forgotPasswordForm.email
+            )) {
+                is GetUserResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            userId = resultUser.getOrNull()?.id,
+                            userId = result.userId,
                             isLoading = false,
                             isContinuedResetPassword = true
                         )
                     }
-                } else {
+                }
+
+                is GetUserResult.Failure -> {
                     _uiState.update {
                         it.copy(
                             forgotPasswordForm = it.forgotPasswordForm.copy(
-                                emailError = "Некорректный email"
+                                emailError = result.message
                             ),
-                            authError = "Что-то пошло не так при восстановлении пароля",
+                            authError = result.message,
                             isLoading = false
                         )
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        authError = e.message ?: "Ошибка при входе",
-                        isLoading = false
-                    )
+
+                is GetUserResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            authError = result.message,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Handles reset password button click. Performs password reset and updates UI state.
+     */
     fun onResetPasswordClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
 
-            try {
-                delay(1500) // Simulate network delay TODO: Replace with real implementation
-                Log.d("AuthViewModel", "Resetting password for userId: ${uiState.value.userId} + ${uiState.value.forgotPasswordForm.newPassword}")
-                val result = resetPasswordUseCase(
-                    uiState.value.userId!!,
-                    uiState.value.forgotPasswordForm.newPassword
-                )
+            val userId = uiState.value.userId
+            if (userId == null) {
+                _uiState.update {
+                    it.copy(
+                        authError = "Error: user not found",
+                        isLoading = false
+                    )
+                }
+                return@launch
+            }
 
-                Log.d("AuthViewModel", "Reset password result: $result")
-
-                if (result.isSuccess) {
+            when (val result = operationHandler.performResetPassword(
+                userId = userId,
+                newPassword = uiState.value.forgotPasswordForm.newPassword
+            )) {
+                is AuthResult.Success -> {
                     _uiState.update {
                         it.copy(
                             forgotPasswordForm = ForgotPasswordFormState(),
@@ -307,38 +342,42 @@ class AuthViewModel @Inject constructor(
                             isResetPasswordSuccess = true
                         )
                     }
-                } else {
+                }
+
+                is AuthResult.Failure -> {
                     _uiState.update {
                         it.copy(
-                            authError = "Что-то пошло не так при сбросе пароля",
+                            authError = result.message,
                             isLoading = false
                         )
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        authError = e.message ?: "Ошибка при сбросе пароля",
-                        isLoading = false
-                    )
+
+                is AuthResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            authError = result.message,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Handles sign up button click. Performs sign up operation and updates UI state.
+     */
     fun onSignUpClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
 
-            try {
-                delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val result = signUpUseCase(
-                    email = _uiState.value.signUpFormState.email,
-                    password = _uiState.value.signUpFormState.password,
-                    username = _uiState.value.signUpFormState.username
-                )
-
-                if (result.isSuccess) {
+            when (val result = operationHandler.performSignUp(
+                email = _uiState.value.signUpFormState.email,
+                password = _uiState.value.signUpFormState.password,
+                username = _uiState.value.signUpFormState.username
+            )) {
+                is AuthResult.Success -> {
                     _uiState.update {
                         it.copy(
                             signUpFormState = SignUpFormState(),
@@ -346,56 +385,55 @@ class AuthViewModel @Inject constructor(
                             isContinuedSignUp = true
                         )
                     }
-                } else {
+                }
+
+                is AuthResult.Failure -> {
                     _uiState.update {
                         it.copy(
-                            authError = "Что-то пошло не так при регистрации",
+                            authError = result.message,
                             isLoading = false
                         )
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        authError = e.message ?: "Ошибка при регистрации",
-                        isLoading = false
-                    )
+
+                is AuthResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            authError = result.message,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun validateName(newName: String): Boolean = newName.isNotEmpty() && newName.length >= 2
+    // ------------------- Reset temporary state flags (for navigation/form reset) -------------------
 
-    private fun validateEmail(email: String): Boolean {
-        return email.isNotEmpty() &&
-                Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    private fun validatePasswordLength(password: String): Boolean {
-        return password.length >= 8
-    }
-
-    private fun validateRepeatedPassword(password: String, repeatedPassword: String): Boolean {
-        return password == repeatedPassword
-    }
-
+    /**
+     * Resets the state for continuing to reset password (after successful user search).
+     */
     fun resetForgotPasswordState() {
         _uiState.update {
             it.copy(isContinuedResetPassword = false)
         }
     }
 
+    /**
+     * Resets the state for continuing sign up (after successful registration).
+     */
     fun resetSignUpState() {
         _uiState.update {
             it.copy(isContinuedSignUp = false)
         }
     }
 
+    /**
+     * Resets the state for successful password reset (after successful reset).
+     */
     fun resetResetPasswordState() {
         _uiState.update {
             it.copy(isResetPasswordSuccess = false)
         }
     }
 }
-

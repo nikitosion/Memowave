@@ -15,6 +15,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
+/**
+ * Text field for non-password authentication input (e.g., email, username).
+ *
+ * Shows an error message if [error] is not null.
+ *
+ * @param value Current text value
+ * @param onValueChange Callback for text changes
+ * @param error Error message to display, or null
+ * @param modifier Modifier for styling
+ * @param labelText Label for the text field
+ * @param placeholderText Placeholder text
+ * @param leadingIconResId Resource ID for the leading icon
+ * @param imeAction IME action for the keyboard
+ */
 @Composable
 fun AuthNotSecuredTextField(
     value: String,
@@ -62,3 +76,7 @@ fun AuthNotSecuredTextField(
         }*/
     }
 }
+
+/**
+ * Preview for [AuthNotSecuredTextField].
+ */

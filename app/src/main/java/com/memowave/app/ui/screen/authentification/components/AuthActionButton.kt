@@ -14,6 +14,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.ui.theme.MemowaveTheme
 
+/**
+ * Primary action button for authentication screens.
+ *
+ * Shows a loading indicator when [isLoading] is true, otherwise displays [text].
+ * Disabled when loading or [isEnabled] is false.
+ *
+ * @param onClick Action to perform when the button is clicked
+ * @param isEnabled Whether the button is enabled
+ * @param isLoading Whether to show a loading indicator
+ * @param text Button label
+ * @param modifier Modifier for styling
+ */
 @Composable
 fun AuthActionButton(
     onClick: () -> Unit,
@@ -45,6 +57,9 @@ fun AuthActionButton(
     }
 }
 
+/**
+ * Preview for [AuthActionButton].
+ */
 @Preview(
     showBackground = false, backgroundColor = 0xFF000000, showSystemUi = false
 )

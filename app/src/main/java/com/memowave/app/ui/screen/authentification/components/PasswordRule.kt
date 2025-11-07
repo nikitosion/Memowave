@@ -12,6 +12,13 @@ import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
+/**
+ * Visual indicator for a password rule (e.g., min length, digit, etc.).
+ *
+ * @param rule Description of the password rule
+ * @param isSatisfied Whether the rule is satisfied
+ * @param modifier Modifier for styling
+ */
 @Composable
 fun PasswordRule(
     modifier: Modifier = Modifier,
@@ -54,6 +61,9 @@ fun PasswordRule(
     }
 }
 
+/**
+ * Preview for [PasswordRule].
+ */
 @Preview
 @Composable
 fun PasswordRulePreview() {
