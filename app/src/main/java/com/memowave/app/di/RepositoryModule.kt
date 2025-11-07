@@ -1,5 +1,7 @@
 package com.memowave.app.di
 
+import com.memowave.app.data.local.dao.UserDao
+import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.domain.repository.AuthRepository
@@ -15,7 +17,21 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(apiService: ApiService): AuthRepository {
-        return AuthRepositoryImpl(apiService = apiService)
+    fun provideAuthRepository(
+        apiService: ApiService,
+        userDao: UserDao,
+        userMapper: UserMapper
+    ): AuthRepository {
+        return AuthRepositoryImpl(
+            apiService = apiService,
+            userDao = userDao,
+            userMapper = userMapper
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserMapper(): UserMapper {
+        return UserMapper()
     }
 }

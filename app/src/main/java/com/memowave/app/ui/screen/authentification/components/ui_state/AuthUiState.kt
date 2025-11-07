@@ -1,6 +1,7 @@
 package com.memowave.app.ui.screen.authentification.components.ui_state
 
 data class AuthUiState(
+    val userId: Long? = null,
     val signUpFormState: SignUpFormState = SignUpFormState(),
     val loginFormState: LoginFormState = LoginFormState(),
     val forgotPasswordForm: ForgotPasswordFormState = ForgotPasswordFormState(),

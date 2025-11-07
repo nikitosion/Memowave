@@ -4,14 +4,11 @@ import com.memowave.app.domain.model.User
 import com.memowave.app.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class LoginUseCase @Inject constructor(
+class GetUserByEmailUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(
-        email: String,
-        password: String
-    ): Result<User> {
-        val result = authRepository.login(email = email, password = password)
+    suspend operator fun invoke(email: String): Result<User?> {
+        val result = authRepository.getUserByEmail(email = email)
         return result
     }
 }

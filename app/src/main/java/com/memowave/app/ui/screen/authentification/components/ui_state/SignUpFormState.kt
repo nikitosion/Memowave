@@ -1,7 +1,7 @@
 package com.memowave.app.ui.screen.authentification.components.ui_state
 
 data class SignUpFormState (
-    val name: String = "",
+    val username: String = "",
     val email: String = "",
     val password: String = "",
     val repeatedPassword: String = "",

@@ -31,9 +31,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memowave.app.R
+import com.memowave.app.data.local.dao.UserDao
+import com.memowave.app.data.local.entity.UserEntity
+import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
+import com.memowave.app.domain.usecase.auth.GetUserByEmailUseCase
 import com.memowave.app.domain.usecase.auth.LoginUseCase
+import com.memowave.app.domain.usecase.auth.LogoutUseCase
+import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
+import com.memowave.app.domain.usecase.auth.SignUpUseCase
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
 import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextField
@@ -179,7 +186,47 @@ fun LoginScreenPreview() {
                 .background(color = MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp)
         ) {
-            LoginScreen(AuthViewModel(loginUseCase = LoginUseCase(AuthRepositoryImpl(ApiService()))), navController = NavController(LocalContext.current))
+            val authRepImpl = AuthRepositoryImpl(
+                ApiService(),
+                object : UserDao {
+                    override suspend fun createUser(user: UserEntity): Long {
+                        TODO("Not yet implemented")
+                    }
+
+                    override suspend fun getCurrentUser(): UserEntity? {
+                        TODO("Not yet implemented")
+                    }
+
+                    override suspend fun getUserByEmail(email: String): UserEntity? {
+                        TODO("Not yet implemented")
+                    }
+
+                    override suspend fun getUserById(id: Long): UserEntity? {
+                        TODO("Not yet implemented")
+                    }
+
+                    override suspend fun updatePassword(
+                        id: Long,
+                        password: String
+                    ) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override suspend fun deleteUserById(id: Long) {
+                        TODO("Not yet implemented")
+                    }
+                }, UserMapper()
+            )
+
+            LoginScreen(
+                viewModel = AuthViewModel(
+                    loginUseCase = LoginUseCase(authRepImpl),
+                    resetPasswordUseCase = ResetPasswordUseCase(authRepImpl),
+                    signUpUseCase = SignUpUseCase(authRepImpl),
+                    logoutUseCase = LogoutUseCase(authRepImpl),
+                    getUserByEmailUseCase = GetUserByEmailUseCase(authRepImpl)
+                ), navController = NavController(LocalContext.current)
+            )
         }
     }
 }

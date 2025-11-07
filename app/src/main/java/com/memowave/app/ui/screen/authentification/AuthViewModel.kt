@@ -1,9 +1,14 @@
 package com.memowave.app.ui.screen.authentification
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.memowave.app.domain.usecase.auth.GetUserByEmailUseCase
 import com.memowave.app.domain.usecase.auth.LoginUseCase
+import com.memowave.app.domain.usecase.auth.LogoutUseCase
+import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
+import com.memowave.app.domain.usecase.auth.SignUpUseCase
 import com.memowave.app.ui.screen.authentification.components.ui_state.AuthUiState
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.PasswordValidationState
@@ -22,7 +27,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val getUserByEmailUseCase: GetUserByEmailUseCase,
+    private val loginUseCase: LoginUseCase,
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val signUpUseCase: SignUpUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -68,7 +77,7 @@ class AuthViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 signUpFormState = it.signUpFormState.copy(
-                    name = newName,
+                    username = newName,
                     isNameValid = isValid,
                     nameError =
                         if (isValid || newName.isEmpty()) null else "Имя должно содержать минимум 2 символа"
@@ -207,6 +216,7 @@ class AuthViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, authError = null) }
 
             try {
+                delay(1500) // Simulate network delay TODO: Replace with real implementation
                 val result = loginUseCase(
                     email = _uiState.value.loginFormState.email,
                     password = _uiState.value.loginFormState.password
@@ -243,11 +253,12 @@ class AuthViewModel @Inject constructor(
 
             try {
                 delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val result = Result.success(Unit)
+                val resultUser = getUserByEmailUseCase(email = uiState.value.forgotPasswordForm.email)
 
-                if (result.isSuccess) {
+                if (resultUser.isSuccess) {
                     _uiState.update {
                         it.copy(
+                            userId = resultUser.getOrNull()?.id,
                             isLoading = false,
                             isContinuedResetPassword = true
                         )
@@ -280,7 +291,13 @@ class AuthViewModel @Inject constructor(
 
             try {
                 delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val result = Result.success(Unit)
+                Log.d("AuthViewModel", "Resetting password for userId: ${uiState.value.userId} + ${uiState.value.forgotPasswordForm.newPassword}")
+                val result = resetPasswordUseCase(
+                    uiState.value.userId!!,
+                    uiState.value.forgotPasswordForm.newPassword
+                )
+
+                Log.d("AuthViewModel", "Reset password result: $result")
 
                 if (result.isSuccess) {
                     _uiState.update {
@@ -315,7 +332,11 @@ class AuthViewModel @Inject constructor(
 
             try {
                 delay(1500) // Simulate network delay TODO: Replace with real implementation
-                val result = Result.success(Unit)
+                val result = signUpUseCase(
+                    email = _uiState.value.signUpFormState.email,
+                    password = _uiState.value.signUpFormState.password,
+                    username = _uiState.value.signUpFormState.username
+                )
 
                 if (result.isSuccess) {
                     _uiState.update {

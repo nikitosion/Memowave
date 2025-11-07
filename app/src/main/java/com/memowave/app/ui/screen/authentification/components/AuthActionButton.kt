@@ -1,6 +1,5 @@
 package com.memowave.app.ui.screen.authentification.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -47,8 +46,7 @@ fun AuthActionButton(
 }
 
 @Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
-    showBackground = true, backgroundColor = 0xFF000000
+    showBackground = false, backgroundColor = 0xFF000000, showSystemUi = false
 )
 @Composable
 fun AuthActionButtonPreview() {
@@ -56,7 +54,7 @@ fun AuthActionButtonPreview() {
         AuthActionButton(
             onClick = {},
             isEnabled = true,
-            isLoading = true,
+            isLoading = false,
             text = "Войти"
         )
     }
