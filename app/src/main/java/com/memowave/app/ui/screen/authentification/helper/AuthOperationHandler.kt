@@ -51,15 +51,16 @@ class AuthOperationHandler @Inject constructor(
 
     /**
      * Performs user registration operation.
+     * @param username User name
      * @param email User email
      * @param password User password
-     * @param username User name
+
      * @return AuthResult indicating success, failure, or error
      */
-    suspend fun performSignUp(email: String, password: String, username: String): AuthResult {
+    suspend fun performSignUp(username: String, email: String, password: String,): AuthResult {
         return try {
             delay(1500) // TODO: Remove in production
-            val result = signUpUseCase(email, password, username)
+            val result = signUpUseCase(username = username, email = email, password = password)
 
             if (result.isSuccess) {
                 AuthResult.Success
