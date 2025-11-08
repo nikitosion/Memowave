@@ -45,4 +45,8 @@
     <string name="reset_password_repeat_placeholder">Repeat password</string>
     <string name="reset_password_button">Reset password</string>
     <string name="password_not_valid">Password does not meet requirements</string>
+    <string name="nav_bar_main_page">Home</string>
+    <string name="nav_bar_library">Library</string>
+    <string name="nav_bar_games">Games</string>
+    <string name="nav_bar_profile">Profile</string>
 </resources>

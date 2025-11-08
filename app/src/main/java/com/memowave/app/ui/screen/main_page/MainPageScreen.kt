@@ -48,8 +48,8 @@ fun MainPageScreen() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(top = 60.dp)
             .verticalScroll(rememberScrollState())
+            .padding(top = 32.dp, bottom = 32.dp)
     ) {
         ContinueLearningButton()
         BaseWordStatictics(modifier = Modifier.padding(top = 28.dp))
