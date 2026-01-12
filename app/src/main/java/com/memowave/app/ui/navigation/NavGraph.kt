@@ -12,6 +12,7 @@ import com.memowave.app.ui.screen.authentification.LoginRoute
 import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.SignUpRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
+import com.memowave.app.ui.screen.profile.ProfileRoute
 
 sealed class Screen(
     val route: String,
@@ -73,7 +74,7 @@ fun NavGraph(navController: NavHostController) {
             // LibraryRoute()
         }
         composable(Screen.Profile.route) {
-            // LibraryRoute()
+            ProfileRoute()
         }
         composable(Screen.Login.route) {
             LoginRoute(authViewModel = authViewModel, navController = navController)
