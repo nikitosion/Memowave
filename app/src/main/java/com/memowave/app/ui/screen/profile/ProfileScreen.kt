@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,21 +34,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun ProfileRoute() {
-    ProfileScreen()
+fun ProfileRoute(navController: NavController) {
+    ProfileScreen(navController)
 }
 
 @Composable
-fun ProfileScreen() {
-    ProfileScreenContent()
+fun ProfileScreen(navController: NavController) {
+    ProfileScreenContent(
+        onSettingsClick = { navController.navigate("app_settings") }
+    )
 }
 
 @Composable
-fun ProfileScreenContent() {
+fun ProfileScreenContent(onSettingsClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,8 +59,25 @@ fun ProfileScreenContent() {
             .verticalScroll(rememberScrollState())
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.End)
+                .background(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = CircleShape
+                ),
+            onClick = onSettingsClick,
+        ) {
+            Icon(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(R.drawable.round_settings_24),
+                contentDescription = "Settings button",
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
         Row(
             modifier = Modifier
+                .padding(top = 20.dp)
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainer,
@@ -480,7 +501,7 @@ fun ProfileScreenPreview() {
                         end = 16.dp
                     ),
             ) {
-                ProfileScreenContent()
+                ProfileScreenContent({})
             }
         }
     }
