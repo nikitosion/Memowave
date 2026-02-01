@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.ui.screen.authentification.components.ui_state.AuthUiState
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
+import com.memowave.app.ui.screen.authentification.components.ui_state.LoginFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
 import com.memowave.app.ui.screen.authentification.helper.AuthFormValidator
 import com.memowave.app.ui.screen.authentification.helper.AuthOperationHandler
@@ -98,6 +99,18 @@ class AuthViewModel @Inject constructor(
             } && !it.isLoading
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    init {
+        _uiState.update {
+            it.copy(
+                loginFormState = LoginFormState(
+                    email = "n@ya.ru",
+                    password = "12345aA&"
+                )
+            )
+        }
+        onLoginClick()
+    }
 
     // ---------------------------------- Form field change handlers ----------------------------------
 

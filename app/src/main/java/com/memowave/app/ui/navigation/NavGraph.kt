@@ -12,6 +12,8 @@ import com.memowave.app.ui.screen.authentification.LoginRoute
 import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.SignUpRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
+import com.memowave.app.ui.screen.profile.ProfileRoute
+import com.memowave.app.ui.screen.settings.AppSettingsRoute
 
 sealed class Screen(
     val route: String,
@@ -51,6 +53,7 @@ sealed class Screen(
     object ForgotPassword : Screen(route = "forgot_password")
     object SignUp : Screen(route = "sign_up")
     object ResetPassword : Screen(route = "reset_password")
+    object AppSettings : Screen(route = "app_settings")
 
     companion object {
         val allScreens =
@@ -73,7 +76,10 @@ fun NavGraph(navController: NavHostController) {
             // LibraryRoute()
         }
         composable(Screen.Profile.route) {
-            // LibraryRoute()
+            ProfileRoute(navController)
+        }
+        composable(Screen.AppSettings.route) {
+            AppSettingsRoute(navController)
         }
         composable(Screen.Login.route) {
             LoginRoute(authViewModel = authViewModel, navController = navController)
