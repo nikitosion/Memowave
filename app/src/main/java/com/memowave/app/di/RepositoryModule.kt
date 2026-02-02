@@ -1,5 +1,6 @@
 package com.memowave.app.di
 
+import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
@@ -20,12 +21,14 @@ object RepositoryModule {
     fun provideAuthRepository(
         apiService: ApiService,
         userDao: UserDao,
-        userMapper: UserMapper
+        userMapper: UserMapper,
+        tokenManager: TokenManager
     ): AuthRepository {
         return AuthRepositoryImpl(
             apiService = apiService,
             userDao = userDao,
-            userMapper = userMapper
+            userMapper = userMapper,
+            tokenManager = tokenManager
         )
     }
 

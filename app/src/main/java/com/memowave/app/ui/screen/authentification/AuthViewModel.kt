@@ -104,8 +104,8 @@ class AuthViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 loginFormState = LoginFormState(
-                    email = "n@ya.ru",
-                    password = "12345aA&"
+                    email = "root",
+                    password = "password123"
                 )
             )
         }

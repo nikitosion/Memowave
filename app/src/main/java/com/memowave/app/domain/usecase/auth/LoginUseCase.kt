@@ -1,6 +1,5 @@
 package com.memowave.app.domain.usecase.auth
 
-import com.memowave.app.domain.model.User
 import com.memowave.app.domain.repository.AuthRepository
 import javax.inject.Inject
 
@@ -10,7 +9,7 @@ class LoginUseCase @Inject constructor(
     suspend operator fun invoke(
         email: String,
         password: String
-    ): Result<User> {
+    ): Result<Unit> {
         val result = authRepository.login(email = email, password = password)
         return result
     }

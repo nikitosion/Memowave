@@ -5,7 +5,7 @@ import com.memowave.app.domain.model.UserRegistration
 
 interface AuthRepository {
     suspend fun getUserByEmail(email: String): Result<User?>
-    suspend fun login(email: String, password: String): Result<User>
+    suspend fun login(email: String, password: String): Result<Unit>
     suspend fun register(newUser: UserRegistration): Result<User>
     suspend fun resetPassword(userId: Long, newPassword: String): Result<User>
     suspend fun logout(userId: Long): Result<Unit>
