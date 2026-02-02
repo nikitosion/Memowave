@@ -1,11 +1,16 @@
 package com.memowave.app.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.memowave.app.AppViewModel
 import com.memowave.app.R
+import com.memowave.app.core.auth.AuthState
 import com.memowave.app.ui.screen.authentification.AuthViewModel
 import com.memowave.app.ui.screen.authentification.ForgotPasswordRoute
 import com.memowave.app.ui.screen.authentification.LoginRoute
@@ -13,6 +18,7 @@ import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.SignUpRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
+import com.memowave.app.ui.screen.profile.ProfileViewModel
 import com.memowave.app.ui.screen.settings.AppSettingsRoute
 
 sealed class Screen(
@@ -63,8 +69,19 @@ sealed class Screen(
 }
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
     val authViewModel = hiltViewModel<AuthViewModel>()
+
+    val authState by appViewModel.authStateManager.authState.collectAsState()
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Unauthenticated) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(navController.graph.id) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.MainPage.route) {
             MainPageRoute()
@@ -76,7 +93,8 @@ fun NavGraph(navController: NavHostController) {
             // LibraryRoute()
         }
         composable(Screen.Profile.route) {
-            ProfileRoute(navController)
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
+            ProfileRoute(navController, profileViewModel)
         }
         composable(Screen.AppSettings.route) {
             AppSettingsRoute(navController)

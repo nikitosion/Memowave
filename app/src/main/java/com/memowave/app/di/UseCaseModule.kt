@@ -1,5 +1,6 @@
 package com.memowave.app.di
 
+import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.domain.repository.AuthRepository
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.domain.usecase.auth.LogoutUseCase
@@ -17,8 +18,11 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
-        return LoginUseCase(authRepository)
+    fun provideLoginUseCase(
+        authRepository: AuthRepository,
+        authStateManager: AuthStateManager
+    ): LoginUseCase {
+        return LoginUseCase(authRepository, authStateManager)
     }
 
     @Provides
@@ -35,7 +39,13 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLogoutUseCase(authRepository: AuthRepository): LogoutUseCase {
-        return LogoutUseCase(authRepository)
+    fun provideLogoutUseCase(
+        authRepository: AuthRepository,
+        authStateManager: AuthStateManager
+    ): LogoutUseCase {
+        return LogoutUseCase(
+            authRepository,
+            authStateManager
+        )
     }
 }

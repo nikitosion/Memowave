@@ -1,6 +1,7 @@
 package com.memowave.app.ui.screen.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -36,22 +39,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memowave.app.R
+import com.memowave.app.domain.model.User
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun ProfileRoute(navController: NavController) {
-    ProfileScreen(navController)
+fun ProfileRoute(navController: NavController, profileViewModel: ProfileViewModel) {
+    ProfileScreen(navController, profileViewModel)
 }
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel) {
+    val uiState by profileViewModel.uiState.collectAsState()
+
     ProfileScreenContent(
-        onSettingsClick = { navController.navigate("app_settings") }
+        user = uiState.user,
+        onSettingsClick = { navController.navigate("app_settings") },
+        refreshProfileInfo = { profileViewModel.loadUserProfile(1L) }
     )
 }
 
 @Composable
-fun ProfileScreenContent(onSettingsClick: () -> Unit) {
+fun ProfileScreenContent(
+    user: User,
+    onSettingsClick: () -> Unit,
+    refreshProfileInfo: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +95,8 @@ fun ProfileScreenContent(onSettingsClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(40.dp)
                 )
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable { refreshProfileInfo() },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -100,12 +113,12 @@ fun ProfileScreenContent(onSettingsClick: () -> Unit) {
                 )
                 Column() {
                     Text(
-                        text = "Albert",
+                        text = user.username ?: "Username is missing",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.W500
                     )
                     Text(
-                        text = "albert@gmail.com",
+                        text = user.email ?: "Email is missing",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -501,7 +514,10 @@ fun ProfileScreenPreview() {
                         end = 16.dp
                     ),
             ) {
-                ProfileScreenContent({})
+                ProfileScreenContent(
+                    User(username = "Albert", email = "albert@example.com"),
+                    {},
+                    {})
             }
         }
     }

@@ -5,7 +5,9 @@ import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
+import com.memowave.app.data.repository.UserRepositoryImpl
 import com.memowave.app.domain.repository.AuthRepository
+import com.memowave.app.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,5 +38,17 @@ object RepositoryModule {
     @Singleton
     fun provideUserMapper(): UserMapper {
         return UserMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        apiService: ApiService,
+        userMapper: UserMapper
+    ): UserRepository {
+        return UserRepositoryImpl(
+            apiService = apiService,
+            userMapper = userMapper
+        )
     }
 }

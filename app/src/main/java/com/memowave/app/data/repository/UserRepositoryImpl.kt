@@ -1,0 +1,26 @@
+package com.memowave.app.data.repository
+
+import com.memowave.app.data.mapper.UserMapper
+import com.memowave.app.data.remote.api.ApiService
+import com.memowave.app.domain.model.User
+import com.memowave.app.domain.repository.UserRepository
+import javax.inject.Inject
+
+class UserRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val userMapper: UserMapper
+) : UserRepository {
+    override suspend fun getUserProfileInfo(userId: Long): Result<User> {
+        return try {
+            val response = apiService.getUserProfileInfoById(userId)
+            if (!response.isSuccessful) {
+                return Result.failure(Exception("Ошибка при получении профиля: ${response.code()}"))
+            }
+            val userDto = response.body() ?: return Result.failure(Exception("Профиль не найден"))
+
+            Result.success(userMapper.dtoToDomain(userDto))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}

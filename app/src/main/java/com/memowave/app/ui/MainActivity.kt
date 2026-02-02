@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.memowave.app.AppViewModel
 import com.memowave.app.ui.common.BottomNavigationBar
 import com.memowave.app.ui.navigation.NavGraph
 import com.memowave.app.ui.navigation.Screen
@@ -34,7 +36,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Memowave() {
+fun Memowave(
+    appViewModel: AppViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -68,7 +72,7 @@ fun Memowave() {
                     )
                 ,
             ) {
-                NavGraph(navController)
+                NavGraph(navController, appViewModel)
             }
         }
     }
