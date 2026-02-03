@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -76,8 +79,16 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
     val sessionExpiredMessage = stringResource(R.string.notification_session_expired)
     val loginSuccessMessage = stringResource(R.string.notification_login_success)
 
+    var isFirstLaunch by remember { mutableStateOf(true) }
+
     // Handle authentication state changes and navigate accordingly
     LaunchedEffect(authState) {
+        if (isFirstLaunch) {
+            // Skip handling on the first launch to avoid unwanted navigation
+            isFirstLaunch = false
+            return@LaunchedEffect
+        }
+
         if (authState is AuthState.Unauthenticated) {
             if (appViewModel.authStateManager.isManualLogout) {
                 appViewModel.notificationManager.showError(
