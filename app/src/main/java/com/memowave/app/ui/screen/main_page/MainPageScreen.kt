@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.memowave.app.AppViewModel
 import com.memowave.app.R
 import com.memowave.app.ui.screen.main_page.components.BaseWordStatictics
 import com.memowave.app.ui.screen.main_page.components.ContinueLearningButton
@@ -26,8 +28,10 @@ import com.memowave.app.ui.screen.main_page.components.LearningMode
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun MainPageRoute() {
-    MainPageScreen()
+fun MainPageRoute(
+    appViewModel: AppViewModel = hiltViewModel()
+) {
+    MainPageScreen(appViewModel)
 }
 
 data class LearningModeConfig(
@@ -43,7 +47,9 @@ private val LEARNING_MODES = listOf(
 )
 
 @Composable
-fun MainPageScreen() {
+fun MainPageScreen(
+    appViewModel: AppViewModel? = null
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

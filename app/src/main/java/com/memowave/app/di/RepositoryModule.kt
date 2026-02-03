@@ -1,10 +1,13 @@
 package com.memowave.app.di
 
+import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
+import com.memowave.app.data.repository.UserRepositoryImpl
 import com.memowave.app.domain.repository.AuthRepository
+import com.memowave.app.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,12 +23,14 @@ object RepositoryModule {
     fun provideAuthRepository(
         apiService: ApiService,
         userDao: UserDao,
-        userMapper: UserMapper
+        userMapper: UserMapper,
+        tokenManager: TokenManager
     ): AuthRepository {
         return AuthRepositoryImpl(
             apiService = apiService,
             userDao = userDao,
-            userMapper = userMapper
+            userMapper = userMapper,
+            tokenManager = tokenManager
         )
     }
 
@@ -33,5 +38,17 @@ object RepositoryModule {
     @Singleton
     fun provideUserMapper(): UserMapper {
         return UserMapper()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        apiService: ApiService,
+        userMapper: UserMapper
+    ): UserRepository {
+        return UserRepositoryImpl(
+            apiService = apiService,
+            userMapper = userMapper
+        )
     }
 }

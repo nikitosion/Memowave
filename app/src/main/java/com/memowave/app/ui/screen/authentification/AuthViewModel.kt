@@ -2,9 +2,9 @@ package com.memowave.app.ui.screen.authentification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.ui.screen.authentification.components.ui_state.AuthUiState
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
-import com.memowave.app.ui.screen.authentification.components.ui_state.LoginFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
 import com.memowave.app.ui.screen.authentification.helper.AuthFormValidator
 import com.memowave.app.ui.screen.authentification.helper.AuthOperationHandler
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -36,13 +37,15 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val formValidator: AuthFormValidator,      // Form validator: field validation logic
-    private val operationHandler: AuthOperationHandler // Operation handler: login, sign up, etc.
+    private val operationHandler: AuthOperationHandler, // Operation handler: login, sign up, etc.
+    private val authStateManager: AuthStateManager
 ) : ViewModel() {
 
     /**
      * Main authentication UI state, containing all form states and flags.
      */
     private val _uiState = MutableStateFlow(AuthUiState())
+
     /**
      * StateFlow for observing authentication UI state.
      */
@@ -101,15 +104,14 @@ class AuthViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     init {
-        _uiState.update {
-            it.copy(
-                loginFormState = LoginFormState(
-                    email = "n@ya.ru",
-                    password = "12345aA&"
-                )
-            )
+        runBlocking {
+            val tokenExist = operationHandler.checkTokenExist()
+            if (tokenExist) {
+                _uiState.update {
+                    it.copy(isLoginSuccess = true)
+                }
+            }
         }
-        onLoginClick()
     }
 
     // ---------------------------------- Form field change handlers ----------------------------------

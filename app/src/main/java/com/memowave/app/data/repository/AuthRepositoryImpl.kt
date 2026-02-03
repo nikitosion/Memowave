@@ -1,8 +1,10 @@
 package com.memowave.app.data.repository
 
+import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
+import com.memowave.app.data.remote.dto.user.UserLoginDto
 import com.memowave.app.domain.model.User
 import com.memowave.app.domain.model.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
@@ -11,7 +13,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val userDao: UserDao,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val tokenManager: TokenManager,
 ) : AuthRepository {
     override suspend fun getUserByEmail(email: String): Result<User?> {
         return try {
@@ -27,14 +30,33 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun login(email: String, password: String): Result<User> {
+    override suspend fun login(email: String, password: String): Result<Unit> {
         return try {
-            val user = userDao.getUserByEmail(email)
-            if (user == null || user.password != password) {
-                return Result.failure(Exception("Неправильный email или пароль"))
+            val userRequest = UserLoginDto(username = email, password = password)
+            val response = apiService.login(userRequest)
+
+            if (!response.isSuccessful) {
+                return Result.failure(Exception("Ошибка при входе: ${response.code()}"))
             }
 
-            Result.success(userMapper.entityToDomainUser(user))
+            val token =
+                response.body()?.token ?: return Result.failure(Exception("Токен не получен"))
+
+            tokenManager.saveToken(token)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkTokenExist(): Result<Boolean> {
+        return try {
+            val token = tokenManager.getTokenSync()
+            if (token.isNullOrEmpty()) {
+                return Result.success(false)
+            }
+            Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -74,13 +96,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(userId: Long): Result<Unit> {
+    override suspend fun logout(): Result<Unit> {
         return try {
-            userDao.getUserById(userId)
-                ?: return Result.failure(Exception("Пользователь не найден"))
-
-            userDao.deleteUserById(userId)
-
+            tokenManager.clear()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

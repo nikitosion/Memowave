@@ -1,6 +1,5 @@
 package com.memowave.app.domain.validator
 
-import android.util.Patterns
 import javax.inject.Inject
 
 /**
@@ -17,11 +16,13 @@ class EmailValidator @Inject constructor() {
      * @return [ValidationResult] indicating if the email is valid or the error reason.
      */
     fun validate(email: String): ValidationResult {
-        return when {
+        return ValidationResult.Valid
+        // TODO: Uncomment the code below to enable email validation
+        /*return when {
             email.isEmpty() -> ValidationResult.Invalid("Email не может быть пустым")
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
                 ValidationResult.Invalid("Некорректный формат email")
             else -> ValidationResult.Valid
-        }
+        }*/
     }
 }

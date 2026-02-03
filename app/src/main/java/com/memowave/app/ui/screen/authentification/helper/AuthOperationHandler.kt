@@ -1,5 +1,6 @@
 package com.memowave.app.ui.screen.authentification.helper
 
+import com.memowave.app.domain.usecase.auth.CheckTokenExistUseCase
 import com.memowave.app.domain.usecase.auth.GetUserByEmailUseCase
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
@@ -26,8 +27,14 @@ class AuthOperationHandler @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val getUserByEmailUseCase: GetUserByEmailUseCase,
-    private val resetPasswordUseCase: ResetPasswordUseCase
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val checkTokenExistUseCase: CheckTokenExistUseCase
 ) {
+    suspend fun checkTokenExist(): Boolean {
+        val result = checkTokenExistUseCase()
+        return result.getOrElse { false }
+    }
+
     /**
      * Performs user login operation.
      * @param email User email
@@ -36,7 +43,6 @@ class AuthOperationHandler @Inject constructor(
      */
     suspend fun performLogin(email: String, password: String): AuthResult {
         return try {
-            delay(1500) // TODO: Remove in production
             val result = loginUseCase(email, password)
 
             if (result.isSuccess) {

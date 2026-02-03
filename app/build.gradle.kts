@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -25,6 +27,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            configureApiUrl()
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -42,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     kapt {
@@ -112,6 +118,22 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
+    // Tink
+    implementation(libs.tink.android)
+
     // Timber
     implementation(libs.timber)
+}
+
+fun com.android.build.api.dsl.ApplicationBuildType.configureApiUrl() {
+    val properties = Properties()
+    val localPropertiesFile = project.rootProject.file("local.properties")
+
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.inputStream())
+    }
+
+    val apiUrl = properties.getProperty("API_BASE_URL") ?: ""
+
+    buildConfigField("String", "BASE_URL", "\"$apiUrl\"")
 }

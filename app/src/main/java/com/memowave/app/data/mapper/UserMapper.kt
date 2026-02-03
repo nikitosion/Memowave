@@ -1,6 +1,7 @@
 package com.memowave.app.data.mapper
 
 import com.memowave.app.data.local.entity.UserEntity
+import com.memowave.app.data.remote.dto.user.UserDto
 import com.memowave.app.domain.model.User
 import com.memowave.app.domain.model.UserRegistration
 
@@ -14,16 +15,6 @@ class UserMapper {
         )
     }
 
-
-    fun domainToEntity(domain: User, password: String): UserEntity {
-        return UserEntity(
-            id = domain.id,
-            username = domain.username,
-            email = domain.email,
-            password = password
-        )
-    }
-
     fun userRegistrationToEntity(
         userRegistration: UserRegistration
     ): UserEntity {
@@ -31,6 +22,14 @@ class UserMapper {
             username = userRegistration.username,
             email = userRegistration.email,
             password = userRegistration.password
+        )
+    }
+
+    fun dtoToDomain(dto: UserDto): User {
+        return User(
+            id = dto.id,
+            username = dto.username,
+            email = dto.email
         )
     }
 }

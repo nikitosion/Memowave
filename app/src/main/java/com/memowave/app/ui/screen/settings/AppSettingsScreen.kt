@@ -22,23 +22,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memowave.app.R
+import com.memowave.app.ui.screen.profile.ProfileViewModel
 import com.memowave.app.ui.screen.settings.components.SettingsBlock
 import com.memowave.app.ui.screen.settings.components.SettingsBlockPreset
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun AppSettingsRoute(navController: NavController) {
-    AppSettingsScreen(navController)
+fun AppSettingsRoute(navController: NavController, profileViewModel: ProfileViewModel) {
+    AppSettingsScreen(navController, profileViewModel)
 }
 
 @Composable
-fun AppSettingsScreen(navController: NavController) {
+fun AppSettingsScreen(navController: NavController, profileViewModel: ProfileViewModel) {
     AppSettingsContent(
-        // TODO: implement logout logic
         onExitClick = {
-            navController.navigate("login") {
-                popUpTo("profile") { inclusive = true }
-            }
+            profileViewModel.logout()
         },
         onBackClick = { navController.popBackStack() }
     )
