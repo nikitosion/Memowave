@@ -1,6 +1,6 @@
 package com.memowave.app.domain.usecase.auth
 
-import com.memowave.app.domain.model.User
+import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.repository.AuthRepository
 import javax.inject.Inject
 

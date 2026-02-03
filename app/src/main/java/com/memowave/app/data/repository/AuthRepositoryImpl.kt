@@ -4,9 +4,9 @@ import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
-import com.memowave.app.data.remote.dto.user.UserLoginDto
-import com.memowave.app.domain.model.User
-import com.memowave.app.domain.model.UserRegistration
+import com.memowave.app.data.remote.dto.user.UserLoginReqDto
+import com.memowave.app.domain.model.user.User
+import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(email: String, password: String): Result<Unit> {
         return try {
-            val userRequest = UserLoginDto(username = email, password = password)
+            val userRequest = UserLoginReqDto(username = email, password = password)
             val response = apiService.login(userRequest)
 
             if (!response.isSuccessful) {
@@ -62,19 +62,14 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun register(
-        newUser: UserRegistration
-    ): Result<User> {
+    override suspend fun register(newUser: UserRegistration): Result<Unit> {
         return try {
-            val existingUser = userDao.getUserByEmail(newUser.email)
-            if (existingUser != null) {
-                return Result.failure(Exception("Пользователь с таким email уже существует"))
+            val response = apiService.register(newUser)
+            if (!response.isSuccessful) {
+                return Result.failure(Exception("Ошибка при регистрации: ${response.code()}"))
             }
 
-            val userId = userDao.createUser(userMapper.userRegistrationToEntity(newUser))
-            val user = User(id = userId, username = newUser.username, email = newUser.email)
-
-            Result.success(user)
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

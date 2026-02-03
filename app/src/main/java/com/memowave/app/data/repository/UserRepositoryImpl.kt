@@ -2,7 +2,7 @@ package com.memowave.app.data.repository
 
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
-import com.memowave.app.domain.model.User
+import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.repository.UserRepository
 import javax.inject.Inject
 

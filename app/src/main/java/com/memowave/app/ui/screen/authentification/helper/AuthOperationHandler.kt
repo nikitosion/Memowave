@@ -65,7 +65,6 @@ class AuthOperationHandler @Inject constructor(
      */
     suspend fun performSignUp(username: String, email: String, password: String,): AuthResult {
         return try {
-            delay(1500) // TODO: Remove in production
             val result = signUpUseCase(username = username, email = email, password = password)
 
             if (result.isSuccess) {

@@ -2,8 +2,8 @@ package com.memowave.app.data.mapper
 
 import com.memowave.app.data.local.entity.UserEntity
 import com.memowave.app.data.remote.dto.user.UserDto
-import com.memowave.app.domain.model.User
-import com.memowave.app.domain.model.UserRegistration
+import com.memowave.app.domain.model.user.User
+import com.memowave.app.domain.model.user.UserRegistration
 
 class UserMapper {
 
