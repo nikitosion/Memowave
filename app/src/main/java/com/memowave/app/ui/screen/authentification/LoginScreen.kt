@@ -94,7 +94,9 @@ fun LoginScreenContent(
                     style = MaterialTheme.typography.headlineLarge
                 )
                 Text(
-                    modifier = Modifier.padding(start = 6.dp).offset(y = (-4).dp),
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .offset(y = (-4).dp),
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontFamily = FontFamily(
@@ -207,9 +209,13 @@ fun LoginScreen(
  *
  * @param authViewModel AuthViewModel instance
  * @param navController NavController for navigation
+ * @param appViewModel AppViewModel для управления уведомлениями
  */
 @Composable
-fun LoginRoute(authViewModel: AuthViewModel, navController: NavController) {
+fun LoginRoute(
+    authViewModel: AuthViewModel,
+    navController: NavController
+) {
     LoginScreen(viewModel = authViewModel, navController = navController)
 }
 

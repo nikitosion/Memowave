@@ -2,20 +2,19 @@ package com.memowave.app.ui.screen.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.memowave.app.data.local.TokenManager
+import com.memowave.app.domain.usecase.auth.LogoutUseCase
 import com.memowave.app.domain.usecase.profile.GetUserProfileInfoUseCase
 import com.memowave.app.ui.screen.profile.ui_state.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getUserProfileInfoUseCase: GetUserProfileInfoUseCase,
-    private val tokenManager: TokenManager
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -58,6 +57,11 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
-        runBlocking { tokenManager.clear() }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase()
+        }
     }
 }

@@ -9,7 +9,7 @@ class LogoutUseCase @Inject constructor(
     private val authStateManager: AuthStateManager
 ) {
     suspend operator fun invoke(): Result<Unit> {
-        authStateManager.setUnauthenticated()
+        authStateManager.setUnauthenticated(true)
         val result = authRepository.logout()
         return result
     }

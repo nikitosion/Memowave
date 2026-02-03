@@ -9,11 +9,15 @@ class AuthStateManager @Inject constructor() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
     val authState: MutableStateFlow<AuthState> = _authState
 
+    private var _isManualLogout = false
+    val isManualLogout = _isManualLogout
+
     fun setAuthenticated() {
         _authState.value = AuthState.Authenticated
     }
 
-    fun setUnauthenticated() {
+    fun setUnauthenticated(isManualLogout: Boolean = false) {
+        _isManualLogout = isManualLogout
         _authState.value = AuthState.Unauthenticated
     }
 }

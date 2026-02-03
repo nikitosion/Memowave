@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -70,21 +71,35 @@ sealed class Screen(
 
 @Composable
 fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
-    val authViewModel = hiltViewModel<AuthViewModel>()
-
     val authState by appViewModel.authStateManager.authState.collectAsState()
 
+    val sessionExpiredMessage = stringResource(R.string.notification_session_expired)
+    val loginSuccessMessage = stringResource(R.string.notification_login_success)
+
+    // Handle authentication state changes and navigate accordingly
     LaunchedEffect(authState) {
         if (authState is AuthState.Unauthenticated) {
+            if (appViewModel.authStateManager.isManualLogout) {
+                appViewModel.notificationManager.showError(
+                    sessionExpiredMessage
+                )
+            }
+
             navController.navigate(Screen.Login.route) {
-                popUpTo(navController.graph.id) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }
+        if (authState is AuthState.Authenticated) {
+            appViewModel.notificationManager.showSuccess(
+                loginSuccessMessage
+            )
+        }
     }
+
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.MainPage.route) {
-            MainPageRoute()
+            MainPageRoute(appViewModel)
         }
         composable(Screen.Library.route) {
             // LibraryRoute()
@@ -97,20 +112,32 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             ProfileRoute(navController, profileViewModel)
         }
         composable(Screen.AppSettings.route) {
-            AppSettingsRoute(navController)
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
+            AppSettingsRoute(navController, profileViewModel)
         }
+
         composable(Screen.Login.route) {
-            LoginRoute(authViewModel = authViewModel, navController = navController)
+            val authViewModel = hiltViewModel<AuthViewModel>()
+            LoginRoute(
+                authViewModel = authViewModel,
+                navController = navController
+            )
         }
+
         composable(Screen.ForgotPassword.route) {
+            val authViewModel = hiltViewModel<AuthViewModel>()
             authViewModel.resetForgotPasswordState()
             ForgotPasswordRoute(authViewModel = authViewModel, navController = navController)
         }
+
         composable(Screen.SignUp.route) {
+            val authViewModel = hiltViewModel<AuthViewModel>()
             authViewModel.resetSignUpState()
             SignUpRoute(authViewModel = authViewModel, navController = navController)
         }
+
         composable(Screen.ResetPassword.route) {
+            val authViewModel = hiltViewModel<AuthViewModel>()
             authViewModel.resetResetPasswordState()
             ResetPasswordRoute(authViewModel = authViewModel, navController = navController)
         }
