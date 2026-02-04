@@ -1,4 +1,4 @@
-package com.memowave.app.domain.model
+package com.memowave.app.domain.model.user
 
 data class User(
     val id: Long? = 0,

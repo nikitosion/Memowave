@@ -14,11 +14,7 @@ class CheckTokenExistUseCase @Inject constructor(
             val tokenExists = result.getOrDefault(false)
             if (tokenExists) {
                 authStateManager.setAuthenticated()
-            } else {
-                authStateManager.setUnauthenticated()
             }
-        } else {
-            authStateManager.setUnauthenticated()
         }
         return result
     }

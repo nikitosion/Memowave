@@ -39,7 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memowave.app.R
-import com.memowave.app.domain.model.User
+import com.memowave.app.domain.model.user.User
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -54,7 +54,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
     ProfileScreenContent(
         user = uiState.user,
         onSettingsClick = { navController.navigate("app_settings") },
-        refreshProfileInfo = { profileViewModel.loadUserProfile(1L) }
+        refreshProfileInfo = { profileViewModel.loadUserProfile(4L) }
     )
 }
 

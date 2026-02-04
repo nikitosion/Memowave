@@ -268,7 +268,7 @@ fun SignUpRoute(authViewModel: AuthViewModel, navController: NavController) {
  * Shows the stateless UI with sample data for design and testing purposes.
  */
 @Preview(
-    device = "spec:width=411dp,height=891dp,cutout=double",
+    device = "spec:width=411dp,height=891dp",
     showSystemUi = true,
     showBackground = false
 )
