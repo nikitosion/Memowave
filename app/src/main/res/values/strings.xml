@@ -51,4 +51,5 @@
     <string name="nav_bar_profile">Profile</string>
     <string name="notification_login_success">Successfully signed in!</string>
     <string name="notification_session_expired">Session expired. Please sign in again</string>
+    <string name="notification_registration_success">Successfully signed up!</string>
 </resources>

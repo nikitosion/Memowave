@@ -63,7 +63,11 @@ class AuthOperationHandler @Inject constructor(
 
      * @return AuthResult indicating success, failure, or error
      */
-    suspend fun performSignUp(username: String, email: String, password: String,): AuthResult {
+    suspend fun performSignUp(
+        username: String,
+        email: String,
+        password: String
+    ): AuthResult {
         return try {
             val result = signUpUseCase(username = username, email = email, password = password)
 

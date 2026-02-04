@@ -78,22 +78,25 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
 
     // Handle authentication state changes and navigate accordingly
     LaunchedEffect(authState) {
-        if (authState is AuthState.Unauthenticated) {
-            if (appViewModel.authStateManager.isManualLogout) {
-                appViewModel.notificationManager.showError(
-                    sessionExpiredMessage
-                )
+        when (authState) {
+            is AuthState.Unauthenticated -> {
+                if (appViewModel.authStateManager.isManualLogout) {
+                    appViewModel.notificationManager.showError(
+                        sessionExpiredMessage
+                    )
+                }
+
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
 
-            navController.navigate(Screen.Login.route) {
-                popUpTo(0) { inclusive = true }
-                launchSingleTop = true
+            is AuthState.Authenticated -> {
+                appViewModel.notificationManager.showSuccess(
+                    loginSuccessMessage
+                )
             }
-        }
-        if (authState is AuthState.Authenticated) {
-            appViewModel.notificationManager.showSuccess(
-                loginSuccessMessage
-            )
         }
     }
 

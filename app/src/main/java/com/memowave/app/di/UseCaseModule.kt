@@ -6,6 +6,7 @@ import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.domain.usecase.auth.LogoutUseCase
 import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
 import com.memowave.app.domain.usecase.auth.SignUpUseCase
+import com.memowave.app.ui.common.notification.NotificationManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,8 +28,11 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideSignUpUseCase(authRepository: AuthRepository): SignUpUseCase {
-        return SignUpUseCase(authRepository)
+    fun provideSignUpUseCase(
+        authRepository: AuthRepository,
+        notificationManager: NotificationManager
+    ): SignUpUseCase {
+        return SignUpUseCase(authRepository, notificationManager)
     }
 
     @Provides
