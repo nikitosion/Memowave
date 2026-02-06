@@ -10,9 +10,9 @@ class UserRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val userMapper: UserMapper
 ) : UserRepository {
-    override suspend fun getUserProfileInfo(userId: Long): Result<User> {
+    override suspend fun getUserInfo(): Result<User> {
         return try {
-            val response = apiService.getUserProfileInfoById(userId)
+            val response = apiService.getUserInfo()
             if (!response.isSuccessful) {
                 return Result.failure(Exception("Ошибка при получении профиля: ${response.code()}"))
             }

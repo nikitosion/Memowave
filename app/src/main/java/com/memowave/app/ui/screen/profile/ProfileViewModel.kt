@@ -3,7 +3,7 @@ package com.memowave.app.ui.screen.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.domain.usecase.auth.LogoutUseCase
-import com.memowave.app.domain.usecase.profile.GetUserProfileInfoUseCase
+import com.memowave.app.domain.usecase.profile.GetUserInfoUseCase
 import com.memowave.app.ui.screen.profile.ui_state.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val getUserProfileInfoUseCase: GetUserProfileInfoUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
@@ -24,7 +24,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = "") }
 
-            val userProfileInfoResult = getUserProfileInfoUseCase(userId)
+            val userProfileInfoResult = getUserInfoUseCase()
             when (userProfileInfoResult.isSuccess) {
                 true -> {
                     val userProfile = userProfileInfoResult.getOrNull()

@@ -27,9 +27,8 @@ class UserMapper {
 
     fun dtoToDomain(dto: UserDto): User {
         return User(
-            id = dto.id,
             username = dto.username,
-            email = dto.email
+            email = dto.email,
         )
     }
 }
