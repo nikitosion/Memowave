@@ -1,4 +1,12 @@
 package com.memowave.app.domain.usecase.word
 
-class GetWordsUseCase {
+import com.memowave.app.domain.model.Word
+import com.memowave.app.domain.repository.WordRepository
+import javax.inject.Inject
+
+class GetWordsUseCase @Inject constructor(
+    private val repository: WordRepository
+) {
+    suspend operator fun invoke(): Result<List<Word>> =
+        repository.getWords()
 }
