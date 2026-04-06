@@ -2,7 +2,9 @@ package com.memowave.app.di
 
 import android.content.Context
 import androidx.room.Room
+import com.memowave.app.data.local.dao.CategoryDao
 import com.memowave.app.data.local.dao.UserDao
+import com.memowave.app.data.local.dao.WordDao
 import com.memowave.app.data.local.database.MemowaveDatabase
 import dagger.Module
 import dagger.Provides
@@ -31,5 +33,17 @@ object DatabaseModule {
     @Singleton
     fun provideUserDao(database: MemowaveDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWordDao(database: MemowaveDatabase): WordDao {
+        return database.wordDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryDao(database: MemowaveDatabase): CategoryDao {
+        return database.categoryDao()
     }
 }
