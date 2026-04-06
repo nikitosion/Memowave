@@ -20,6 +20,7 @@ import com.memowave.app.ui.screen.authentification.ForgotPasswordRoute
 import com.memowave.app.ui.screen.authentification.LoginRoute
 import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.SignUpRoute
+import com.memowave.app.ui.screen.library.LibraryRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
 import com.memowave.app.ui.screen.profile.ProfileViewModel
@@ -116,7 +117,9 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             MainPageRoute(appViewModel)
         }
         composable(Screen.Library.route) {
-            // LibraryRoute()
+            LibraryRoute(
+                navController = navController
+            )
         }
         composable(Screen.Games.route) {
             // LibraryRoute()
