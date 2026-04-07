@@ -45,4 +45,10 @@ interface WordDao {
 
     @Query("DELETE FROM words WHERE id = :id")
     suspend fun deleteWordById(id: Long)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(words: List<WordEntity>)
+
+    @Query("DELETE FROM words")
+    suspend fun deleteAll()
 }
