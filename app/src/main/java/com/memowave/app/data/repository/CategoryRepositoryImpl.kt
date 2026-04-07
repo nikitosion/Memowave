@@ -4,8 +4,10 @@ import com.memowave.app.data.local.dao.CategoryDao
 import com.memowave.app.data.local.entity.CategoryEntity
 import com.memowave.app.data.mapper.CategoryMapper
 import com.memowave.app.data.remote.api.ApiService
+import com.memowave.app.data.remote.dto.library.CategoryDto
 import com.memowave.app.domain.model.Category
 import com.memowave.app.domain.repository.CategoryRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
@@ -16,12 +18,26 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun getCategories(): Result<List<Category>> {
         return try {
-            val categories = apiService.getUserCategories().body()
-                ?: return Result.failure(Exception("Не удалось загрузить категории с сервера"))
-            val domainCategories = categories.map { category -> categoryMapper.dtoToDomain(category) }
-            Result.success(domainCategories)
+            val response = apiService.getUserCategories()
+            if (response.isSuccessful && response.body() != null) {
+                val dtos = response.body()!!
+                val entities = dtos.map(::dtoToEntity)
+                categoryDao.deleteAll()
+                categoryDao.insertAll(entities)
+            }
+            val cached = categoryDao.getCategories()
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map(::entityToDomain))
+            } else {
+                Result.failure(Exception("Нет данных о категориях"))
+            }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = categoryDao.getCategories()
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map(::entityToDomain))
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -38,13 +54,25 @@ class CategoryRepositoryImpl @Inject constructor(
         return try {
             val categoryDto = categoryMapper.domainToDto(category)
             val response = apiService.addCategory(categoryDto)
-            if (!response.isSuccessful || response.body() == null) {
-                return Result.failure(Exception("Ошибка при добавлении категории: ${response.code()}"))
+            if (response.isSuccessful && response.body() != null) {
+                val domainCategory = categoryMapper.dtoToDomain(response.body()!!)
+                categoryDao.insertCategory(domainToEntity(domainCategory))
+                Result.success(domainCategory)
+            } else {
+                val localId = categoryDao.insertCategory(domainToEntity(category))
+                val localCategory = category.copy(id = localId)
+                Timber.w("API addCategory failed (${response.code()}), saved locally with id=$localId")
+                Result.success(localCategory)
             }
-            val domainCategory = categoryMapper.dtoToDomain(response.body()!!)
-            Result.success(domainCategory)
         } catch (e: Exception) {
-            Result.failure(e)
+            try {
+                val localId = categoryDao.insertCategory(domainToEntity(category))
+                val localCategory = category.copy(id = localId)
+                Timber.w(e, "API addCategory failed, saved locally with id=$localId")
+                Result.success(localCategory)
+            } catch (dbError: Exception) {
+                Result.failure(dbError)
+            }
         }
     }
 
@@ -52,26 +80,52 @@ class CategoryRepositoryImpl @Inject constructor(
         return try {
             val categoryDto = categoryMapper.domainToDto(category)
             val response = apiService.updateCategory(category.id.toInt(), categoryDto)
-            if (!response.isSuccessful || response.body() == null) {
-                return Result.failure(Exception("Ошибка при обновлении категории: ${response.code()}"))
+            if (response.isSuccessful && response.body() != null) {
+                val updatedCategory = categoryMapper.dtoToDomain(response.body()!!)
+                categoryDao.insertCategory(domainToEntity(updatedCategory))
+                Result.success(updatedCategory)
+            } else {
+                categoryDao.updateCategory(domainToEntity(category))
+                Timber.w("API updateCategory failed (${response.code()}), updated locally")
+                Result.success(category)
             }
-            val updatedCategory = categoryMapper.dtoToDomain(response.body()!!)
-            Result.success(updatedCategory)
         } catch (e: Exception) {
-            Result.failure(e)
+            try {
+                categoryDao.updateCategory(domainToEntity(category))
+                Timber.w(e, "API updateCategory failed, updated locally")
+                Result.success(category)
+            } catch (dbError: Exception) {
+                Result.failure(dbError)
+            }
         }
     }
 
     override suspend fun deleteCategory(id: Long): Result<Unit> {
         return try {
-            val response = apiService.deleteCategory(id.toInt())
-            if (!response.isSuccessful) {
-                return Result.failure(Exception("Ошибка при удалении категории: ${response.code()}"))
+            categoryDao.deleteCategoryById(id)
+            try {
+                val response = apiService.deleteCategory(id.toInt())
+                if (!response.isSuccessful) {
+                    Timber.w("API deleteCategory failed (${response.code()}), deleted locally only")
+                }
+            } catch (e: Exception) {
+                Timber.w(e, "API deleteCategory failed, deleted locally only")
             }
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private fun dtoToEntity(dto: CategoryDto): CategoryEntity {
+        return CategoryEntity(
+            id = dto.id,
+            name = dto.name ?: "",
+            description = dto.description,
+            colorHex = dto.color,
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
+        )
     }
 
     private fun entityToDomain(entity: CategoryEntity): Category {
