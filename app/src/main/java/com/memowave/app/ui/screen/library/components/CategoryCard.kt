@@ -60,7 +60,7 @@ fun CategoryCard(
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(
-                            color = category.colorHex
+                            color = category.color
                                 ?.let { Color(it.toColorInt()) }
                                 ?: MaterialTheme.colorScheme.primaryContainer
                         ),
@@ -117,7 +117,7 @@ fun CategoryCardPreview() {
             category = Category(
                 id = 1,
                 name = "Test category",
-                colorHex = "#FF9800",
+                color = "#FF9800",
                 iconRes = R.drawable.round_palette_24
             ),
             wordsCount = 42,

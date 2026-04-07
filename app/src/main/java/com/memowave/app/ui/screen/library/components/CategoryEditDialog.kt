@@ -25,7 +25,7 @@ fun CategoryEditDialog(
 ) {
     var name by remember { mutableStateOf(initialCategory?.name.orEmpty()) }
     var description by remember { mutableStateOf(initialCategory?.description.orEmpty()) }
-    var colorHex by remember { mutableStateOf(initialCategory?.colorHex.orEmpty()) }
+    var colorHex by remember { mutableStateOf(initialCategory?.color.orEmpty()) }
 
     AlertDialog(
         onDismissRequest = onDismiss,

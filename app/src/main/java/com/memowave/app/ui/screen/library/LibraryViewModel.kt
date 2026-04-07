@@ -185,11 +185,11 @@ class LibraryViewModel @Inject constructor(
             val baseCategory = currentEditing?.copy(
                 name = event.name.trim(),
                 description = event.description?.takeIf { it.isNotBlank() },
-                colorHex = event.colorHex
+                color = event.colorHex
             ) ?: Category(
                 name = event.name.trim(),
                 description = event.description?.takeIf { it.isNotBlank() },
-                colorHex = event.colorHex
+                color = event.colorHex
             )
 
             val result = if (currentEditing == null) {
