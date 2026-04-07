@@ -4,7 +4,9 @@ import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.CategoryDao
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.local.dao.WordDao
+import com.memowave.app.data.mapper.CategoryMapper
 import com.memowave.app.data.mapper.UserMapper
+import com.memowave.app.data.mapper.WordMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.data.repository.CategoryRepositoryImpl
@@ -60,21 +62,41 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideWordMapper(): WordMapper {
+        return WordMapper()
+    }
+
+    @Provides
+    @Singleton
     fun provideWordRepository(
-        wordDao: WordDao
+        wordDao: WordDao,
+        apiService: ApiService,
+        wordMapper: WordMapper
     ): WordRepository {
         return WordRepositoryImpl(
-            wordDao = wordDao
+            wordDao = wordDao,
+            apiService = apiService,
+            wordMapper = wordMapper
         )
     }
 
     @Provides
     @Singleton
+    fun provideCategoryMapper(): CategoryMapper {
+        return CategoryMapper()
+    }
+
+    @Provides
+    @Singleton
     fun provideCategoryRepository(
-        categoryDao: CategoryDao
+        categoryDao: CategoryDao,
+        apiService: ApiService,
+        categoryMapper: CategoryMapper
     ): CategoryRepository {
         return CategoryRepositoryImpl(
-            categoryDao = categoryDao
+            categoryDao = categoryDao,
+            apiService = apiService,
+            categoryMapper = categoryMapper
         )
     }
 }
