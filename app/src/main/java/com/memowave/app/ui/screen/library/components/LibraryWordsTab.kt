@@ -1,9 +1,7 @@
 package com.memowave.app.ui.screen.library.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,57 +21,52 @@ fun LibraryWordsTab(
     onEvent: (LibraryEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        SearchAndCategoryFilter(
-            searchQuery = state.searchQuery,
-            selectedCategoryId = state.selectedCategoryId,
-            categories = state.categories,
-            onSearchChange = { query ->
-                onEvent(LibraryEvent.SearchChanged(query))
-            },
-            onCategorySelected = { categoryId ->
-                onEvent(LibraryEvent.CategorySelected(categoryId))
-            },
-            onAddWordClick = { onEvent(LibraryEvent.AddWordClicked) }
-        )
+    val filteredWords = state.words.filter { word ->
+        val matchesCategory =
+            state.selectedCategoryId?.let { word.categoryId == it } ?: true
+        val query = state.searchQuery.trim()
+        val matchesSearch = if (query.isBlank()) {
+            true
+        } else {
+            word.original.contains(query, ignoreCase = true) ||
+                    word.translation.contains(query, ignoreCase = true)
+        }
+        matchesCategory && matchesSearch
+    }
 
-        val filteredWords = state.words.filter { word ->
-            val matchesCategory =
-                state.selectedCategoryId?.let { word.categoryId == it } ?: true
-            val query = state.searchQuery.trim()
-            val matchesSearch = if (query.isBlank()) {
-                true
-            } else {
-                word.original.contains(query, ignoreCase = true) ||
-                        word.translation.contains(query, ignoreCase = true)
-            }
-            matchesCategory && matchesSearch
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            SearchAndCategoryFilter(
+                searchQuery = state.searchQuery,
+                selectedCategoryId = state.selectedCategoryId,
+                categories = state.categories,
+                onSearchChange = { query -> onEvent(LibraryEvent.SearchChanged(query)) },
+                onCategorySelected = { categoryId -> onEvent(LibraryEvent.CategorySelected(categoryId)) },
+                onAddWordClick = { onEvent(LibraryEvent.AddWordClicked) }
+            )
         }
 
         if (filteredWords.isEmpty()) {
-            EmptyStateCard(
-                modifier = Modifier.padding(top = 24.dp),
-                title = "Нет слов",
-                subtitle = "Добавьте первое слово, чтобы начать учить",
-                primaryActionText = "Добавить слово",
-                onPrimaryActionClick = { onEvent(LibraryEvent.AddWordClicked) }
-            )
+            item {
+                EmptyStateCard(
+                    modifier = Modifier.padding(top = 12.dp),
+                    title = "Нет слов",
+                    subtitle = "Добавьте первое слово, чтобы начать учить",
+                    primaryActionText = "Добавить слово",
+                    onPrimaryActionClick = { onEvent(LibraryEvent.AddWordClicked) }
+                )
+            }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-                    .height(400.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredWords) { word ->
-                    WordCard(
-                        word = word,
-                        category = state.categories.firstOrNull { it.id == word.categoryId },
-                        onEditClick = { onEvent(LibraryEvent.EditWordClicked(word)) },
-                        onDeleteClick = { onEvent(LibraryEvent.DeleteWordClicked(word.id)) }
-                    )
-                }
+            items(filteredWords) { word ->
+                WordCard(
+                    word = word,
+                    category = state.categories.firstOrNull { it.id == word.categoryId },
+                    onEditClick = { onEvent(LibraryEvent.EditWordClicked(word)) },
+                    onDeleteClick = { onEvent(LibraryEvent.DeleteWordClicked(word.id)) }
+                )
             }
         }
     }

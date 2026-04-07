@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -90,10 +88,8 @@ fun LibraryScreen(
     ) {
         Column(
             modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-                .padding(top = 32.dp, bottom = 32.dp)
+                .fillMaxSize()
+                .padding(top = 32.dp, bottom = 0.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -177,6 +173,7 @@ fun LibraryScreen(
             if (state.isLoading) {
                 Box(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxWidth()
                         .padding(top = 40.dp),
                     contentAlignment = Alignment.Center
@@ -188,13 +185,17 @@ fun LibraryScreen(
                     LibraryTab.WORDS -> LibraryWordsTab(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.padding(top = 24.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 24.dp)
                     )
 
                     LibraryTab.CATEGORIES -> LibraryCategoriesTab(
                         state = state,
                         onEvent = onEvent,
-                        modifier = Modifier.padding(top = 24.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 24.dp)
                     )
                 }
             }
