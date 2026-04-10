@@ -15,6 +15,7 @@ data class Word(
     val prevEaseFactor: Double = 2.5,
     val prevInterval: Int = 0,
     // -------------------------------------
+    val isSynced: Boolean = false,
     val isFavorite: Boolean = false,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
