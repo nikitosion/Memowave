@@ -26,7 +26,9 @@ object DatabaseModule {
             context,
             MemowaveDatabase::class.java,
             "memowave_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides
@@ -45,5 +47,11 @@ object DatabaseModule {
     @Singleton
     fun provideCategoryDao(database: MemowaveDatabase): CategoryDao {
         return database.categoryDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSyncQueueDao(database: MemowaveDatabase): com.memowave.app.data.local.dao.SyncQueueDao {
+        return database.syncQueueDao()
     }
 }

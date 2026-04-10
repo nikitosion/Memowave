@@ -20,6 +20,8 @@ data class WordEntity(
     val example: List<String> = emptyList(),
     val note: String? = null,
     val isFavorite: Boolean = false,
+    val isSynced: Boolean = false,
+    val remoteId: Long? = null,
     val createdAt: Long,
     val updatedAt: Long
 )

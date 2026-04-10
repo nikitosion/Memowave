@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.memowave.app.data.local.entity.WordEntity
 import kotlinx.coroutines.flow.Flow
@@ -48,6 +49,26 @@ interface WordDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(words: List<WordEntity>)
+
+    @Query("SELECT * FROM words WHERE remoteId = :remoteId LIMIT 1")
+    suspend fun getWordByRemoteId(remoteId: Long): WordEntity?
+
+    @Transaction
+    suspend fun upsertWordsByRemoteId(words: List<WordEntity>) {
+        for (word in words) {
+            val existing = getWordByRemoteId(word.remoteId!!)
+            if (existing != null) {
+                if (existing.isSynced) {
+                    updateWord(word.copy(id = existing.id, isSynced = true))
+                }
+            } else {
+                insertWord(word)
+            }
+        }
+    }
+
+    @Query("DELETE FROM words WHERE isSynced = 1 AND remoteId NOT IN (:ids)")
+    suspend fun deleteSyncedWordsNotInIds(ids: List<Long>)
 
     @Query("DELETE FROM words")
     suspend fun deleteAll()

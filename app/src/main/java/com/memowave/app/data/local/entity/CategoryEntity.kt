@@ -10,6 +10,8 @@ data class CategoryEntity(
     val name: String,
     val description: String? = null,
     val colorHex: String? = null,
+    val isSynced: Boolean = false,
+    val remoteId: Long? = null,
     val createdAt: Long,
     val updatedAt: Long
 )
