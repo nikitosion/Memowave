@@ -3,6 +3,7 @@ package com.memowave.app.data.remote.api
 import com.memowave.app.data.remote.dto.AuthResponseDto
 import com.memowave.app.data.remote.dto.library.CategoryDto
 import com.memowave.app.data.remote.dto.library.WordDto
+import com.memowave.app.data.remote.dto.user.ChangePasswordDto
 import com.memowave.app.data.remote.dto.user.UserDto
 import com.memowave.app.data.remote.dto.user.UserLoginReqDto
 import com.memowave.app.domain.model.user.UserRegistration
@@ -21,30 +22,39 @@ interface ApiService {
     @POST("auth/register")
     suspend fun register(@Body request: UserRegistration): Response<Unit>
 
-    @GET("users/user/current")
+    @GET("users/me")
     suspend fun getUserInfo(): Response<UserDto>
+
+    @PUT("users/me")
+    suspend fun updateUserInfo(@Body userInfo: UserDto): Response<UserDto>
+
+    @PUT("users/me/change-password")
+    suspend fun changePassword(@Body passwordChangeRequest: ChangePasswordDto): Response<Unit>
 
     @GET("categories")
     suspend fun getUserCategories(): Response<List<CategoryDto>>
 
-    @POST("categories/category/new")
+    @GET("categories/{categoryId}")
+    suspend fun getCategoryById(@Path("categoryId") categoryId: Long): Response<CategoryDto>
+
+    @POST("categories")
     suspend fun addCategory(@Body category: CategoryDto): Response<CategoryDto>
 
-    @PUT("categories/category/{categoryId}/update")
-    suspend fun updateCategory(@Path("categoryId") categoryId: Int, @Body category: CategoryDto): Response<CategoryDto>
+    @PUT("categories/{categoryId}")
+    suspend fun updateCategory(@Path("categoryId") categoryId: Long, @Body category: CategoryDto): Response<CategoryDto>
 
-    @DELETE("categories/category/{categoryId}/delete")
-    suspend fun deleteCategory(@Path("categoryId") categoryId: Int): Response<Unit>
+    @DELETE("categories/{categoryId}")
+    suspend fun deleteCategory(@Path("categoryId") categoryId: Long): Response<Unit>
 
     @GET("words")
     suspend fun getUserWords(): Response<List<WordDto>>
 
-    @POST("words/word/add")
+    @POST("words/")
     suspend fun addWord(@Body word: WordDto): Response<WordDto>
 
-    @PUT("words/word/{wordId}/update")
+    @PUT("words/{wordId}")
     suspend fun updateWord(@Path("wordId") wordId: Int, @Body word: WordDto): Response<WordDto>
 
-    @PUT("words/word/{wordId}/delete")
+    @DELETE("words/{wordId}")
     suspend fun deleteWord(@Path("wordId") wordId: Int): Response<Unit>
 }

@@ -7,8 +7,7 @@ import java.time.LocalDateTime
 @Serializable
 data class WordDto(
     val id: Long? = null,
-    val categoryId: Long? = 1,  // используется при отправке (запрос)
-    val category: String? = null,  // приходит с сервера (ответ), categoryId в ответе отсутствует
+    val categoryId: Long? = null,
     val text: String,
     val translate: String = "",
     val example: String = "",
