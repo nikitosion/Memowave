@@ -2,8 +2,10 @@ package com.memowave.app.di
 
 import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.CategoryDao
+import com.memowave.app.data.local.dao.SyncQueueDao
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.local.dao.WordDao
+import com.memowave.app.data.local.database.MemowaveDatabase
 import com.memowave.app.data.mapper.CategoryMapper
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.mapper.WordMapper
@@ -12,6 +14,7 @@ import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.data.repository.CategoryRepositoryImpl
 import com.memowave.app.data.repository.UserRepositoryImpl
 import com.memowave.app.data.repository.WordRepositoryImpl
+import com.memowave.app.data.sync.SyncManager
 import com.memowave.app.domain.repository.AuthRepository
 import com.memowave.app.domain.repository.CategoryRepository
 import com.memowave.app.domain.repository.UserRepository
@@ -70,13 +73,19 @@ object RepositoryModule {
     @Singleton
     fun provideWordRepository(
         wordDao: WordDao,
+        syncQueueDao: SyncQueueDao,
         apiService: ApiService,
-        wordMapper: WordMapper
+        wordMapper: WordMapper,
+        database: MemowaveDatabase,
+        syncManager: SyncManager
     ): WordRepository {
         return WordRepositoryImpl(
             wordDao = wordDao,
+            syncQueueDao = syncQueueDao,
             apiService = apiService,
-            wordMapper = wordMapper
+            wordMapper = wordMapper,
+            database = database,
+            syncManager = syncManager
         )
     }
 
@@ -90,13 +99,19 @@ object RepositoryModule {
     @Singleton
     fun provideCategoryRepository(
         categoryDao: CategoryDao,
+        syncQueueDao: SyncQueueDao,
         apiService: ApiService,
-        categoryMapper: CategoryMapper
+        categoryMapper: CategoryMapper,
+        database: MemowaveDatabase,
+        syncManager: SyncManager
     ): CategoryRepository {
         return CategoryRepositoryImpl(
             categoryDao = categoryDao,
+            syncQueueDao = syncQueueDao,
             apiService = apiService,
-            categoryMapper = categoryMapper
+            categoryMapper = categoryMapper,
+            database = database,
+            syncManager = syncManager
         )
     }
 }

@@ -1,10 +1,15 @@
 package com.memowave.app.data.repository
 
+import androidx.room.withTransaction
 import com.memowave.app.data.local.dao.CategoryDao
-import com.memowave.app.data.local.entity.CategoryEntity
+import com.memowave.app.data.local.dao.SyncQueueDao
+import com.memowave.app.data.local.database.MemowaveDatabase
+import com.memowave.app.data.local.entity.SyncQueueEntity
 import com.memowave.app.data.mapper.CategoryMapper
 import com.memowave.app.data.remote.api.ApiService
-import com.memowave.app.data.remote.dto.library.CategoryDto
+import com.memowave.app.data.sync.SyncEntityType
+import com.memowave.app.data.sync.SyncManager
+import com.memowave.app.data.sync.SyncOperationType
 import com.memowave.app.domain.model.Category
 import com.memowave.app.domain.repository.CategoryRepository
 import timber.log.Timber
@@ -12,39 +17,43 @@ import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
+    private val syncQueueDao: SyncQueueDao,
     private val apiService: ApiService,
-    private val categoryMapper: CategoryMapper
+    private val categoryMapper: CategoryMapper,
+    private val database: MemowaveDatabase,
+    private val syncManager: SyncManager
 ) : CategoryRepository {
 
     override suspend fun getCategories(): Result<List<Category>> {
-        return try {
+        try {
+            syncManager.syncPendingOperations()
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to sync pending operations before fetching categories")
+        }
+
+        try {
             val response = apiService.getUserCategories()
             if (response.isSuccessful && response.body() != null) {
                 val dtos = response.body()!!
-                val entities = dtos.map(::dtoToEntity)
-                categoryDao.deleteAll()
-                categoryDao.insertAll(entities)
-            }
-            val cached = categoryDao.getCategories()
-            if (cached.isNotEmpty()) {
-                Result.success(cached.map(::entityToDomain))
-            } else {
-                Result.failure(Exception("Нет данных о категориях"))
+                val serverEntities = dtos.map { categoryMapper.dtoToEntity(it) }
+
+                categoryDao.upsertCategoriesByRemoteId(serverEntities)
+
+                val serverIds = serverEntities.mapNotNull { it.remoteId }
+                categoryDao.deleteSyncedCategoriesNotInIds(serverIds)
             }
         } catch (e: Exception) {
-            val cached = categoryDao.getCategories()
-            if (cached.isNotEmpty()) {
-                Result.success(cached.map(::entityToDomain))
-            } else {
-                Result.failure(e)
-            }
+            Timber.e(e, "Failed to fetch categories from API, falling back to local cache")
         }
+
+        val entities = categoryDao.getCategories()
+        return Result.success(entities.map { categoryMapper.entityToDomain(it) })
     }
 
     override suspend fun getCategory(id: Long): Result<Category?> {
         return try {
             val entity = categoryDao.getCategoryById(id)
-            Result.success(entity?.let(::entityToDomain))
+            Result.success(entity?.let { categoryMapper.entityToDomain(it) })
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -52,101 +61,70 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun addCategory(category: Category): Result<Category> {
         return try {
-            val categoryDto = categoryMapper.domainToDto(category)
-            val response = apiService.addCategory(categoryDto)
-            if (response.isSuccessful && response.body() != null) {
-                val domainCategory = categoryMapper.dtoToDomain(response.body()!!)
-                categoryDao.insertCategory(domainToEntity(domainCategory))
-                Result.success(domainCategory)
-            } else {
-                val localId = categoryDao.insertCategory(domainToEntity(category))
-                val localCategory = category.copy(id = localId)
-                Timber.w("API addCategory failed (${response.code()}), saved locally with id=$localId")
-                Result.success(localCategory)
+            val localId = database.withTransaction {
+                val id = categoryDao.insertCategory(
+                    categoryMapper.domainToEntity(category).copy(isSynced = false)
+                )
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityId = id,
+                        entityType = SyncEntityType.CATEGORY,
+                        operationType = SyncOperationType.ADD,
+                    )
+                )
+                id
             }
-        } catch (e: Exception) {
-            try {
-                val localId = categoryDao.insertCategory(domainToEntity(category))
-                val localCategory = category.copy(id = localId)
-                Timber.w(e, "API addCategory failed, saved locally with id=$localId")
-                Result.success(localCategory)
-            } catch (dbError: Exception) {
-                Result.failure(dbError)
-            }
-        }
-    }
-
-    override suspend fun updateCategory(category: Category): Result<Category> {
-        return try {
-            val categoryDto = categoryMapper.domainToDto(category)
-            val response = apiService.updateCategory(category.id.toInt(), categoryDto)
-            if (response.isSuccessful && response.body() != null) {
-                val updatedCategory = categoryMapper.dtoToDomain(response.body()!!)
-                categoryDao.insertCategory(domainToEntity(updatedCategory))
-                Result.success(updatedCategory)
-            } else {
-                categoryDao.updateCategory(domainToEntity(category))
-                Timber.w("API updateCategory failed (${response.code()}), updated locally")
-                Result.success(category)
-            }
-        } catch (e: Exception) {
-            try {
-                categoryDao.updateCategory(domainToEntity(category))
-                Timber.w(e, "API updateCategory failed, updated locally")
-                Result.success(category)
-            } catch (dbError: Exception) {
-                Result.failure(dbError)
-            }
-        }
-    }
-
-    override suspend fun deleteCategory(id: Long): Result<Unit> {
-        return try {
-            categoryDao.deleteCategoryById(id)
-            try {
-                val response = apiService.deleteCategory(id.toInt())
-                if (!response.isSuccessful) {
-                    Timber.w("API deleteCategory failed (${response.code()}), deleted locally only")
-                }
-            } catch (e: Exception) {
-                Timber.w(e, "API deleteCategory failed, deleted locally only")
-            }
-            Result.success(Unit)
+            Result.success(category.copy(id = localId))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    private fun dtoToEntity(dto: CategoryDto): CategoryEntity {
-        return CategoryEntity(
-            id = dto.id,
-            name = dto.name ?: "",
-            description = dto.description,
-            colorHex = dto.color,
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
-        )
+    override suspend fun updateCategory(category: Category): Result<Category> {
+        return try {
+            database.withTransaction {
+                val existing = categoryDao.getCategoryById(category.id)
+                categoryDao.updateCategory(
+                    categoryMapper.domainToEntity(category).copy(
+                        isSynced = false,
+                        remoteId = existing?.remoteId
+                    )
+                )
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityId = category.id,
+                        entityType = SyncEntityType.CATEGORY,
+                        operationType = SyncOperationType.UPDATE,
+                    )
+                )
+            }
+            Result.success(category)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    private fun entityToDomain(entity: CategoryEntity): Category {
-        return Category(
-            id = entity.id,
-            name = entity.name,
-            description = entity.description,
-            color = entity.colorHex,
-            createdAt = entity.createdAt,
-            updatedAt = entity.updatedAt
-        )
-    }
-
-    private fun domainToEntity(domain: Category): CategoryEntity {
-        return CategoryEntity(
-            id = domain.id,
-            name = domain.name,
-            description = domain.description,
-            colorHex = domain.color,
-            createdAt = domain.createdAt,
-            updatedAt = domain.updatedAt
-        )
+    override suspend fun deleteCategory(id: Long): Result<Unit> {
+        return try {
+            val category = categoryDao.getCategoryById(id)
+            if (category == null) {
+                Timber.w("Category with id=$id not found for deletion")
+                return Result.failure(Exception("Категория не найдена"))
+            }
+            database.withTransaction {
+                categoryDao.deleteCategoryById(id)
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityType = SyncEntityType.CATEGORY,
+                        entityId = id,
+                        operationType = SyncOperationType.DELETE,
+                        remoteId = category.remoteId
+                    )
+                )
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

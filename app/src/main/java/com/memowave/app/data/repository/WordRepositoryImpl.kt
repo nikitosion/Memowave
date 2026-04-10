@@ -1,10 +1,15 @@
 package com.memowave.app.data.repository
 
+import androidx.room.withTransaction
+import com.memowave.app.data.local.dao.SyncQueueDao
 import com.memowave.app.data.local.dao.WordDao
-import com.memowave.app.data.local.entity.WordEntity
+import com.memowave.app.data.local.database.MemowaveDatabase
+import com.memowave.app.data.local.entity.SyncQueueEntity
 import com.memowave.app.data.mapper.WordMapper
 import com.memowave.app.data.remote.api.ApiService
-import com.memowave.app.data.remote.dto.library.WordDto
+import com.memowave.app.data.sync.SyncEntityType
+import com.memowave.app.data.sync.SyncManager
+import com.memowave.app.data.sync.SyncOperationType
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.WordRepository
 import timber.log.Timber
@@ -12,39 +17,42 @@ import javax.inject.Inject
 
 class WordRepositoryImpl @Inject constructor(
     private val wordDao: WordDao,
+    private val syncQueueDao: SyncQueueDao,
     private val apiService: ApiService,
-    private val wordMapper: WordMapper
+    private val wordMapper: WordMapper,
+    private val database: MemowaveDatabase,
+    private val syncManager: SyncManager
 ) : WordRepository {
 
     override suspend fun getWords(): Result<List<Word>> {
-        return try {
+        try {
+            syncManager.syncPendingOperations()
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to sync pending operations before fetching words")
+        }
+
+        try {
             val response = apiService.getUserWords()
             if (response.isSuccessful && response.body() != null) {
-                val dtos = response.body()!!
-                val entities = dtos.map(::dtoToEntity)
-                wordDao.deleteAll()
-                wordDao.insertAll(entities)
-            }
-            val cached = wordDao.getWords()
-            if (cached.isNotEmpty()) {
-                Result.success(cached.map(::entityToDomain))
-            } else {
-                Result.failure(Exception("Нет данных о словах"))
+                val serverEntities = response.body()!!.map { wordMapper.dtoToEntity(it) }
+
+                wordDao.upsertWordsByRemoteId(serverEntities)
+
+                val serverIds = serverEntities.mapNotNull { it.remoteId }
+                wordDao.deleteSyncedWordsNotInIds(serverIds)
             }
         } catch (e: Exception) {
-            val cached = wordDao.getWords()
-            if (cached.isNotEmpty()) {
-                Result.success(cached.map(::entityToDomain))
-            } else {
-                Result.failure(e)
-            }
+            Timber.w(e, "Failed to fetch words from API, falling back to local cache")
         }
+
+        val entities = wordDao.getWords()
+        return Result.success(entities.map { wordMapper.entityToDomain(it) })
     }
 
     override suspend fun getWord(id: Long): Result<Word?> {
         return try {
             val entity = wordDao.getWordById(id)
-            Result.success(entity?.let(::entityToDomain))
+            Result.success(entity?.let { wordMapper.entityToDomain(it) })
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -52,110 +60,70 @@ class WordRepositoryImpl @Inject constructor(
 
     override suspend fun addWord(word: Word): Result<Word> {
         return try {
-            val wordDto = wordMapper.domainToDto(word)
-            val response = apiService.addWord(wordDto)
-            if (response.isSuccessful && response.body() != null) {
-                val domainWord = wordMapper.dtoToDomain(response.body()!!)
-                wordDao.insertWord(domainToEntity(domainWord))
-                Result.success(domainWord)
-            } else {
-                val localId = wordDao.insertWord(domainToEntity(word))
-                val localWord = word.copy(id = localId)
-                Timber.w("API addWord failed (${response.code()}), saved locally with id=$localId")
-                Result.success(localWord)
+            val localId = database.withTransaction {
+                val id = wordDao.insertWord(
+                    wordMapper.domainToEntity(word).copy(isSynced = false)
+                )
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityId = id,
+                        entityType = SyncEntityType.WORD,
+                        operationType = SyncOperationType.ADD,
+                    )
+                )
+                id
             }
-        } catch (e: Exception) {
-            try {
-                val localId = wordDao.insertWord(domainToEntity(word))
-                val localWord = word.copy(id = localId)
-                Timber.w(e, "API addWord failed, saved locally with id=$localId")
-                Result.success(localWord)
-            } catch (dbError: Exception) {
-                Result.failure(dbError)
-            }
-        }
-    }
-
-    override suspend fun updateWord(word: Word): Result<Word> {
-        return try {
-            val wordDto = wordMapper.domainToDto(word)
-            val response = apiService.updateWord(word.id.toInt(), wordDto)
-            if (response.isSuccessful && response.body() != null) {
-                val updatedWord = wordMapper.dtoToDomain(response.body()!!)
-                wordDao.insertWord(domainToEntity(updatedWord))
-                Result.success(updatedWord)
-            } else {
-                wordDao.updateWord(domainToEntity(word))
-                Timber.w("API updateWord failed (${response.code()}), updated locally")
-                Result.success(word)
-            }
-        } catch (e: Exception) {
-            try {
-                wordDao.updateWord(domainToEntity(word))
-                Timber.w(e, "API updateWord failed, updated locally")
-                Result.success(word)
-            } catch (dbError: Exception) {
-                Result.failure(dbError)
-            }
-        }
-    }
-
-    override suspend fun deleteWord(id: Long): Result<Unit> {
-        return try {
-            wordDao.deleteWordById(id)
-            try {
-                val response = apiService.deleteWord(id.toInt())
-                if (!response.isSuccessful) {
-                    Timber.w("API deleteWord failed (${response.code()}), deleted locally only")
-                }
-            } catch (e: Exception) {
-                Timber.w(e, "API deleteWord failed, deleted locally only")
-            }
-            Result.success(Unit)
+            Result.success(word.copy(id = localId))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    private fun dtoToEntity(dto: WordDto): WordEntity {
-        return WordEntity(
-            id = dto.id ?: 0L,
-            original = dto.text,
-            translation = dto.translate,
-            categoryId = dto.categoryId,
-            example = listOf(dto.example),
-            note = null,
-            isFavorite = false,
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
-        )
+    override suspend fun updateWord(word: Word): Result<Word> {
+        return try {
+            database.withTransaction {
+                val existing = wordDao.getWordById(word.id)
+                wordDao.updateWord(
+                    wordMapper.domainToEntity(word).copy(
+                        isSynced = false,
+                        remoteId = existing?.remoteId
+                    )
+                )
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityId = word.id,
+                        entityType = SyncEntityType.WORD,
+                        operationType = SyncOperationType.UPDATE,
+                    )
+                )
+            }
+            Result.success(word)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    private fun entityToDomain(entity: WordEntity): Word {
-        return Word(
-            id = entity.id,
-            original = entity.original,
-            translation = entity.translation,
-            categoryId = entity.categoryId,
-            examples = entity.example,
-            note = entity.note,
-            isFavorite = entity.isFavorite,
-            createdAt = entity.createdAt,
-            updatedAt = entity.updatedAt
-        )
-    }
-
-    private fun domainToEntity(domain: Word): WordEntity {
-        return WordEntity(
-            id = domain.id,
-            original = domain.original,
-            translation = domain.translation,
-            categoryId = domain.categoryId,
-            example = domain.examples,
-            note = domain.note,
-            isFavorite = domain.isFavorite,
-            createdAt = domain.createdAt,
-            updatedAt = domain.updatedAt
-        )
+    override suspend fun deleteWord(id: Long): Result<Unit> {
+        return try {
+            val word = wordDao.getWordById(id)
+            if (word == null) {
+                Timber.w("Word with id=$id not found for deletion")
+                return Result.failure(Exception("Слово не найдено"))
+            }
+            database.withTransaction {
+                wordDao.deleteWordById(id)
+                syncQueueDao.insertSyncItem(
+                    SyncQueueEntity(
+                        entityType = SyncEntityType.WORD,
+                        entityId = id,
+                        operationType = SyncOperationType.DELETE,
+                        remoteId = word.remoteId
+                    )
+                )
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
