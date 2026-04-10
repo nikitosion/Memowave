@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -55,6 +56,7 @@ fun WordEditDialog(
                     onValueChange = { original = it },
                     label = { Text("Оригинал") },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
@@ -62,6 +64,7 @@ fun WordEditDialog(
                     onValueChange = { translation = it },
                     label = { Text("Перевод") },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth()
@@ -70,6 +73,7 @@ fun WordEditDialog(
                     value = example,
                     onValueChange = { example = it },
                     label = { Text("Пример (необязательно)") },
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth()
@@ -78,6 +82,7 @@ fun WordEditDialog(
                     value = note,
                     onValueChange = { note = it },
                     label = { Text("Заметка (необязательно)") },
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth()

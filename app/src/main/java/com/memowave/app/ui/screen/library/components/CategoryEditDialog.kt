@@ -3,6 +3,7 @@ package com.memowave.app.ui.screen.library.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -10,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,12 +44,14 @@ fun CategoryEditDialog(
                     onValueChange = { name = it },
                     label = { Text("Название") },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Описание (необязательно)") },
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth()
@@ -57,6 +61,7 @@ fun CategoryEditDialog(
                     onValueChange = { colorHex = it },
                     label = { Text("Цвет (HEX, необязательно)") },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth()

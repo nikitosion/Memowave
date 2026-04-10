@@ -20,6 +20,8 @@ import com.memowave.app.domain.model.Category
 import androidx.compose.ui.tooling.preview.Preview
 import com.memowave.app.ui.theme.MemowaveTheme
 
+const val FILTER_NO_CATEGORY = -1L
+
 @Composable
 fun SearchAndCategoryFilter(
     searchQuery: String,
@@ -52,6 +54,11 @@ fun SearchAndCategoryFilter(
                     text = "All",
                     isSelected = selectedCategoryId == null,
                     onClick = { onCategorySelected(null) }
+                )
+                CategoryChip(
+                    text = "No category",
+                    isSelected = selectedCategoryId == FILTER_NO_CATEGORY,
+                    onClick = { onCategorySelected(FILTER_NO_CATEGORY) }
                 )
                 categories.forEach { category ->
                     CategoryChip(

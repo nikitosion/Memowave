@@ -23,8 +23,11 @@ fun LibraryWordsTab(
     modifier: Modifier = Modifier
 ) {
     val filteredWords = state.words.filter { word ->
-        val matchesCategory =
-            state.selectedCategoryId?.let { word.categoryId == it } ?: true
+        val matchesCategory = when (state.selectedCategoryId) {
+            null -> true
+            FILTER_NO_CATEGORY -> word.categoryId == null
+            else -> word.categoryId == state.selectedCategoryId
+        }
         val query = state.searchQuery.trim()
         val matchesSearch = if (query.isBlank()) {
             true
