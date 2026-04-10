@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:name=".MemowaveApp"
@@ -12,6 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Memowave"
         android:networkSecurityConfig="@xml/network_security_config">
+        
+        <provider
+            android:authorities="${applicationId}.androidx-startup"
+            android:name="androidx.startup.InitializationProvider"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

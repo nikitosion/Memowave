@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.graphics.shapes)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,6 +87,10 @@ dependencies {
     // Hilt - local unit testing
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.compiler)
+
+    // Hilt - WorkManager
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
 
     // Room
     implementation(libs.room.runtime)
