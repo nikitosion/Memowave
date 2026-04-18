@@ -49,7 +49,7 @@ interface ApiService {
     @GET("words")
     suspend fun getUserWords(): Response<List<WordDto>>
 
-    @POST("words/")
+    @POST("words")
     suspend fun addWord(@Body word: WordDto): Response<WordDto>
 
     @PUT("words/{wordId}")
