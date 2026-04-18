@@ -19,28 +19,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.memowave.app.AppViewModel
 import com.memowave.app.R
 import com.memowave.app.ui.screen.main_page.components.BaseWordStatictics
 import com.memowave.app.ui.screen.main_page.components.ContinueLearningButton
 import com.memowave.app.ui.screen.main_page.components.InterestingFacts
 import com.memowave.app.ui.screen.main_page.components.LearningMode
+import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun MainPageRoute(
-    appViewModel: AppViewModel = hiltViewModel()
+    appViewModel: AppViewModel = hiltViewModel(),
+    navController: NavController? = null
 ) {
-    MainPageScreen(appViewModel)
+    MainPageScreen(appViewModel, navController)
 }
 
 data class LearningModeConfig(
     val id: String,
     val iconResId: Int,
+    val route: String? = null,
 )
 
 private val LEARNING_MODES = listOf(
-    LearningModeConfig("Каротчки", R.drawable.playing_cards_24),
+    LearningModeConfig("Каротчки", R.drawable.playing_cards_24, route = Screen.Flashcard.route),
     LearningModeConfig("Перевод", R.drawable.round_translate_24),
     LearningModeConfig("Викторина", R.drawable.electric_bolt_24),
     LearningModeConfig("Слово-пазл", R.drawable.baseline_extension_24),
@@ -48,7 +52,8 @@ private val LEARNING_MODES = listOf(
 
 @Composable
 fun MainPageScreen(
-    appViewModel: AppViewModel? = null
+    appViewModel: AppViewModel? = null,
+    navController: NavController? = null
 ) {
     Column(
         modifier = Modifier
@@ -83,7 +88,12 @@ fun MainPageScreen(
                         cornerRadius = 30f,
                         figureSize = 250.dp,
                         modeName = mode.id,
-                        iconResId = mode.iconResId
+                        iconResId = mode.iconResId,
+                        onClick = {
+                            mode.route?.let { route ->
+                                navController?.navigate(route)
+                            }
+                        }
                     )
                 }
             }

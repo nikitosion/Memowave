@@ -24,6 +24,7 @@ import com.memowave.app.ui.screen.library.LibraryRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
 import com.memowave.app.ui.screen.profile.ProfileViewModel
+import com.memowave.app.ui.screen.flashcard.FlashcardRoute
 import com.memowave.app.ui.screen.settings.AppSettingsRoute
 
 sealed class Screen(
@@ -66,10 +67,11 @@ sealed class Screen(
     object SignUp : Screen(route = "sign_up")
     object ResetPassword : Screen(route = "reset_password")
     object AppSettings : Screen(route = "app_settings")
+    object Flashcard : Screen(route = "flashcard", hasCustomTopBar = true)
 
     companion object {
         val allScreens =
-            listOf(MainPage, Library, Games, Profile, Login, ForgotPassword, SignUp, ResetPassword)
+            listOf(MainPage, Library, Games, Profile, Login, ForgotPassword, SignUp, ResetPassword, Flashcard)
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
 }
@@ -115,7 +117,7 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
 
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.MainPage.route) {
-            MainPageRoute(appViewModel)
+            MainPageRoute(appViewModel, navController)
         }
         composable(Screen.Library.route) {
             LibraryRoute(
@@ -132,6 +134,10 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
         composable(Screen.AppSettings.route) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()
             AppSettingsRoute(navController, profileViewModel)
+        }
+
+        composable(Screen.Flashcard.route) {
+            FlashcardRoute(navController)
         }
 
         composable(Screen.Login.route) {
