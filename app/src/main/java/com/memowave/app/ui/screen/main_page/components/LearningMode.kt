@@ -2,6 +2,7 @@ package com.memowave.app.ui.screen.main_page.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -40,13 +41,15 @@ fun LearningMode(
     cornerRadius: Float = 30f,
     figureSize: Dp = 200.dp,
     modeName: String = "Карточки",
-    @DrawableRes iconResId: Int
+    @DrawableRes iconResId: Int,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .height(220.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(30.dp))
+            .clickable(onClick = onClick)
             .background(
                 MaterialTheme.colorScheme.surfaceContainer,
                 RoundedCornerShape(30.dp)
