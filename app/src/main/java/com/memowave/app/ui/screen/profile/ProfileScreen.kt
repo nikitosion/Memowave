@@ -74,6 +74,7 @@ fun ProfileScreenContent(
             .fillMaxWidth()
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
         IconButton(
@@ -514,9 +515,7 @@ fun ProfileScreenPreview() {
                     .fillMaxSize()
                     .padding(
                         top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = 16.dp,
-                        end = 16.dp
+                        bottom = paddingValues.calculateBottomPadding()
                     ),
             ) {
                 ProfileScreenContent(

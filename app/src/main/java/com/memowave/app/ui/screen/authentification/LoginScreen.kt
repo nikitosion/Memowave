@@ -72,7 +72,9 @@ fun LoginScreenContent(
     onSignUpClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(

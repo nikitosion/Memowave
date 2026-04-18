@@ -55,6 +55,7 @@ fun MainPageScreen(
             .fillMaxWidth()
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
         ContinueLearningButton()

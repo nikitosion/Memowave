@@ -75,18 +75,9 @@ fun AppSettingsContent(
             .fillMaxWidth()
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
-        IconButton(
-            onClick = onBackClick
-        ) {
-            Icon(
-                modifier = Modifier.size(60.dp),
-                painter = painterResource(id = R.drawable.round_chevron_left_24),
-                contentDescription = stringResource(R.string.back),
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
         SettingsBlock(mainSettingsBlock)
         SettingsBlock(secondSettingsBlock)
         SettingsBlock(exitSettingBlock, SettingsBlockPreset.EXIT)
@@ -107,9 +98,7 @@ fun AppSettingsPreview() {
                     .fillMaxSize()
                     .padding(
                         top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = 16.dp,
-                        end = 16.dp
+                        bottom = paddingValues.calculateBottomPadding()
                     ),
             ) {
                 AppSettingsContent({}, {})

@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.memowave.app.AppViewModel
 import com.memowave.app.ui.common.BottomNavigationBar
+import com.memowave.app.ui.common.MemowaveTopBar
 import com.memowave.app.ui.common.notification.CustomSnackbar
 import com.memowave.app.ui.navigation.NavGraph
 import com.memowave.app.ui.navigation.Screen
@@ -57,6 +58,10 @@ fun Memowave(
         currentRoute?.let { route -> navBarScreens.any { it.route == route } } ?: false
     val selectedDestination = navBarScreens.indexOfFirst { it.route == currentRoute }.takeIf { it >= 0 } ?: 0
 
+    val currentScreen = Screen.allScreens.find { it.route == currentRoute }
+    val canGoBack = navController.previousBackStackEntry != null
+    val showDefaultTopBar = canGoBack && currentScreen?.hasCustomTopBar != true && !showNavBar
+
     var showNotification by remember { mutableStateOf(false) }
     val notificationMessage by appViewModel.notificationManager.notificationMessage.collectAsState()
 
@@ -78,6 +83,14 @@ fun Memowave(
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    if (showDefaultTopBar) {
+                        MemowaveTopBar(
+                            modifier = Modifier.statusBarsPadding(),
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
+                },
                 bottomBar = {
                     if (showNavBar) {
                         BottomNavigationBar(
@@ -93,9 +106,7 @@ fun Memowave(
                         .fillMaxSize()
                         .padding(
                             top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding(),
-                            start = 16.dp,
-                            end = 16.dp
+                            bottom = paddingValues.calculateBottomPadding()
                         ),
                 ) {
                     NavGraph(navController, appViewModel)

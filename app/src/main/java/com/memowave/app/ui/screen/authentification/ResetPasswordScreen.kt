@@ -69,7 +69,9 @@ fun ResetPasswordScreenContent(
     onBackClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -137,19 +139,6 @@ fun ResetPasswordScreenContent(
                 isLoading = isLoading,
                 modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.reset_password_button)
-            )
-        }
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 64.dp),
-            onClick = onBackClick
-        ) {
-            Icon(
-                modifier = Modifier.size(60.dp),
-                painter = painterResource(id = R.drawable.round_chevron_left_24),
-                contentDescription = stringResource(R.string.back),
-                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

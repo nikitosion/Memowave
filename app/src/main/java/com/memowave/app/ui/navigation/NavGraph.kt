@@ -30,7 +30,8 @@ sealed class Screen(
     val route: String,
     val iconResId: Int? = null,
     val labelResId: Int? = null,
-    val showInAppBar: Boolean = false
+    val showInAppBar: Boolean = false,
+    val hasCustomTopBar: Boolean = false
 ) {
     object MainPage : Screen(
         route = "main_page",

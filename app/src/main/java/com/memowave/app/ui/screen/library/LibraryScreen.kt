@@ -89,6 +89,7 @@ fun LibraryScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .padding(horizontal = 16.dp)
                 .padding(top = 32.dp, bottom = 0.dp)
         ) {
             Row(
@@ -203,7 +204,7 @@ fun LibraryScreen(
 
         FloatingActionButton(
             modifier = Modifier
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp, end = 16.dp)
                 .align(Alignment.BottomEnd),
             onClick = {
                 when (selectedTab) {
@@ -271,9 +272,7 @@ private fun LibraryScreenWordsPreview() {
                         .fillMaxSize()
                         .padding(
                             top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding(),
-                            start = 16.dp,
-                            end = 16.dp
+                            bottom = paddingValues.calculateBottomPadding()
                         ),
                 ) {
                     LibraryScreen(
@@ -321,9 +320,7 @@ private fun LibraryScreenWithoutWordsPreview() {
                         .fillMaxSize()
                         .padding(
                             top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding(),
-                            start = 16.dp,
-                            end = 16.dp
+                            bottom = paddingValues.calculateBottomPadding()
                         ),
                 ) {
                     LibraryScreen(
