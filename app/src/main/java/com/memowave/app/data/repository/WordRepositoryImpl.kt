@@ -103,6 +103,15 @@ class WordRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getWordsByCategory(categoryId: Long): Result<List<Word>> {
+        return try {
+            val entities = wordDao.getWordsByCategory(categoryId)
+            Result.success(entities.map { wordMapper.entityToDomain(it) })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun deleteWord(id: Long): Result<Unit> {
         return try {
             val word = wordDao.getWordById(id)

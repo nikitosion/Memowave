@@ -8,4 +8,5 @@ interface WordRepository {
     suspend fun addWord(word: Word): Result<Word>
     suspend fun updateWord(word: Word): Result<Word>
     suspend fun deleteWord(id: Long): Result<Unit>
+    suspend fun getWordsByCategory(categoryId: Long): Result<List<Word>>
 }
