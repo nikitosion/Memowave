@@ -217,3 +217,13 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF1B2122)
 val surfaceContainerDarkHighContrast = Color(0xFF2B3133)
 val surfaceContainerHighDarkHighContrast = Color(0xFF363C3E)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF424849)
+
+// Custom Warning tokens (pastel yellow) — not part of Material 3 palette.
+// Provided via LocalAppWarningColors (see Theme.kt).
+val WarningContainerLight = Color(0xFFFFF3C4)
+val OnWarningContainerLight = Color(0xFF574400)
+val WarningAccentLight = Color(0xFFB18600)
+
+val WarningContainerDark = Color(0xFF4A3A00)
+val OnWarningContainerDark = Color(0xFFF7E28A)
+val WarningAccentDark = Color(0xFFE5C45A)

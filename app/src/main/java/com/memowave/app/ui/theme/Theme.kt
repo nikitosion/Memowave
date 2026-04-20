@@ -5,7 +5,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 private val lightScheme = lightColorScheme(
@@ -248,6 +250,27 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+@Immutable
+data class AppWarningColors(
+    val container: Color,
+    val onContainer: Color,
+    val accent: Color,
+)
+
+private val lightWarningColors = AppWarningColors(
+    container = WarningContainerLight,
+    onContainer = OnWarningContainerLight,
+    accent = WarningAccentLight,
+)
+
+private val darkWarningColors = AppWarningColors(
+    container = WarningContainerDark,
+    onContainer = OnWarningContainerDark,
+    accent = WarningAccentDark,
+)
+
+val LocalAppWarningColors = staticCompositionLocalOf { lightWarningColors }
+
 @Composable
 fun MemowaveTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -258,10 +281,13 @@ fun MemowaveTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
+    val warningColors = if (darkTheme) darkWarningColors else lightWarningColors
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = MemowaveTypography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppWarningColors provides warningColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = MemowaveTypography,
+            content = content
+        )
+    }
 }
