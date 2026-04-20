@@ -3,17 +3,21 @@ package com.memowave.app.ui.screen.flashcard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.domain.model.FlashcardResult
+import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 private const val XP_PER_CORRECT = 25
+private const val AUTO_ADVANCE_MILLIS = 1500L
 
 @HiltViewModel
 class FlashcardGameViewModel @Inject constructor(
@@ -25,12 +29,16 @@ class FlashcardGameViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FlashcardGameUiState())
     val uiState: StateFlow<FlashcardGameUiState> = _uiState.asStateFlow()
 
+    private var allWordsCache: List<Word>? = null
+    private var advanceJob: Job? = null
+
     fun onEvent(event: FlashcardGameEvent) {
         when (event) {
             is FlashcardGameEvent.LoadCategories -> loadCategories()
             is FlashcardGameEvent.SelectCategory -> {
                 _uiState.value = _uiState.value.copy(selectedCategoryId = event.categoryId)
             }
+            is FlashcardGameEvent.ChangeGameMode -> changeGameMode(event.gameMode)
             is FlashcardGameEvent.SetWordCount -> {
                 _uiState.value = _uiState.value.copy(wordCount = event.count)
             }
@@ -44,8 +52,10 @@ class FlashcardGameViewModel @Inject constructor(
             is FlashcardGameEvent.FlipCard -> {
                 _uiState.value = _uiState.value.copy(isCardFlipped = !_uiState.value.isCardFlipped)
             }
-            is FlashcardGameEvent.MarkCorrect -> markAnswer(isCorrect = true)
-            is FlashcardGameEvent.MarkWrong -> markAnswer(isCorrect = false)
+            is FlashcardGameEvent.MarkCorrect -> binaryMark(isCorrect = true)
+            is FlashcardGameEvent.MarkWrong -> binaryMark(isCorrect = false)
+            is FlashcardGameEvent.SelectAnswer -> selectNumberedAnswer(event.index)
+            is FlashcardGameEvent.AdvanceCard -> advanceCard()
             is FlashcardGameEvent.DismissXpPopup -> {
                 _uiState.value = _uiState.value.copy(showXpPopup = false)
             }
@@ -112,6 +122,13 @@ class FlashcardGameViewModel @Inject constructor(
                     processedWords.take(wordCount)
                 }
 
+                val firstWord = selectedWords.first()
+                val (options, correctIdx) = if (_uiState.value.gameMode == FlashcardGameMode.NUMBERED) {
+                    generateNumberedOptions(firstWord, selectedWords)
+                } else {
+                    emptyList<String>() to 0
+                }
+
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     words = selectedWords,
@@ -119,7 +136,10 @@ class FlashcardGameViewModel @Inject constructor(
                     isCardFlipped = false,
                     results = emptyList(),
                     totalXpEarned = 0,
-                    phase = FlashcardPhase.GAME
+                    phase = FlashcardPhase.GAME,
+                    numberedOptions = options,
+                    correctAnswerIndex = correctIdx,
+                    selectedAnswerIndex = null
                 )
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(
@@ -130,35 +150,146 @@ class FlashcardGameViewModel @Inject constructor(
         }
     }
 
-    private fun markAnswer(isCorrect: Boolean) {
+    private fun binaryMark(isCorrect: Boolean) {
         val state = _uiState.value
         val currentWord = state.currentWord ?: return
-
-        val result = FlashcardResult(wordId = currentWord.id, isCorrect = isCorrect)
-        val xpGained = if (isCorrect) XP_PER_CORRECT else 0
-        val newResults = state.results + result
+        recordResult(currentWord, isCorrect)
 
         if (state.isLastCard) {
-            _uiState.value = state.copy(
-                results = newResults,
-                totalXpEarned = state.totalXpEarned + xpGained,
-                showXpPopup = isCorrect,
-                xpPopupAmount = xpGained,
-                phase = FlashcardPhase.SUMMARY
-            )
+            _uiState.value = _uiState.value.copy(phase = FlashcardPhase.SUMMARY)
         } else {
-            _uiState.value = state.copy(
-                results = newResults,
-                totalXpEarned = state.totalXpEarned + xpGained,
-                showXpPopup = isCorrect,
-                xpPopupAmount = xpGained,
-                currentIndex = state.currentIndex + 1,
-                isCardFlipped = false
+            moveToNextCard()
+        }
+    }
+
+    private fun selectNumberedAnswer(index: Int) {
+        val state = _uiState.value
+        if (state.selectedAnswerIndex != null) return
+        val currentWord = state.currentWord ?: return
+
+        val isCorrect = index == state.correctAnswerIndex
+        recordResult(currentWord, isCorrect)
+        _uiState.value = _uiState.value.copy(
+            selectedAnswerIndex = index,
+            isCardFlipped = true
+        )
+        scheduleAutoAdvance()
+    }
+
+    private fun recordResult(currentWord: Word, isCorrect: Boolean) {
+        val state = _uiState.value
+        val result = FlashcardResult(wordId = currentWord.id, isCorrect = isCorrect)
+        val xpGained = if (isCorrect) XP_PER_CORRECT else 0
+        _uiState.value = state.copy(
+            results = state.results + result,
+            totalXpEarned = state.totalXpEarned + xpGained,
+            showXpPopup = isCorrect,
+            xpPopupAmount = xpGained
+        )
+    }
+
+    private fun scheduleAutoAdvance() {
+        advanceJob?.cancel()
+        advanceJob = viewModelScope.launch {
+            delay(AUTO_ADVANCE_MILLIS)
+            advanceCard()
+        }
+    }
+
+    private fun advanceCard() {
+        advanceJob?.cancel()
+        val state = _uiState.value
+        if (state.phase != FlashcardPhase.GAME) return
+
+        if (state.isLastCard) {
+            _uiState.value = state.copy(phase = FlashcardPhase.SUMMARY)
+        } else {
+            moveToNextCard()
+        }
+    }
+
+    private fun moveToNextCard() {
+        val state = _uiState.value
+        val nextIdx = state.currentIndex + 1
+        val nextWord = state.words.getOrNull(nextIdx) ?: return
+
+        viewModelScope.launch {
+            val (options, correctIdx) = if (state.gameMode == FlashcardGameMode.NUMBERED) {
+                generateNumberedOptions(nextWord, state.words)
+            } else {
+                emptyList<String>() to 0
+            }
+            _uiState.value = _uiState.value.copy(
+                currentIndex = nextIdx,
+                isCardFlipped = false,
+                selectedAnswerIndex = null,
+                numberedOptions = options,
+                correctAnswerIndex = correctIdx
             )
         }
     }
 
+    private fun changeGameMode(mode: FlashcardGameMode) {
+        val state = _uiState.value
+        if (state.gameMode == mode) return
+
+        advanceJob?.cancel()
+
+        if (mode == FlashcardGameMode.NUMBERED && state.phase == FlashcardPhase.GAME) {
+            val currentWord = state.currentWord
+            if (currentWord != null) {
+                viewModelScope.launch {
+                    val (options, correctIdx) = generateNumberedOptions(currentWord, state.words)
+                    _uiState.value = _uiState.value.copy(
+                        gameMode = mode,
+                        numberedOptions = options,
+                        correctAnswerIndex = correctIdx,
+                        selectedAnswerIndex = null,
+                        isCardFlipped = false
+                    )
+                }
+                return
+            }
+        }
+
+        _uiState.value = state.copy(
+            gameMode = mode,
+            selectedAnswerIndex = null
+        )
+    }
+
+    private suspend fun generateNumberedOptions(
+        currentWord: Word,
+        gameWords: List<Word>
+    ): Pair<List<String>, Int> {
+        val inGamePool = gameWords.filter { it.id != currentWord.id }
+        val pool = if (inGamePool.size >= 3) {
+            inGamePool
+        } else {
+            loadAllWordsPool().filter { it.id != currentWord.id }
+        }
+        val distractors = pool.shuffled().take(3).map { it.translation }
+        // If still fewer than 3 unique distractors available in the whole DB, pad with
+        // a best-effort reuse — rare edge case (user has <4 words total).
+        val paddedDistractors = if (distractors.size < 3) {
+            val filler = List(3 - distractors.size) { "—" }
+            distractors + filler
+        } else distractors
+
+        val correctIdx = (0..3).random()
+        val options = paddedDistractors.toMutableList().apply { add(correctIdx, currentWord.translation) }
+        return options to correctIdx
+    }
+
+    private suspend fun loadAllWordsPool(): List<Word> {
+        allWordsCache?.let { return it }
+        val all = getWordsUseCase().getOrNull().orEmpty()
+        allWordsCache = all
+        return all
+    }
+
     private fun restartGame() {
+        advanceJob?.cancel()
         _uiState.value = _uiState.value.copy(
             phase = FlashcardPhase.LOBBY,
             words = emptyList(),
@@ -167,7 +298,10 @@ class FlashcardGameViewModel @Inject constructor(
             results = emptyList(),
             totalXpEarned = 0,
             showXpPopup = false,
-            errorMessage = null
+            errorMessage = null,
+            numberedOptions = emptyList(),
+            correctAnswerIndex = 0,
+            selectedAnswerIndex = null
         )
     }
 

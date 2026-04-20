@@ -2,6 +2,7 @@ package com.memowave.app.ui.screen.flashcard
 
 sealed interface FlashcardGameEvent {
     // Settings
+    data class ChangeGameMode(val gameMode: FlashcardGameMode) : FlashcardGameEvent
     data object LoadCategories : FlashcardGameEvent
     data class SelectCategory(val categoryId: Long?) : FlashcardGameEvent
     data class SetWordCount(val count: Int) : FlashcardGameEvent
@@ -13,6 +14,8 @@ sealed interface FlashcardGameEvent {
     data object FlipCard : FlashcardGameEvent
     data object MarkCorrect : FlashcardGameEvent
     data object MarkWrong : FlashcardGameEvent
+    data class SelectAnswer(val index: Int) : FlashcardGameEvent
+    data object AdvanceCard : FlashcardGameEvent
     data object DismissXpPopup : FlashcardGameEvent
 
     // Navigation

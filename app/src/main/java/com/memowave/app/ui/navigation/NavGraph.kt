@@ -137,7 +137,7 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
         }
 
         composable(Screen.Flashcard.route) {
-            FlashcardRoute(navController)
+            FlashcardRoute(appViewModel, navController)
         }
 
         composable(Screen.Login.route) {

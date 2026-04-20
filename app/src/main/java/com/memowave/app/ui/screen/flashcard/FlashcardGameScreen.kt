@@ -8,16 +8,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,15 +31,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.memowave.app.AppViewModel
 import com.memowave.app.R
 import com.memowave.app.ui.common.MemowaveTopBar
+import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.screen.flashcard.components.AnimatedPlayButton
 import com.memowave.app.ui.screen.flashcard.components.FlashcardActionButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardCard
+import com.memowave.app.ui.screen.flashcard.components.FlashcardNumberedAnswerButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardSettingsSheet
 import com.memowave.app.ui.screen.flashcard.components.FlashcardSummaryContent
 import com.memowave.app.ui.screen.flashcard.components.FlashcardTopBar
@@ -45,7 +52,10 @@ import com.memowave.app.domain.model.Word
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
-fun FlashcardRoute(navController: NavController) {
+fun FlashcardRoute(
+    appViewModel: AppViewModel,
+    navController: NavController
+) {
     val viewModel: FlashcardGameViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -62,7 +72,18 @@ fun FlashcardRoute(navController: NavController) {
     FlashcardScreen(
         state = uiState,
         onEvent = viewModel::onEvent,
-        onNavigateBack = { navController.popBackStack() }
+        onNavigateBack = { navController.popBackStack() },
+        onWordCountLocked = {
+            appViewModel.notificationManager.showWarning(
+                "Количество слов нельзя менять — начните игру заново"
+            )
+        },
+        onCategoryLocked = {
+            appViewModel.notificationManager.showWarning(
+                "Набор слов нельзя менять — начните игру заново"
+            )
+        },
+        notificationManager = appViewModel.notificationManager
     )
 }
 
@@ -70,7 +91,10 @@ fun FlashcardRoute(navController: NavController) {
 private fun FlashcardScreen(
     state: FlashcardGameUiState,
     onEvent: (FlashcardGameEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onWordCountLocked: () -> Unit,
+    onCategoryLocked: () -> Unit,
+    notificationManager: NotificationManager? = null
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (state.phase) {
@@ -108,11 +132,14 @@ private fun FlashcardScreen(
             FlashcardSettingsSheet(
                 wordCount = state.wordCount,
                 isShuffled = state.isShuffled,
+                gamePhase = state.phase,
+                gameMode = state.gameMode,
                 showTranslationFirst = state.showTranslationFirst,
                 selectedCategoryId = state.selectedCategoryId,
                 categories = state.categories,
                 onWordCountChanged = { onEvent(FlashcardGameEvent.SetWordCount(it)) },
                 onShuffledChanged = { onEvent(FlashcardGameEvent.SetShuffled(it)) },
+                onGameModeChanged = { onEvent(FlashcardGameEvent.ChangeGameMode(it)) },
                 onShowTranslationFirstChanged = {
                     onEvent(
                         FlashcardGameEvent.SetShowTranslationFirst(
@@ -121,7 +148,10 @@ private fun FlashcardScreen(
                     )
                 },
                 onCategorySelected = { onEvent(FlashcardGameEvent.SelectCategory(it)) },
-                onDismiss = { onEvent(FlashcardGameEvent.ToggleSettings) }
+                onWordCountLocked = onWordCountLocked,
+                onCategoryLocked = onCategoryLocked,
+                onDismiss = { onEvent(FlashcardGameEvent.ToggleSettings) },
+                notificationManager = notificationManager
             )
         }
 
@@ -129,19 +159,64 @@ private fun FlashcardScreen(
         if (state.showExitConfirmation) {
             AlertDialog(
                 onDismissRequest = { onEvent(FlashcardGameEvent.DismissExitDialog) },
-                title = { Text("Выйти из игры?") },
-                text = { Text("Прогресс текущей сессии будет потерян.") },
+                shape = RoundedCornerShape(28.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                icon = {
+                    Icon(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(R.drawable.round_warning_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                },
+                title = {
+                    Text(
+                        text = "Выйти из игры?",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.W600
+                    )
+                },
+                text = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Прогресс текущей сессии не сохранится.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                },
                 confirmButton = {
-                    TextButton(onClick = {
-                        onEvent(FlashcardGameEvent.ConfirmExit)
-                        onNavigateBack()
-                    }) {
-                        Text("Выйти", color = MaterialTheme.colorScheme.error)
+                    Button(
+                        modifier = Modifier.height(48.dp),
+                        onClick = { onEvent(FlashcardGameEvent.DismissExitDialog) },
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text(
+                            text = "Остаться",
+                            fontWeight = FontWeight.W600
+                        )
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { onEvent(FlashcardGameEvent.DismissExitDialog) }) {
-                        Text("Остаться")
+                    OutlinedButton(
+                        modifier = Modifier.height(48.dp),
+                        onClick = {
+                            onEvent(FlashcardGameEvent.ConfirmExit)
+                            onNavigateBack()
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(
+                            text = "Выйти",
+                            fontWeight = FontWeight.W600
+                        )
                     }
                 }
             )
@@ -272,22 +347,42 @@ private fun FlashcardGameContent(
                         word = currentWord,
                         isFlipped = state.isCardFlipped,
                         showTranslationFirst = state.showTranslationFirst,
-                        onClick = { onEvent(FlashcardGameEvent.FlipCard) },
+                        onClick = {
+                            when (state.gameMode) {
+                                FlashcardGameMode.BINARY -> onEvent(FlashcardGameEvent.FlipCard)
+                                FlashcardGameMode.NUMBERED -> {
+                                    if (state.selectedAnswerIndex != null) {
+                                        onEvent(FlashcardGameEvent.AdvanceCard)
+                                    }
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp)
                     )
                 }
-                // Action buttons
-                FlashcardActionButtons(
-                    isEnabled = state.isCardFlipped,
-                    onWrongClick = { onEvent(FlashcardGameEvent.MarkWrong) },
-                    onCorrectClick = { onEvent(FlashcardGameEvent.MarkCorrect) },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(vertical = 24.dp)
-                )
+                // Answer controls
+                when (state.gameMode) {
+                    FlashcardGameMode.BINARY -> FlashcardActionButtons(
+                        isEnabled = state.isCardFlipped,
+                        onWrongClick = { onEvent(FlashcardGameEvent.MarkWrong) },
+                        onCorrectClick = { onEvent(FlashcardGameEvent.MarkCorrect) },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(vertical = 24.dp)
+                    )
+                    FlashcardGameMode.NUMBERED -> FlashcardNumberedAnswerButtons(
+                        options = state.numberedOptions,
+                        correctIndex = state.correctAnswerIndex,
+                        selectedIndex = state.selectedAnswerIndex,
+                        onSelect = { onEvent(FlashcardGameEvent.SelectAnswer(it)) },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(vertical = 24.dp)
+                    )
+                }
             }
 
             XpPopup(
@@ -324,7 +419,9 @@ private fun FlashcardLobbyPreview() {
         FlashcardScreen(
             state = FlashcardGameUiState(phase = FlashcardPhase.LOBBY),
             onEvent = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onWordCountLocked = {},
+            onCategoryLocked = {}
         )
     }
 }
@@ -342,7 +439,9 @@ private fun FlashcardGamePreview() {
                 totalXpEarned = 50
             ),
             onEvent = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onWordCountLocked = {},
+            onCategoryLocked = {}
         )
     }
 }
@@ -360,7 +459,9 @@ private fun FlashcardGameFlippedPreview() {
                 totalXpEarned = 75
             ),
             onEvent = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onWordCountLocked = {},
+            onCategoryLocked = {}
         )
     }
 }
@@ -381,7 +482,9 @@ private fun FlashcardSummaryPreview() {
                 )
             ),
             onEvent = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onWordCountLocked = {},
+            onCategoryLocked = {}
         )
     }
 }

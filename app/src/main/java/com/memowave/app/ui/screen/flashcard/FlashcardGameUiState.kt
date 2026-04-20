@@ -10,9 +10,17 @@ enum class FlashcardPhase {
     SUMMARY
 }
 
+enum class FlashcardGameMode {
+    BINARY,
+    NUMBERED
+}
+
 data class FlashcardGameUiState(
     // Phase
     val phase: FlashcardPhase = FlashcardPhase.LOBBY,
+
+    // Game mode
+    val gameMode: FlashcardGameMode = FlashcardGameMode.BINARY,
 
     // Settings
     val categories: List<Category> = emptyList(),
@@ -29,6 +37,11 @@ data class FlashcardGameUiState(
     val totalXpEarned: Int = 0,
     val showXpPopup: Boolean = false,
     val xpPopupAmount: Int = 0,
+
+    // Numbered mode
+    val numberedOptions: List<String> = emptyList(),
+    val correctAnswerIndex: Int = 0,
+    val selectedAnswerIndex: Int? = null,
 
     // UI
     val showSettingsSheet: Boolean = false,
