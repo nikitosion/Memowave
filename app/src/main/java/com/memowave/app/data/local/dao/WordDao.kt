@@ -59,7 +59,20 @@ interface WordDao {
             val existing = getWordByRemoteId(word.remoteId!!)
             if (existing != null) {
                 if (existing.isSynced) {
-                    updateWord(word.copy(id = existing.id, isSynced = true))
+                    updateWord(
+                        word.copy(
+                            id = existing.id,
+                            isSynced = true,
+                            // server doesn't know about SRS fields yet — preserve local progress
+                            stability = existing.stability,
+                            difficulty = existing.difficulty,
+                            interval = existing.interval,
+                            dueDate = existing.dueDate,
+                            reviewCount = existing.reviewCount,
+                            lastReview = existing.lastReview,
+                            phase = existing.phase,
+                        )
+                    )
                 }
             } else {
                 insertWord(word)

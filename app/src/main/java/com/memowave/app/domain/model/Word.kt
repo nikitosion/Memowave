@@ -1,5 +1,7 @@
 package com.memowave.app.domain.model
 
+import java.time.LocalDateTime
+
 data class Word(
     val id: Long = 0L,
     val original: String,
@@ -10,10 +12,13 @@ data class Word(
     val audioUrl: String? = null,
     val note: String? = null,
     // Spaced Repetition System (SRS) fields
-    val quality: Int = 0,
-    val repetitions: Int = 0,
-    val prevEaseFactor: Double = 2.5,
-    val prevInterval: Int = 0,
+    val stability: Double = 2.5,
+    val difficulty: Double = 2.5,
+    val interval: Int = 0,
+    val dueDate: LocalDateTime = LocalDateTime.now(),
+    val reviewCount: Int = 0,
+    val lastReview: LocalDateTime? = null,
+    val phase: Int = 0,
     // -------------------------------------
     val isSynced: Boolean = false,
     val isFavorite: Boolean = false,
