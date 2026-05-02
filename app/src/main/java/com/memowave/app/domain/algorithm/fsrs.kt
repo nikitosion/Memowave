@@ -1,0 +1,302 @@
+package com.memowave.app.domain.algorithm
+
+import com.memowave.app.domain.model.Rating
+import com.memowave.app.domain.model.Word
+import com.memowave.app.domain.model.WordGrade
+import kotlin.math.abs
+import kotlin.math.exp
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.random.Random
+import java.util.Locale
+
+enum class CardPhase(val value: Int) {
+    Added(0),
+    ReLearning(1),
+    Review(2),
+}
+
+@Suppress("DefaultLocale")
+class FSRS(
+    private val requestRetention: Double,
+    private val params: List<Double>,
+    private val isReview: Boolean = false,
+) {
+
+    data class InitState(var difficulty: Double = 0.0, var stability: Double = 0.0)
+
+    private val decay = -params[20]
+    private val factor = 0.9.pow(1.0 / decay) - 1
+    private val enableFuzz = true;
+
+    var gradeList = mutableListOf(
+        WordGrade( "Easy", 0, 0, "", Rating.Easy),
+        WordGrade( "Good", 0, 0, "", Rating.Good),
+        WordGrade("Hard", 0, 0, "", Rating.Hard),
+        WordGrade( "Again", 0, 0, "", Rating.Again),
+    )
+
+    fun calculate(word: Word): List<WordGrade> {
+        var stateAgain: InitState
+        var stateHard: InitState
+        var stateGood: InitState
+        var stateEasy: InitState
+
+
+        var durationHard = 5 * 60 * 1000L
+        var durationGood: Long
+        var durationEasy: Long
+
+        var ivlHard = 0
+        var ivlGood = 0
+        var ivlEasy = 0
+
+        var textHard: String
+        var textGood: String
+        var textEasy: String
+
+        var dayConvertor: Long = 24 * 60 * 60 * 1000
+
+        when (word.phase) {
+            CardPhase.Added.value -> {
+                stateAgain = initState(Rating.Again)
+                stateHard = initState(Rating.Hard)
+                stateGood = initState(Rating.Good)
+                stateEasy = initState(Rating.Easy)
+
+                ivlEasy = 1
+
+                textHard = "5 Min"
+                textGood = "10 Min"
+                textEasy = "1 day"
+
+                durationGood = 10 * 60 * 1000L
+                durationEasy = ivlEasy * dayConvertor
+            }
+
+            CardPhase.ReLearning.value -> {
+                if (word.difficulty == 0.0) {
+                    stateAgain = initState(Rating.Again)
+                    stateHard = initState(Rating.Hard)
+                    stateGood = initState(Rating.Good)
+                    stateEasy = initState(Rating.Easy)
+                }
+                else {
+                    val lastD = word.difficulty
+                    val lastS = word.stability
+
+                    stateAgain = InitState(
+                        difficulty = nextDifficulty(lastD, Rating.Again),
+                        stability = nextShortTermStability(lastS, Rating.Again)
+                    )
+                    stateHard = InitState(
+                        difficulty = nextDifficulty(lastD, Rating.Hard),
+                        stability = nextShortTermStability(lastS, Rating.Hard)
+                    )
+                    stateGood = InitState(
+                        difficulty = nextDifficulty(lastD, Rating.Good),
+                        stability = nextShortTermStability(lastS, Rating.Good)
+                    )
+                    stateEasy = InitState(
+                        difficulty = nextDifficulty(lastD, Rating.Easy),
+                        stability = nextShortTermStability(lastS, Rating.Easy)
+                    )
+                }
+
+                ivlGood = nextInterval(stateGood.stability)
+                ivlEasy = nextInterval(stateEasy.stability)
+                ivlEasy = max(ivlEasy, ivlGood + 1)
+
+                textHard = "10 Min"
+                textGood = convertDays(ivlGood)
+                textEasy = convertDays(ivlEasy)
+
+                durationGood = ivlGood * dayConvertor
+                durationEasy = ivlEasy * dayConvertor
+            }
+
+            else -> {
+                val interval = word.interval
+                val lastD = word.difficulty
+                val lastS = word.stability
+
+                val retrievability = forgettingCurve(interval.toDouble(), lastS)
+
+                stateAgain = InitState(
+                    difficulty = nextDifficulty(lastD, Rating.Again),
+                    stability = nextForgetStability(lastD, lastS, retrievability)
+                )
+                stateHard = InitState(
+                    difficulty = nextDifficulty(lastD, Rating.Hard),
+                    stability = nextRecallStability(lastD, lastS, retrievability, Rating.Hard)
+                )
+                stateGood = InitState(
+                    difficulty = nextDifficulty(lastD, Rating.Good),
+                    stability = nextRecallStability(lastD, lastS, retrievability, Rating.Good)
+                )
+                stateEasy = InitState(
+                    difficulty = nextDifficulty(lastD, Rating.Easy),
+                    stability = nextRecallStability(lastD, lastS, retrievability, Rating.Easy)
+                )
+
+                ivlHard = nextInterval(stateHard.stability)
+                ivlGood = nextInterval(stateGood.stability)
+                ivlEasy = nextInterval(stateEasy.stability)
+
+                ivlHard = kotlin.math.min(ivlHard, ivlGood)
+                ivlGood = kotlin.math.min(ivlGood, ivlHard + 1)
+                ivlEasy = kotlin.math.min(ivlEasy, ivlGood + 1)
+
+                textHard = convertDays(ivlHard)
+                textGood = convertDays(ivlGood)
+                textEasy = convertDays(ivlEasy)
+
+                durationHard = ivlHard * dayConvertor
+                durationGood = ivlGood * dayConvertor
+                durationEasy = ivlEasy * dayConvertor
+            }
+        }
+
+        gradeList[0] = gradeList[0].copy(
+            stability = stateEasy.stability, difficulty = stateEasy.difficulty,
+            durationMillis = durationEasy, interval = ivlEasy, text = textEasy
+        )
+        gradeList[1] = gradeList[1].copy(
+            stability = stateGood.stability, difficulty = stateGood.difficulty,
+            durationMillis = durationGood, interval = ivlGood, text = textGood
+        )
+        gradeList[2] = gradeList[2].copy(
+            stability = stateHard.stability, difficulty = stateHard.difficulty,
+            durationMillis = durationHard, interval = ivlHard, text = textHard
+        )
+        gradeList[3] = gradeList[3].copy(
+            stability = stateAgain.stability,
+            difficulty = stateAgain.difficulty,
+            interval = word.interval,
+            durationMillis = 3 * 60 * 1000L,
+            text = "< 3 Min"
+        )
+
+        return gradeList
+    }
+
+    private fun convertDays(days: Int): String {
+        return if (days > 365) "${days / 365.0} year"
+        else if (days > 30) "${days / 30.0} month"
+        else "$days day"
+    }
+
+    private fun applyFuzz(
+        interval: Double,
+        fuzzFactor: Double,
+        scheduledDays: Int = 0
+    ): Double {
+        if (!enableFuzz || interval < 2.5) return interval
+
+        val ivl = interval.roundToInt()
+        var minIvl = max(2, (ivl * 0.95 - 1).roundToInt())
+        val maxIvl = (ivl * 1.05 + 1).roundToInt()
+
+        if (isReview && ivl > scheduledDays)
+            minIvl = max(minIvl, scheduledDays + 1)
+
+        return floor(fuzzFactor * (maxIvl - minIvl + 1) + minIvl)
+    }
+
+    private fun forgettingCurve(interval: Double, stability: Double): Double {
+        return exp(-interval / stability)
+    }
+
+    private fun generateFuzzFactor(): Double {
+        val seed = System.currentTimeMillis()
+        val random = Random(seed)
+        return random.nextDouble()  // returns value between 0.0 and 1.0
+    }
+
+    private fun initDifficulty(rating: Rating): Double {
+        val base = params[4]
+        val exponent = params[5] * (rating.value - 1)
+        val raw = base - exp(exponent) + 1
+        return String.format(Locale.ROOT, "%.2f", raw.coerceIn(1.0, 10.0)).toDouble()
+    }
+
+    private fun initStability(rating: Rating): Double {
+        val index = rating.value - 1
+        val value = params.getOrElse(index) { 0.1 }
+        return String.format(Locale.ROOT, "%.2f", value.coerceAtLeast(0.1)).toDouble()
+    }
+
+    private fun initState(rating: Rating): InitState {
+        return InitState(
+            difficulty = initDifficulty(rating),
+            stability = initStability(rating)
+        )
+    }
+
+    private fun linearDamping(delta: Double, oldD: Double): Double {
+        return delta * (10 - oldD) / 9
+    }
+
+    private fun meanReversion(initD: Double, nextD: Double): Double {
+        return params[7] * initD + (1 - params[7]) * nextD
+    }
+
+    private fun nextInterval(
+        stability: Double,
+        maxInterval: Int = 36500, lastInterval: Int = 0
+    ): Int {
+        val fuzzFactor = generateFuzzFactor()
+        val rawInterval = stability / factor * (requestRetention.pow(1 / decay) - 1)
+        val fuzzed = applyFuzz(rawInterval, fuzzFactor, scheduledDays = lastInterval)
+        return fuzzed.roundToInt().coerceIn(1, maxInterval)
+    }
+
+    private fun nextDifficulty(currentD: Double, rating: Rating): Double {
+        val deltaD = -params[6] * (rating.value - 3)
+        val damped = linearDamping(deltaD, currentD)
+        val nextD = currentD + damped
+        val reverted = meanReversion(initDifficulty(Rating.Easy), nextD)
+        return String.format(Locale.ROOT, "%.2f", reverted.coerceIn(1.0, 10.0)).toDouble()
+    }
+
+    private fun nextShortTermStability(currentS: Double, rating: Rating): Double {
+        var sinc = exp(params[17] * (rating.value - 3 + params[18])) * currentS.pow(-params[19])
+        if (rating.value >= 3) {
+            sinc = max(sinc, 1.0)
+        }
+        return String.format(Locale.ROOT, "%.2f", abs(currentS * sinc)).toDouble()
+    }
+
+    private fun nextForgetStability(
+        difficulty: Double,
+        stability: Double,
+        retrievability: Double
+    ): Double {
+        val sMin = stability / exp(params[17] * params[18])
+
+        val result = params[11] *
+                difficulty.pow(-params[12]) *
+                ((stability + 1).pow(params[13]) - 1) *
+                exp((1 - retrievability) * params[14])
+
+        return String.format(Locale.ROOT, "%.2f", min(result, sMin)).toDouble()
+    }
+
+    private fun nextRecallStability(d: Double, s: Double, r: Double, rating: Rating): Double {
+        val hardPenalty = if (rating == Rating.Hard) params[15] else 1.0
+        val easyBonus = if (rating == Rating.Easy) params[16] else 1.0
+
+        val factor = exp(params[8]) *
+                (11 - d) *
+                s.pow(-params[9]) *
+                (exp((1 - r) * params[10]) - 1) *
+                hardPenalty *
+                easyBonus
+
+        val result = s * (1 + factor)
+        return String.format(Locale.ROOT, "%.2f", result).toDouble()
+    }
+}
