@@ -52,4 +52,15 @@
     <string name="notification_login_success">С возвращением!</string>
     <string name="notification_session_expired">Session expired. Please sign in again</string>
     <string name="notification_registration_success">Successfully signed up!</string>
+    <string name="flashcard_delta_stability">Stability</string>
+    <string name="flashcard_delta_difficulty">Difficulty</string>
+    <string name="flashcard_delta_interval">Interval</string>
+    <string name="flashcard_delta_due">Next review</string>
+    <string name="flashcard_delta_days_suffix">d</string>
+    <string name="flashcard_delta_a11y_change">%1$s changed from %2$s to %3$s</string>
+    <string name="flashcard_delta_learning_badge">Being studied</string>
+    <string name="flashcard_rating_again">Forgot</string>
+    <string name="flashcard_rating_hard">Hard</string>
+    <string name="flashcard_rating_good">OK</string>
+    <string name="flashcard_rating_easy">Easy</string>
 </resources>

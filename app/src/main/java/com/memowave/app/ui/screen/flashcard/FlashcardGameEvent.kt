@@ -1,5 +1,7 @@
 package com.memowave.app.ui.screen.flashcard
 
+import com.memowave.app.domain.model.Rating
+
 sealed interface FlashcardGameEvent {
     // Settings
     data class ChangeGameMode(val gameMode: FlashcardGameMode) : FlashcardGameEvent
@@ -12,15 +14,15 @@ sealed interface FlashcardGameEvent {
     // Game flow
     data object StartGame : FlashcardGameEvent
     data object FlipCard : FlashcardGameEvent
-    data object MarkCorrect : FlashcardGameEvent
-    data object MarkWrong : FlashcardGameEvent
+    data class MarkRating(val rating: Rating) : FlashcardGameEvent
     data class SelectAnswer(val index: Int) : FlashcardGameEvent
     data object AdvanceCard : FlashcardGameEvent
     data object DismissXpPopup : FlashcardGameEvent
 
     // Navigation
     data object RestartGame : FlashcardGameEvent
-    data object ToggleSettings : FlashcardGameEvent
+    data object ShowSettings : FlashcardGameEvent
+    data object DismissSettings : FlashcardGameEvent
     data object RequestExit : FlashcardGameEvent
     data object ConfirmExit : FlashcardGameEvent
     data object DismissExitDialog : FlashcardGameEvent

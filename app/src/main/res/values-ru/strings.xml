@@ -52,5 +52,16 @@
     <string name="notification_login_success">Вход выполнен успешно!</string>
     <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова</string>
     <string name="notification_registration_success">Регистрация выполнена успешно!</string>
+    <string name="flashcard_delta_stability">Стабильность</string>
+    <string name="flashcard_delta_difficulty">Сложность</string>
+    <string name="flashcard_delta_interval">Интервал</string>
+    <string name="flashcard_delta_due">След. повтор</string>
+    <string name="flashcard_delta_days_suffix">дн</string>
+    <string name="flashcard_delta_a11y_change">%1$s изменилось с %2$s на %3$s</string>
+    <string name="flashcard_delta_learning_badge">На изучении</string>
+    <string name="flashcard_rating_again">Забыл</string>
+    <string name="flashcard_rating_hard">Сложно</string>
+    <string name="flashcard_rating_good">Норм</string>
+    <string name="flashcard_rating_easy">Легко</string>
 </resources>
 
