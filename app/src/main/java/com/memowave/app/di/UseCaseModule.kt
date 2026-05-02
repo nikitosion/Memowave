@@ -1,6 +1,8 @@
 package com.memowave.app.di
 
 import com.memowave.app.core.auth.AuthStateManager
+import com.memowave.app.domain.algorithm.FSRSConfig
+import com.memowave.app.domain.algorithm.FSRS
 import com.memowave.app.domain.repository.AuthRepository
 import com.memowave.app.domain.usecase.auth.LoginUseCase
 import com.memowave.app.domain.usecase.auth.LogoutUseCase
@@ -16,6 +18,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
+
+    @Provides
+    @Singleton
+    fun provideFsrs(): FSRS = FSRS(
+        requestRetention = FSRSConfig.REQUEST_RETENTION,
+        params = FSRSConfig.DEFAULT_PARAMS
+    )
 
     @Provides
     @Singleton
