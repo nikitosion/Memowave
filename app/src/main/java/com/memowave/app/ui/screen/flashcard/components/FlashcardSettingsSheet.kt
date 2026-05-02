@@ -1,5 +1,6 @@
 package com.memowave.app.ui.screen.flashcard.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
@@ -22,8 +26,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.memowave.app.domain.model.Category
 import com.memowave.app.ui.common.notification.NotificationHost
 import com.memowave.app.ui.common.notification.NotificationManager
@@ -53,7 +59,7 @@ fun FlashcardSettingsSheet(
     onDismiss: () -> Unit,
     notificationManager: NotificationManager? = null
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -110,64 +116,43 @@ private fun FlashcardSettingsSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             text = "Настройки",
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.W600
+            fontWeight = FontWeight.W700,
+            textAlign = TextAlign.Center
         )
 
-        Column() {
-            Text(
-                text = "Выбор ответов",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.W500,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        SettingsSection(title = "Режим") {
             FlashcardGameModeSwitcher(
-                modifier = Modifier.padding(top = 8.dp),
                 onModeSelected = onGameModeChanged,
-                selectedMode = if (gameMode == FlashcardGameMode.NUMBERED) FlashcardGameMode.NUMBERED else FlashcardGameMode.BINARY,
+                selectedMode = if (gameMode == FlashcardGameMode.NUMBERED) FlashcardGameMode.NUMBERED else FlashcardGameMode.RECALL,
             )
         }
 
-        // Word count
-        Column {
-            Text(
-                text = "Количество слов",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.W500,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (gamePhase == FlashcardPhase.GAME) {
-                    val label = if (wordCount == 0) "Все" else wordCount.toString()
-                    FilterChip(
-                        selected = true,
-                        onClick = onWordCountLocked,
-                        label = {
-                            Text(
-                                text = label,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        },
-                        colors = mutedFilterChipColors()
-                    )
-                } else {
-                    WORD_COUNT_OPTIONS.forEach { count ->
-                        val label = if (count == 0) "Все" else count.toString()
+        SettingsSection(title = "Колода") {
+            // Word count
+            SettingsItemColumn(label = "Количество слов") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (gamePhase == FlashcardPhase.GAME) {
+                        val label = if (wordCount == 0) "Все" else wordCount.toString()
                         FilterChip(
-                            selected = wordCount == count,
-                            onClick = { onWordCountChanged(count) },
+                            selected = true,
+                            onClick = onWordCountLocked,
                             label = {
                                 Text(
                                     text = label,
@@ -176,67 +161,129 @@ private fun FlashcardSettingsSheetContent(
                             },
                             colors = mutedFilterChipColors()
                         )
+                    } else {
+                        WORD_COUNT_OPTIONS.forEach { count ->
+                            val label = if (count == 0) "Все" else count.toString()
+                            FilterChip(
+                                selected = wordCount == count,
+                                onClick = { onWordCountChanged(count) },
+                                label = {
+                                    Text(
+                                        text = label,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                },
+                                colors = mutedFilterChipColors()
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        // Category selector
-        Column {
-            Text(
-                text = "Набор слов",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.W500,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (gamePhase == FlashcardPhase.GAME) {
-                    val selectedCategory = categories.find { it.id == selectedCategoryId }
-                    FilterChip(
-                        selected = true,
-                        onClick = onCategoryLocked,
-                        label = { Text(selectedCategory?.name ?: "Все слова") },
-                        colors = mutedFilterChipColors()
-                    )
-                } else {
-                    FilterChip(
-                        selected = selectedCategoryId == null,
-                        onClick = { onCategorySelected(null) },
-                        label = { Text("Все слова") },
-                        colors = mutedFilterChipColors()
-                    )
-                    categories.forEach { category ->
+            SectionDivider()
+
+            // Category selector
+            SettingsItemColumn(label = "Набор слов") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (gamePhase == FlashcardPhase.GAME) {
+                        val selectedCategory = categories.find { it.id == selectedCategoryId }
                         FilterChip(
-                            selected = selectedCategoryId == category.id,
-                            onClick = { onCategorySelected(category.id) },
-                            label = { Text(category.name) },
+                            selected = true,
+                            onClick = onCategoryLocked,
+                            label = { Text(selectedCategory?.name ?: "Все слова") },
                             colors = mutedFilterChipColors()
                         )
+                    } else {
+                        FilterChip(
+                            selected = selectedCategoryId == null,
+                            onClick = { onCategorySelected(null) },
+                            label = { Text("Все слова") },
+                            colors = mutedFilterChipColors()
+                        )
+                        categories.forEach { category ->
+                            FilterChip(
+                                selected = selectedCategoryId == category.id,
+                                onClick = { onCategorySelected(category.id) },
+                                label = { Text(category.name) },
+                                colors = mutedFilterChipColors()
+                            )
+                        }
                     }
                 }
             }
         }
 
-        // Shuffle toggle
-        SettingsToggleRow(
-            label = "Перемешивать",
-            checked = isShuffled,
-            onCheckedChange = onShuffledChanged
-        )
-
-        // Translation first toggle
-        SettingsToggleRow(
-            label = "Показывать перевод первым",
-            checked = showTranslationFirst,
-            onCheckedChange = onShowTranslationFirstChanged
-        )
+        SettingsSection(title = "Дополнительно") {
+            SettingsToggleRow(
+                label = "Перемешивать",
+                checked = isShuffled,
+                onCheckedChange = onShuffledChanged
+            )
+            SectionDivider()
+            SettingsToggleRow(
+                label = "Показывать перевод первым",
+                checked = showTranslationFirst,
+                onCheckedChange = onShowTranslationFirstChanged
+            )
+        }
     }
+}
+
+@Composable
+private fun SettingsSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = title.uppercase(),
+            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.2.sp),
+            fontWeight = FontWeight.W700,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+private fun SettingsItemColumn(
+    label: String,
+    content: @Composable () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.W500,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        content()
+    }
+}
+
+@Composable
+private fun SectionDivider() {
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+    )
 }
 
 @Composable
@@ -251,10 +298,11 @@ private fun SettingsToggleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.padding(end = 12.dp),
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.W500,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurface
         )
         Switch(
             checked = checked,
@@ -288,7 +336,7 @@ private fun FlashcardSettingsSheetContentPreview() {
         FlashcardSettingsSheetContent(
             wordCount = 10,
             isShuffled = true,
-            gameMode = FlashcardGameMode.BINARY,
+            gameMode = FlashcardGameMode.RECALL,
             gamePhase = FlashcardPhase.GAME,
             showTranslationFirst = false,
             selectedCategoryId = 1L,
