@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,21 +22,30 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.memowave.app.AppViewModel
+import com.memowave.app.core.media.ImageUrlResolver
 import com.memowave.app.ui.common.BottomNavigationBar
 import com.memowave.app.ui.common.MemowaveTopBar
+import com.memowave.app.ui.common.media.LocalImageUrlResolver
 import com.memowave.app.ui.common.notification.NotificationHost
 import com.memowave.app.ui.navigation.NavGraph
 import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.theme.MemowaveTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var imageUrlResolver: ImageUrlResolver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Memowave()
+            CompositionLocalProvider(LocalImageUrlResolver provides imageUrlResolver) {
+                Memowave()
+            }
         }
     }
 }
