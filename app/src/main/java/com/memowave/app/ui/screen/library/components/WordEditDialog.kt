@@ -1,5 +1,6 @@
 package com.memowave.app.ui.screen.library.components
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.memowave.app.domain.model.Category
 import com.memowave.app.domain.model.Word
+import com.memowave.app.ui.common.media.ImagePickerField
 import kotlin.collections.forEach
 
 @Composable
@@ -33,16 +35,27 @@ fun WordEditDialog(
     categories: List<Category>,
     initialWord: Word?,
     onDismiss: () -> Unit,
-    onSave: (String, String, Long?, List<String>, String?) -> Unit
+    onSave: (String, String, Long?, List<String>, String?, String?) -> Unit,
+    onUploadImage: suspend (Uri) -> Result<String>,
+    onDiscardImage: (String) -> Unit
 ) {
     var original by remember { mutableStateOf(initialWord?.original.orEmpty()) }
     var translation by remember { mutableStateOf(initialWord?.translation.orEmpty()) }
-    var example by remember { mutableStateOf(initialWord?.examples[0].orEmpty()) }
+    var example by remember { mutableStateOf(initialWord?.examples?.firstOrNull().orEmpty()) }
     var note by remember { mutableStateOf(initialWord?.note.orEmpty()) }
     var selectedCategoryId by remember { mutableStateOf(initialWord?.categoryId) }
+    var imageFileName by remember { mutableStateOf(initialWord?.imageUrl) }
+
+    val initialImage = initialWord?.imageUrl
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            // If user picked a new image but never pressed Save, drop it from the server.
+            if (imageFileName != null && imageFileName != initialImage) {
+                onDiscardImage(imageFileName!!)
+            }
+            onDismiss()
+        },
         title = {
             Text(
                 text = if (initialWord == null) "Новое слово" else "Редактировать слово",
@@ -51,6 +64,21 @@ fun WordEditDialog(
         },
         text = {
             Column {
+                ImagePickerField(
+                    currentFileName = imageFileName,
+                    onUpload = onUploadImage,
+                    onFileNameChange = { newFileName ->
+                        val previous = imageFileName
+                        imageFileName = newFileName
+                        if (previous != null && previous != newFileName && previous != initialImage) {
+                            onDiscardImage(previous)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+
                 OutlinedTextField(
                     value = original,
                     onValueChange = { original = it },
@@ -145,7 +173,8 @@ fun WordEditDialog(
                         translation,
                         selectedCategoryId,
                         listOf(example),
-                        note.ifBlank { null }
+                        note.ifBlank { null },
+                        imageFileName
                     )
                 }
             ) {
@@ -153,7 +182,12 @@ fun WordEditDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = {
+                if (imageFileName != null && imageFileName != initialImage) {
+                    onDiscardImage(imageFileName!!)
+                }
+                onDismiss()
+            }) {
                 Text("Отмена")
             }
         }

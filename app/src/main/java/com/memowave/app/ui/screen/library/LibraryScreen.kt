@@ -65,7 +65,9 @@ fun LibraryRoute(
 
     LibraryScreen(
         state = uiState,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onUploadImage = viewModel::uploadPickedImage,
+        onDiscardImage = viewModel::discardPendingImage
     )
 }
 
@@ -79,6 +81,8 @@ private enum class LibraryTab {
 fun LibraryScreen(
     state: LibraryUiState,
     onEvent: (LibraryEvent) -> Unit,
+    onUploadImage: suspend (android.net.Uri) -> Result<String> = { Result.failure(NotImplementedError()) },
+    onDiscardImage: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableStateOf(LibraryTab.WORDS) }
@@ -227,17 +231,20 @@ fun LibraryScreen(
             categories = state.categories,
             initialWord = state.editingWord,
             onDismiss = { onEvent(LibraryEvent.DismissWordDialog) },
-            onSave = { original, translation, categoryId, examples, note ->
+            onSave = { original, translation, categoryId, examples, note, imageFileName ->
                 onEvent(
                     LibraryEvent.SaveWord(
                         original = original,
                         translation = translation,
                         categoryId = categoryId,
                         examples = examples,
-                        note = note
+                        note = note,
+                        imageFileName = imageFileName
                     )
                 )
-            }
+            },
+            onUploadImage = onUploadImage,
+            onDiscardImage = onDiscardImage
         )
     }
 
