@@ -8,12 +8,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,9 +26,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,7 +41,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.memowave.app.domain.model.Word
+import com.memowave.app.ui.common.media.LocalImageUrlResolver
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -91,7 +100,8 @@ fun FlashcardCard(
                     word = word,
                     displayText = frontText,
                     label = frontLabel,
-                    showTranslationFirst = showTranslationFirst
+                    showTranslationFirst = showTranslationFirst,
+                    imageFileName = word.imageUrl
                 )
             } else {
                 // Back side (mirrored due to rotation)
@@ -104,7 +114,8 @@ fun FlashcardCard(
                     CardBackContent(
                         displayText = backText,
                         label = backLabel,
-                        translatedWord = frontText
+                        translatedWord = frontText,
+                        imageFileName = word.imageUrl
                     )
                 }
             }
@@ -117,7 +128,8 @@ private fun CardFrontContent(
     word: Word,
     displayText: String,
     label: String,
-    showTranslationFirst: Boolean
+    showTranslationFirst: Boolean,
+    imageFileName: String?
 ) {
     Column(
         modifier = Modifier
@@ -127,6 +139,8 @@ private fun CardFrontContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        FlashcardImage(imageFileName)
+
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
@@ -134,7 +148,7 @@ private fun CardFrontContent(
         )
 
         Text(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 4.dp),
             text = displayText,
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.W600,
@@ -170,7 +184,7 @@ private fun CardFrontContent(
             }
 
             Text(
-                modifier = Modifier.padding(top = 24.dp),
+                modifier = Modifier.padding(top = 12.dp),
                 text = annotatedExample,
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
@@ -179,7 +193,7 @@ private fun CardFrontContent(
         }
 
         Text(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 16.dp),
             text = "Нажмите, чтобы перевернуть",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
@@ -191,7 +205,8 @@ private fun CardFrontContent(
 private fun CardBackContent(
     displayText: String,
     label: String,
-    translatedWord: String
+    translatedWord: String,
+    imageFileName: String?
 ) {
     Column(
         modifier = Modifier
@@ -200,6 +215,8 @@ private fun CardBackContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        FlashcardImage(imageFileName)
+
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
@@ -207,7 +224,7 @@ private fun CardBackContent(
         )
 
         Text(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 4.dp),
             text = displayText,
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.W600,
@@ -216,13 +233,37 @@ private fun CardBackContent(
         )
 
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 8.dp),
             text = translatedWord,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.outline
         )
     }
+}
+
+@Composable
+private fun FlashcardImage(fileName: String?) {
+    if (fileName.isNullOrBlank()) return
+    val resolver = LocalImageUrlResolver.current
+    val context = LocalContext.current
+    Box(
+        modifier = Modifier
+            .size(160.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(resolver.resolve(fileName))
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+    Spacer(modifier = Modifier.size(12.dp))
 }
 
 private val previewWord = Word(
