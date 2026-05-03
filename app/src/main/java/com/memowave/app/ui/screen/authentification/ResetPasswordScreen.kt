@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,6 +35,7 @@ import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextFie
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.screen.authentification.components.PasswordRule
 import com.memowave.app.ui.screen.authentification.components.ui_state.PasswordValidationState
+import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
 /**
@@ -150,52 +152,54 @@ fun ResetPasswordScreenContent(
  * Observes state from the ViewModel and passes it to the stateless content.
  * Handles navigation to the login screen after success.
  *
- * @param viewModel AuthViewModel instance
+ * @param viewModel ResetPasswordViewModel instance
  * @param navController NavController for navigation
  */
 @Composable
 fun ResetPasswordScreen(
-    viewModel: AuthViewModel,
+    viewModel: ResetPasswordViewModel,
     navController: NavController
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-    val isResetPasswordButtonEnabled = viewModel.isResetPasswordButtonEnabled.collectAsState().value
+    val uiState by viewModel.uiState.collectAsState()
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsState()
 
-    LaunchedEffect(uiState.isResetPasswordSuccess) {
-        if (uiState.isResetPasswordSuccess) {
-            navController.navigate("login") {
-                popUpTo(Screen.Login.route) { inclusive = true }
-                launchSingleTop = true
+    LaunchedEffect(Unit) {
+        viewModel.navEvents.collect { event ->
+            if (event is AuthNavEvent.BackToLogin) {
+                navController.navigate("login") {
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
     }
 
-    val passwordError = if (!uiState.forgotPasswordForm.newPassword.isEmpty() && !uiState.forgotPasswordForm.passwordValidationState.isAllValid) stringResource(R.string.password_not_valid) else null
+    val passwordError = if (
+        uiState.form.newPassword.isNotEmpty() &&
+        !uiState.form.passwordValidationState.isAllValid
+    ) stringResource(R.string.password_not_valid) else null
 
     ResetPasswordScreenContent(
-        newPassword = uiState.forgotPasswordForm.newPassword,
+        newPassword = uiState.form.newPassword,
         newPasswordError = passwordError,
-        passwordValidationState = uiState.forgotPasswordForm.passwordValidationState,
-        repeatedNewPassword = uiState.forgotPasswordForm.repeatedNewPassword,
-        repeatedNewPasswordError = uiState.forgotPasswordForm.repeatedNewPasswordError,
+        passwordValidationState = uiState.form.passwordValidationState,
+        repeatedNewPassword = uiState.form.repeatedNewPassword,
+        repeatedNewPasswordError = uiState.form.repeatedNewPasswordError,
         isLoading = uiState.isLoading,
-        isButtonEnabled = isResetPasswordButtonEnabled,
-        onNewPasswordChange = viewModel::onResetPasswordNewPasswordChanged,
-        onRepeatedNewPasswordChange = viewModel::onResetPasswordRepeatedNewPasswordChanged,
-        onResetClick = viewModel::onResetPasswordClick,
+        isButtonEnabled = isButtonEnabled,
+        onNewPasswordChange = viewModel::onNewPasswordChanged,
+        onRepeatedNewPasswordChange = viewModel::onRepeatedNewPasswordChanged,
+        onResetClick = viewModel::onResetClick,
         onBackClick = { navController.popBackStack() }
     )
 }
 
 /**
  * Navigation wrapper for the Reset Password screen.
- *
- * @param authViewModel AuthViewModel instance
- * @param navController NavController for navigation
  */
 @Composable
-fun ResetPasswordRoute(authViewModel: AuthViewModel, navController: NavController) {
-    ResetPasswordScreen(viewModel = authViewModel, navController = navController)
+fun ResetPasswordRoute(viewModel: ResetPasswordViewModel, navController: NavController) {
+    ResetPasswordScreen(viewModel = viewModel, navController = navController)
 }
 
 /**

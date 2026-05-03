@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +37,7 @@ import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextFie
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.screen.authentification.components.OAuthButtons
 import com.memowave.app.ui.screen.authentification.components.PasswordRule
+import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
 /**
@@ -194,41 +196,48 @@ fun SignUpScreenContent(
  * Observes state from the ViewModel and passes it to the stateless content.
  * Handles navigation to the login screen and back.
  *
- * @param viewModel AuthViewModel instance
+ * @param viewModel SignUpViewModel instance
  * @param navController NavController for navigation
  */
 @Composable
 fun SignUpScreen(
-    viewModel: AuthViewModel,
+    viewModel: SignUpViewModel,
     navController: NavController
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-    val isSignUpButtonEnabled = viewModel.isSignUpButtonEnabled.collectAsState().value
+    val uiState by viewModel.uiState.collectAsState()
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsState()
 
-    LaunchedEffect(uiState.isContinuedSignUp) {
-        if (uiState.isContinuedSignUp) {
-            navController.navigate("login") {
-                popUpTo("login") { inclusive = true }
-                launchSingleTop = true
+    LaunchedEffect(Unit) {
+        viewModel.navEvents.collect { event ->
+            if (event is AuthNavEvent.BackToLogin) {
+                navController.navigate("login") {
+                    popUpTo("login") { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
     }
 
+    val passwordError = if (
+        uiState.form.password.isNotEmpty() &&
+        !uiState.form.passwordValidationState.isAllValid
+    ) stringResource(R.string.password_not_valid) else null
+
     SignUpScreenContent(
-        username = uiState.signUpFormState.username,
-        usernameError = uiState.signUpFormState.nameError,
-        email = uiState.signUpFormState.email,
-        emailError = uiState.signUpFormState.emailError,
-        password = uiState.signUpFormState.password,
-                passwordError = if (uiState.signUpFormState.password.isNotEmpty() && !uiState.signUpFormState.passwordValidationState.isAllValid) "Пароль не соответствует требованиям" else null,
-        passwordValidationState = uiState.signUpFormState.passwordValidationState,
-        repeatedPassword = uiState.signUpFormState.repeatedPassword,
-        repeatedPasswordError = uiState.signUpFormState.repeatedPasswordError,
+        username = uiState.form.username,
+        usernameError = uiState.form.nameError,
+        email = uiState.form.email,
+        emailError = uiState.form.emailError,
+        password = uiState.form.password,
+        passwordError = passwordError,
+        passwordValidationState = uiState.form.passwordValidationState,
+        repeatedPassword = uiState.form.repeatedPassword,
+        repeatedPasswordError = uiState.form.repeatedPasswordError,
         isLoading = uiState.isLoading,
-        isButtonEnabled = isSignUpButtonEnabled,
+        isButtonEnabled = isButtonEnabled,
         onUsernameChange = viewModel::onNameChanged,
-        onEmailChange = viewModel::onSignUpEmailChanged,
-        onPasswordChange = viewModel::onSignUpPasswordChanged,
+        onEmailChange = viewModel::onEmailChanged,
+        onPasswordChange = viewModel::onPasswordChanged,
         onRepeatedPasswordChange = viewModel::onRepeatedPasswordChanged,
         onSignUpClick = viewModel::onSignUpClick,
         onLoginClick = {
@@ -242,13 +251,10 @@ fun SignUpScreen(
 
 /**
  * Navigation wrapper for the Sign Up screen.
- *
- * @param authViewModel AuthViewModel instance
- * @param navController NavController for navigation
  */
 @Composable
-fun SignUpRoute(authViewModel: AuthViewModel, navController: NavController) {
-    SignUpScreen(viewModel = authViewModel, navController = navController)
+fun SignUpRoute(viewModel: SignUpViewModel, navController: NavController) {
+    SignUpScreen(viewModel = viewModel, navController = navController)
 }
 
 /**

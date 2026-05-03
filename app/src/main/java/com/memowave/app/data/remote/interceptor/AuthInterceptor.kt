@@ -1,18 +1,22 @@
 package com.memowave.app.data.remote.interceptor
 
+import com.memowave.app.core.auth.AuthState
 import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.data.local.TokenManager
+import com.memowave.app.di.ApplicationScope
 import jakarta.inject.Inject
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager,
-    private val authStateManager: AuthStateManager
+    private val authStateManager: AuthStateManager,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = tokenManager.getTokenSync()
+        val token = tokenManager.cachedToken.value
         val request = chain.request().newBuilder()
 
         if (!token.isNullOrEmpty()) {
@@ -21,10 +25,9 @@ class AuthInterceptor @Inject constructor(
 
         val response = chain.proceed(request.build())
 
-        // TODO: Delete 403 once backend is fixed to return 401 for unauthorized requests
-        if (response.code == 401 || response.code == 403) {
-            runBlocking { tokenManager.clear() }
-            authStateManager.setUnauthenticated()
+        if (response.code == 401) {
+            appScope.launch { tokenManager.clear() }
+            authStateManager.setUnauthenticated(AuthState.Unauthenticated.Reason.SessionExpired)
         }
 
         return response

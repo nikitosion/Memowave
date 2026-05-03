@@ -8,6 +8,7 @@ import com.memowave.app.data.remote.dto.user.UserLoginReqDto
 import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -52,11 +53,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun checkTokenExist(): Result<Boolean> {
         return try {
-            val token = tokenManager.getTokenSync()
-            if (token.isNullOrEmpty()) {
-                return Result.success(false)
-            }
-            Result.success(true)
+            val token = tokenManager.token.first()
+            Result.success(!token.isNullOrEmpty())
         } catch (e: Exception) {
             Result.failure(e)
         }

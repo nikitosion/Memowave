@@ -5,6 +5,7 @@ import com.memowave.app.domain.validator.PasswordValidator
 import com.memowave.app.domain.validator.UsernameValidator
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.LoginFormState
+import com.memowave.app.ui.screen.authentification.components.ui_state.ResetPasswordFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
 import javax.inject.Inject
 
@@ -139,14 +140,11 @@ class AuthFormValidator @Inject constructor(
 
     /**
      * Validates new password in the reset password form.
-     * @param currentState Current forgot password form state
-     * @param newPassword New password value
-     * @return Updated forgot password form state
      */
     fun validateResetNewPassword(
-        currentState: ForgotPasswordFormState,
+        currentState: ResetPasswordFormState,
         newPassword: String
-    ): ForgotPasswordFormState {
+    ): ResetPasswordFormState {
         val passwordResult = passwordValidator.validate(newPassword)
         return currentState.copy(
             newPassword = newPassword,
@@ -157,14 +155,11 @@ class AuthFormValidator @Inject constructor(
 
     /**
      * Validates repeated new password in the reset password form.
-     * @param currentState Current forgot password form state
-     * @param newRepeatedPassword New repeated password value
-     * @return Updated forgot password form state
      */
     fun validateResetRepeatedPassword(
-        currentState: ForgotPasswordFormState,
+        currentState: ResetPasswordFormState,
         newRepeatedPassword: String
-    ): ForgotPasswordFormState {
+    ): ResetPasswordFormState {
         val result = passwordValidator.validateMatch(currentState.newPassword, newRepeatedPassword)
         return currentState.copy(
             repeatedNewPassword = newRepeatedPassword,

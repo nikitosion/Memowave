@@ -37,6 +37,7 @@ import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextFie
 import com.memowave.app.ui.screen.authentification.components.DividersWithTextInMiddle
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.screen.authentification.components.OAuthButtons
+import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
 /**
@@ -168,38 +169,34 @@ fun LoginScreenContent(
 
 /**
  * Entry point for the Login screen with ViewModel and navigation.
- *
- * Observes state from the ViewModel and passes it to the stateless content.
- * Handles navigation to the main page and other screens.
- *
- * @param viewModel AuthViewModel instance
- * @param navController NavController for navigation
  */
 @Composable
 fun LoginScreen(
-    viewModel: AuthViewModel,
+    viewModel: LoginViewModel,
     navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val isButtonEnabled by viewModel.isLoginButtonEnabled.collectAsState()
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsState()
 
-    LaunchedEffect(uiState.isLoginSuccess) {
-        if (uiState.isLoginSuccess) {
-            navController.navigate("main_page") {
-                popUpTo("login") { inclusive = true }
+    LaunchedEffect(Unit) {
+        viewModel.navEvents.collect { event ->
+            if (event is AuthNavEvent.ToMain) {
+                navController.navigate("main_page") {
+                    popUpTo("login") { inclusive = true }
+                }
             }
         }
     }
 
     LoginScreenContent(
-        email = uiState.loginFormState.email,
-        emailError = uiState.loginFormState.emailError,
-        password = uiState.loginFormState.password,
-        passwordError = uiState.loginFormState.passwordError,
+        email = uiState.form.email,
+        emailError = uiState.form.emailError,
+        password = uiState.form.password,
+        passwordError = uiState.form.passwordError,
         isLoading = uiState.isLoading,
         isButtonEnabled = isButtonEnabled,
-        onEmailChange = viewModel::onLoginEmailChanged,
-        onPasswordChange = viewModel::onLoginPasswordChanged,
+        onEmailChange = viewModel::onEmailChanged,
+        onPasswordChange = viewModel::onPasswordChanged,
         onLoginClick = viewModel::onLoginClick,
         onForgotPasswordClick = { navController.navigate("forgot_password") },
         onSignUpClick = { navController.navigate("sign_up") }
@@ -208,17 +205,13 @@ fun LoginScreen(
 
 /**
  * Navigation wrapper for the Login screen.
- *
- * @param authViewModel AuthViewModel instance
- * @param navController NavController for navigation
- * @param appViewModel AppViewModel для управления уведомлениями
  */
 @Composable
 fun LoginRoute(
-    authViewModel: AuthViewModel,
+    viewModel: LoginViewModel,
     navController: NavController
 ) {
-    LoginScreen(viewModel = authViewModel, navController = navController)
+    LoginScreen(viewModel = viewModel, navController = navController)
 }
 
 /**

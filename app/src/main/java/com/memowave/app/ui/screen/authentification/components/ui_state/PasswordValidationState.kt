@@ -5,7 +5,6 @@ package com.memowave.app.ui.screen.authentification.components.ui_state
  *
  * Each property indicates if a specific rule is satisfied.
  * [isAllValid] is true if all rules are satisfied.
- * @see AuthUiState
  */
 data class PasswordValidationState(
     val hasMinLength: Boolean? = null,

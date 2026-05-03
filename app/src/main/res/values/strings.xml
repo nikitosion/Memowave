@@ -50,6 +50,21 @@
     <string name="nav_bar_games">Games</string>
     <string name="nav_bar_profile">Profile</string>
     <string name="notification_login_success">С возвращением!</string>
-    <string name="notification_session_expired">Session expired. Please sign in again</string>
-    <string name="notification_registration_success">Successfully signed up!</string>
+    <string name="notification_logout_success">Вы вышли из аккаунта</string>
+    <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова.</string>
+    <string name="notification_registration_success">Регистрация прошла успешно! Войдите в систему.</string>
+
+    <!-- Auth: failure / error messages -->
+    <string name="auth_error_invalid_credentials">Неверный email или пароль</string>
+    <string name="auth_error_login_failed">Ошибка при входе</string>
+    <string name="auth_error_signup_failed_generic">Что-то пошло не так при регистрации</string>
+    <string name="auth_error_signup_failed">Ошибка при регистрации</string>
+    <string name="auth_error_user_not_found">Пользователь не найден</string>
+    <string name="auth_error_invalid_email">Некорректный email</string>
+    <string name="auth_error_get_user_failed">Ошибка при поиске пользователя</string>
+    <string name="auth_error_reset_password_generic">Что-то пошло не так при сбросе пароля</string>
+    <string name="auth_error_reset_password_failed">Ошибка при сбросе пароля</string>
+
+    <!-- Auth: success messages -->
+    <string name="auth_success_password_reset">Пароль успешно изменён</string>
 </resources>

@@ -10,22 +10,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.memowave.app.AppViewModel
 import com.memowave.app.R
 import com.memowave.app.core.auth.AuthState
-import com.memowave.app.ui.screen.authentification.AuthViewModel
 import com.memowave.app.ui.screen.authentification.ForgotPasswordRoute
+import com.memowave.app.ui.screen.authentification.ForgotPasswordViewModel
 import com.memowave.app.ui.screen.authentification.LoginRoute
+import com.memowave.app.ui.screen.authentification.LoginViewModel
 import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
+import com.memowave.app.ui.screen.authentification.ResetPasswordViewModel
 import com.memowave.app.ui.screen.authentification.SignUpRoute
+import com.memowave.app.ui.screen.authentification.SignUpViewModel
 import com.memowave.app.ui.screen.library.LibraryRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
 import com.memowave.app.ui.screen.profile.ProfileViewModel
 import com.memowave.app.ui.screen.flashcard.FlashcardRoute
 import com.memowave.app.ui.screen.settings.AppSettingsRoute
+import com.memowave.app.ui.screen.splash.SplashRoute
+import com.memowave.app.ui.screen.splash.SplashViewModel
 
 sealed class Screen(
     val route: String,
@@ -62,16 +69,24 @@ sealed class Screen(
         showInAppBar = true
     )
 
+    object Splash : Screen(route = "splash")
     object Login : Screen(route = "login")
     object ForgotPassword : Screen(route = "forgot_password")
     object SignUp : Screen(route = "sign_up")
-    object ResetPassword : Screen(route = "reset_password")
+
+    /**
+     * Reset-password destination. The `userId` is passed as a path arg from
+     * [ForgotPassword] via [com.memowave.app.ui.screen.authentification.helper.AuthNavEvent.ToResetPassword].
+     */
+    object ResetPassword : Screen(route = "reset_password/{userId}") {
+        const val USER_ID_ARG = "userId"
+    }
     object AppSettings : Screen(route = "app_settings")
     object Flashcard : Screen(route = "flashcard", hasCustomTopBar = true)
 
     companion object {
         val allScreens =
-            listOf(MainPage, Library, Games, Profile, Login, ForgotPassword, SignUp, ResetPassword, Flashcard)
+            listOf(MainPage, Library, Games, Profile, Splash, Login, ForgotPassword, SignUp, ResetPassword, Flashcard)
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
 }
@@ -82,23 +97,26 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
 
     val sessionExpiredMessage = stringResource(R.string.notification_session_expired)
     val loginSuccessMessage = stringResource(R.string.notification_login_success)
+    val logoutSuccessMessage = stringResource(R.string.notification_logout_success)
 
     var isFirstLaunch by remember { mutableStateOf(true) }
 
-    // Handle authentication state changes and navigate accordingly
+    // Handle authentication state changes and navigate accordingly.
+    // The first emission is skipped — Splash drives bootstrap navigation directly.
     LaunchedEffect(authState) {
         if (isFirstLaunch) {
-            // Skip handling on the first launch to avoid unwanted navigation
             isFirstLaunch = false
             return@LaunchedEffect
         }
 
-        when (authState) {
+        when (val state = authState) {
             is AuthState.Unauthenticated -> {
-                if (appViewModel.authStateManager.isManualLogout) {
-                    appViewModel.notificationManager.showError(
-                        sessionExpiredMessage
-                    )
+                when (state.reason) {
+                    AuthState.Unauthenticated.Reason.SessionExpired ->
+                        appViewModel.notificationManager.showError(sessionExpiredMessage)
+                    AuthState.Unauthenticated.Reason.ManualLogout ->
+                        appViewModel.notificationManager.showSuccess(logoutSuccessMessage)
+                    AuthState.Unauthenticated.Reason.Initial -> { /* silent */ }
                 }
 
                 navController.navigate(Screen.Login.route) {
@@ -108,14 +126,16 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             }
 
             is AuthState.Authenticated -> {
-                appViewModel.notificationManager.showSuccess(
-                    loginSuccessMessage
-                )
+                appViewModel.notificationManager.showSuccess(loginSuccessMessage)
             }
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+        composable(Screen.Splash.route) {
+            val viewModel = hiltViewModel<SplashViewModel>()
+            SplashRoute(viewModel = viewModel, navController = navController)
+        }
         composable(Screen.MainPage.route) {
             MainPageRoute(appViewModel, navController)
         }
@@ -141,29 +161,28 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
         }
 
         composable(Screen.Login.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
-            LoginRoute(
-                authViewModel = authViewModel,
-                navController = navController
-            )
+            val viewModel = hiltViewModel<LoginViewModel>()
+            LoginRoute(viewModel = viewModel, navController = navController)
         }
 
         composable(Screen.ForgotPassword.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
-            authViewModel.resetForgotPasswordState()
-            ForgotPasswordRoute(authViewModel = authViewModel, navController = navController)
+            val viewModel = hiltViewModel<ForgotPasswordViewModel>()
+            ForgotPasswordRoute(viewModel = viewModel, navController = navController)
         }
 
         composable(Screen.SignUp.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
-            authViewModel.resetSignUpState()
-            SignUpRoute(authViewModel = authViewModel, navController = navController)
+            val viewModel = hiltViewModel<SignUpViewModel>()
+            SignUpRoute(viewModel = viewModel, navController = navController)
         }
 
-        composable(Screen.ResetPassword.route) {
-            val authViewModel = hiltViewModel<AuthViewModel>()
-            authViewModel.resetResetPasswordState()
-            ResetPasswordRoute(authViewModel = authViewModel, navController = navController)
+        composable(
+            route = Screen.ResetPassword.route,
+            arguments = listOf(
+                navArgument(Screen.ResetPassword.USER_ID_ARG) { type = NavType.LongType }
+            )
+        ) {
+            val viewModel = hiltViewModel<ResetPasswordViewModel>()
+            ResetPasswordRoute(viewModel = viewModel, navController = navController)
         }
     }
 }

@@ -32,6 +32,7 @@ import com.memowave.app.R
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
 import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
+import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
 /**
@@ -114,43 +115,42 @@ fun ForgotPasswordScreenContent(
  * Observes state from the ViewModel and passes it to the stateless content.
  * Handles navigation to the reset password screen.
  *
- * @param viewModel AuthViewModel instance
+ * @param viewModel ForgotPasswordViewModel instance
  * @param navController NavController for navigation
  */
 @Composable
 fun ForgotPasswordScreen(
-    viewModel: AuthViewModel,
+    viewModel: ForgotPasswordViewModel,
     navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val isForgetButtonEnabled by viewModel.isForgotPasswordButtonEnabled.collectAsState()
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsState()
 
-    LaunchedEffect(uiState.isContinuedResetPassword) {
-        if (uiState.isContinuedResetPassword) {
-            navController.navigate("reset_password")
+    LaunchedEffect(Unit) {
+        viewModel.navEvents.collect { event ->
+            if (event is AuthNavEvent.ToResetPassword) {
+                navController.navigate("reset_password/${event.userId}")
+            }
         }
     }
 
     ForgotPasswordScreenContent(
-        email = uiState.forgotPasswordForm.email,
-        emailError = uiState.forgotPasswordForm.emailError,
+        email = uiState.form.email,
+        emailError = uiState.form.emailError,
         isLoading = uiState.isLoading,
-        isButtonEnabled = isForgetButtonEnabled,
-        onEmailChange = viewModel::onForgotPasswordEmailChanged,
-        onContinueClick = viewModel::onForgotPasswordClick,
+        isButtonEnabled = isButtonEnabled,
+        onEmailChange = viewModel::onEmailChanged,
+        onContinueClick = viewModel::onContinueClick,
         onBackClick = { navController.popBackStack() }
     )
 }
 
 /**
  * Navigation wrapper for the Forgot Password screen.
- *
- * @param authViewModel AuthViewModel instance
- * @param navController NavController for navigation
  */
 @Composable
-fun ForgotPasswordRoute(authViewModel: AuthViewModel, navController: NavController) {
-    ForgotPasswordScreen(viewModel = authViewModel, navController = navController)
+fun ForgotPasswordRoute(viewModel: ForgotPasswordViewModel, navController: NavController) {
+    ForgotPasswordScreen(viewModel = viewModel, navController = navController)
 }
 
 /**
