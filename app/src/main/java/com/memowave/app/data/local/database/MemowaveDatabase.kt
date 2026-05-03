@@ -19,7 +19,7 @@ import com.memowave.app.data.local.entity.WordEntity
         CategoryEntity::class,
         SyncQueueEntity::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class MemowaveDatabase : RoomDatabase() {

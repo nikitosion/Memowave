@@ -37,7 +37,7 @@ class WordMapper {
             text = entity.original,
             translate = entity.translation,
             example = entity.example.firstOrNull() ?: "",
-            imageUrl = null,
+            imageUrl = entity.imageUrl,
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now()
         )
@@ -51,6 +51,7 @@ class WordMapper {
             translation = dto.translate,
             categoryId = dto.categoryId,
             example = listOf(dto.example),
+            imageUrl = dto.imageUrl,
             isSynced = true,
             createdAt = System.currentTimeMillis(),
             updatedAt = System.currentTimeMillis()
@@ -64,6 +65,7 @@ class WordMapper {
             translation = domain.translation,
             categoryId = domain.categoryId,
             example = domain.examples,
+            imageUrl = domain.imageUrl,
             note = domain.note,
             isFavorite = domain.isFavorite,
             isSynced = domain.isSynced,
@@ -79,6 +81,7 @@ class WordMapper {
             translation = entity.translation,
             categoryId = entity.categoryId,
             examples = entity.example,
+            imageUrl = entity.imageUrl,
             note = entity.note,
             isSynced = entity.isSynced,
             isFavorite = entity.isFavorite,
