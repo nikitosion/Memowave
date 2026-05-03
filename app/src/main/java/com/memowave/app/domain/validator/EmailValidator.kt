@@ -1,11 +1,14 @@
 package com.memowave.app.domain.validator
 
+import android.util.Patterns
 import javax.inject.Inject
 
 /**
- * Validates email addresses using Android's Patterns utility.
+ * Validates email addresses using Android's [Patterns.EMAIL_ADDRESS].
  *
- * Provides a single method to check if an email is non-empty and matches the standard email format.
+ * Catches the vast majority of typos (missing `@`, missing TLD, spaces, Cyrillic chars).
+ * Does NOT verify the address actually exists — that's the server's job after sending
+ * a verification email.
  */
 class EmailValidator @Inject constructor() {
 
@@ -15,14 +18,10 @@ class EmailValidator @Inject constructor() {
      * @param email The email string to validate.
      * @return [ValidationResult] indicating if the email is valid or the error reason.
      */
-    fun validate(email: String): ValidationResult {
-        return ValidationResult.Valid
-        // TODO: Uncomment the code below to enable email validation
-        /*return when {
-            email.isEmpty() -> ValidationResult.Invalid("Email не может быть пустым")
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
-                ValidationResult.Invalid("Некорректный формат email")
-            else -> ValidationResult.Valid
-        }*/
+    fun validate(email: String): ValidationResult = when {
+        email.isEmpty() -> ValidationResult.Invalid("Email не может быть пустым")
+        !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
+            ValidationResult.Invalid("Некорректный формат email")
+        else -> ValidationResult.Valid
     }
 }
