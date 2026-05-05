@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,13 +40,15 @@ import com.memowave.app.R
 import com.memowave.app.ui.common.MemowaveTopBar
 import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.screen.flashcard.components.AnimatedPlayButton
-import com.memowave.app.ui.screen.flashcard.components.FlashcardActionButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardCard
 import com.memowave.app.ui.screen.flashcard.components.FlashcardNumberedAnswerButtons
+import com.memowave.app.ui.screen.flashcard.components.FlashcardRatingButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardSettingsSheet
 import com.memowave.app.ui.screen.flashcard.components.FlashcardSummaryContent
 import com.memowave.app.ui.screen.flashcard.components.FlashcardTopBar
+import com.memowave.app.ui.screen.flashcard.components.WordProgressDeltaBlocks
 import com.memowave.app.ui.screen.flashcard.components.XpPopup
+import androidx.compose.ui.zIndex
 import com.memowave.app.domain.model.Word
 import com.memowave.app.ui.theme.MemowaveTheme
 
@@ -83,6 +84,11 @@ fun FlashcardRoute(
                 "Набор слов нельзя менять — начните игру заново"
             )
         },
+        onFlippedBinaryCardClick = {
+            appViewModel.notificationManager.showInfo(
+                "Вы уже перевернули карточку. Теперь укажите, правильно ли вы вспомнили перевод."
+            )
+        },
         notificationManager = appViewModel.notificationManager
     )
 }
@@ -94,13 +100,14 @@ private fun FlashcardScreen(
     onNavigateBack: () -> Unit,
     onWordCountLocked: () -> Unit,
     onCategoryLocked: () -> Unit,
+    onFlippedBinaryCardClick: () -> Unit = {},
     notificationManager: NotificationManager? = null
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (state.phase) {
             FlashcardPhase.LOBBY -> FlashcardLobbyContent(
                 onStartGame = { onEvent(FlashcardGameEvent.StartGame) },
-                onSettingsClick = { onEvent(FlashcardGameEvent.ToggleSettings) },
+                onSettingsClick = { onEvent(FlashcardGameEvent.ShowSettings) },
                 onBackClick = onNavigateBack,
                 isLoading = state.isLoading,
                 errorMessage = state.errorMessage
@@ -114,7 +121,8 @@ private fun FlashcardScreen(
                     if (!state.showExitConfirmation && state.results.isEmpty()) {
                         onNavigateBack()
                     }
-                }
+                },
+                onFlippedBinaryCardClick = onFlippedBinaryCardClick
             )
 
             FlashcardPhase.SUMMARY -> FlashcardSummaryContent(
@@ -150,7 +158,7 @@ private fun FlashcardScreen(
                 onCategorySelected = { onEvent(FlashcardGameEvent.SelectCategory(it)) },
                 onWordCountLocked = onWordCountLocked,
                 onCategoryLocked = onCategoryLocked,
-                onDismiss = { onEvent(FlashcardGameEvent.ToggleSettings) },
+                onDismiss = { onEvent(FlashcardGameEvent.DismissSettings) },
                 notificationManager = notificationManager
             )
         }
@@ -307,6 +315,7 @@ private fun FlashcardLobbyContent(
 private fun FlashcardGameContent(
     state: FlashcardGameUiState,
     onEvent: (FlashcardGameEvent) -> Unit,
+    onFlippedBinaryCardClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val currentWord = state.currentWord ?: return
@@ -320,7 +329,7 @@ private fun FlashcardGameContent(
             progress = state.progress,
             totalXp = state.totalXpEarned,
             onBackClick = onBackClick,
-            onSettingsClick = { onEvent(FlashcardGameEvent.ToggleSettings) }
+            onSettingsClick = { onEvent(FlashcardGameEvent.ShowSettings) }
         )
 
         // XP popup
@@ -349,7 +358,12 @@ private fun FlashcardGameContent(
                         showTranslationFirst = state.showTranslationFirst,
                         onClick = {
                             when (state.gameMode) {
-                                FlashcardGameMode.BINARY -> onEvent(FlashcardGameEvent.FlipCard)
+                                FlashcardGameMode.RECALL ->
+                                    if (!state.isCardFlipped) {
+                                        onEvent(FlashcardGameEvent.FlipCard)
+                                    } else {
+                                        onFlippedBinaryCardClick()
+                                    }
                                 FlashcardGameMode.NUMBERED -> {
                                     if (state.selectedAnswerIndex != null) {
                                         onEvent(FlashcardGameEvent.AdvanceCard)
@@ -362,13 +376,20 @@ private fun FlashcardGameContent(
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp)
                     )
+                    WordProgressDeltaBlocks(
+                        delta = state.progressDelta,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = 24.dp, vertical = 24.dp)
+                            .zIndex(1f)
+                    )
                 }
                 // Answer controls
                 when (state.gameMode) {
-                    FlashcardGameMode.BINARY -> FlashcardActionButtons(
+                    FlashcardGameMode.RECALL -> FlashcardRatingButtons(
                         isEnabled = state.isCardFlipped,
-                        onWrongClick = { onEvent(FlashcardGameEvent.MarkWrong) },
-                        onCorrectClick = { onEvent(FlashcardGameEvent.MarkCorrect) },
+                        preview = state.gradePreview,
+                        onRate = { onEvent(FlashcardGameEvent.MarkRating(it)) },
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .padding(vertical = 24.dp)

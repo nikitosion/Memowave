@@ -15,7 +15,7 @@ class WordMapper {
             translation = dto.translate,
             examples = listOf(dto.example),
             imageUrl = dto.imageUrl,
-            repetitions = dto.repetitionCount,
+            reviewCount = dto.repetitionCount,
         )
     }
 
@@ -26,7 +26,7 @@ class WordMapper {
             translate = word.translation,
             example = word.examples.firstOrNull() ?: "",
             imageUrl = word.imageUrl,
-            repetitionCount = word.repetitions,
+            repetitionCount = word.reviewCount,
             nextRepetitionDate = LocalDateTime.now()
         )
     }
@@ -68,7 +68,14 @@ class WordMapper {
             isFavorite = domain.isFavorite,
             isSynced = domain.isSynced,
             createdAt = domain.createdAt,
-            updatedAt = domain.updatedAt
+            updatedAt = domain.updatedAt,
+            stability = domain.stability,
+            difficulty = domain.difficulty,
+            interval = domain.interval,
+            dueDate = domain.dueDate,
+            reviewCount = domain.reviewCount,
+            lastReview = domain.lastReview,
+            phase = domain.phase,
         )
     }
 
@@ -83,7 +90,14 @@ class WordMapper {
             isSynced = entity.isSynced,
             isFavorite = entity.isFavorite,
             createdAt = entity.createdAt,
-            updatedAt = entity.updatedAt
+            updatedAt = entity.updatedAt,
+            stability = entity.stability,
+            difficulty = entity.difficulty,
+            interval = entity.interval,
+            dueDate = entity.dueDate,
+            reviewCount = entity.reviewCount,
+            lastReview = entity.lastReview,
+            phase = entity.phase,
         )
     }
 }

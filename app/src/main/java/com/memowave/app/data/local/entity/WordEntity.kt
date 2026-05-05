@@ -3,6 +3,7 @@ package com.memowave.app.data.local.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
 @Entity(
     tableName = "words",
@@ -23,5 +24,13 @@ data class WordEntity(
     val isSynced: Boolean = false,
     val remoteId: Long? = null,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    // SRS fields
+    val stability: Double = 2.5,
+    val difficulty: Double = 2.5,
+    val interval: Int = 0,
+    val dueDate: LocalDateTime = LocalDateTime.now(),
+    val reviewCount: Int = 0,
+    val lastReview: LocalDateTime? = null,
+    val phase: Int = 0,
 )

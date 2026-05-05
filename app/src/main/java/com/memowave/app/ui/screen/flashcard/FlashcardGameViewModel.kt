@@ -2,11 +2,15 @@ package com.memowave.app.ui.screen.flashcard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.memowave.app.domain.algorithm.CardPhase
 import com.memowave.app.domain.model.FlashcardResult
+import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
+import com.memowave.app.domain.usecase.word.CalculateGradePreviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
+import com.memowave.app.domain.usecase.word.UpdateWordProgressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -16,14 +20,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private const val XP_PER_CORRECT = 25
-private const val AUTO_ADVANCE_MILLIS = 1500L
+private const val AUTO_ADVANCE_MILLIS = 2200L
+
+private val XP_BY_RATING = mapOf(
+    Rating.Again to 0,
+    Rating.Hard to 15,
+    Rating.Good to 25,
+    Rating.Easy to 35
+)
 
 @HiltViewModel
 class FlashcardGameViewModel @Inject constructor(
     private val getWordsUseCase: GetWordsUseCase,
     private val getWordsByCategoryUseCase: GetWordsByCategoryUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val updateWordProgressUseCase: UpdateWordProgressUseCase,
+    private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardGameUiState())
@@ -52,18 +64,22 @@ class FlashcardGameViewModel @Inject constructor(
             is FlashcardGameEvent.FlipCard -> {
                 _uiState.value = _uiState.value.copy(isCardFlipped = !_uiState.value.isCardFlipped)
             }
-            is FlashcardGameEvent.MarkCorrect -> binaryMark(isCorrect = true)
-            is FlashcardGameEvent.MarkWrong -> binaryMark(isCorrect = false)
+            is FlashcardGameEvent.MarkRating -> applyAnswer(event.rating)
             is FlashcardGameEvent.SelectAnswer -> selectNumberedAnswer(event.index)
             is FlashcardGameEvent.AdvanceCard -> advanceCard()
             is FlashcardGameEvent.DismissXpPopup -> {
                 _uiState.value = _uiState.value.copy(showXpPopup = false)
             }
             is FlashcardGameEvent.RestartGame -> restartGame()
-            is FlashcardGameEvent.ToggleSettings -> {
-                _uiState.value = _uiState.value.copy(
-                    showSettingsSheet = !_uiState.value.showSettingsSheet
-                )
+            is FlashcardGameEvent.ShowSettings -> {
+                if (!_uiState.value.showSettingsSheet) {
+                    _uiState.value = _uiState.value.copy(showSettingsSheet = true)
+                }
+            }
+            is FlashcardGameEvent.DismissSettings -> {
+                if (_uiState.value.showSettingsSheet) {
+                    _uiState.value = _uiState.value.copy(showSettingsSheet = false)
+                }
             }
             is FlashcardGameEvent.RequestExit -> {
                 if (_uiState.value.phase == FlashcardPhase.GAME && _uiState.value.results.isNotEmpty()) {
@@ -139,8 +155,11 @@ class FlashcardGameViewModel @Inject constructor(
                     phase = FlashcardPhase.GAME,
                     numberedOptions = options,
                     correctAnswerIndex = correctIdx,
-                    selectedAnswerIndex = null
+                    selectedAnswerIndex = null,
+                    progressDelta = null,
+                    gradePreview = null
                 )
+                computeGradePreview()
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
@@ -150,41 +169,48 @@ class FlashcardGameViewModel @Inject constructor(
         }
     }
 
-    private fun binaryMark(isCorrect: Boolean) {
-        val state = _uiState.value
-        val currentWord = state.currentWord ?: return
-        recordResult(currentWord, isCorrect)
-
-        if (state.isLastCard) {
-            _uiState.value = _uiState.value.copy(phase = FlashcardPhase.SUMMARY)
-        } else {
-            moveToNextCard()
-        }
-    }
-
     private fun selectNumberedAnswer(index: Int) {
         val state = _uiState.value
         if (state.selectedAnswerIndex != null) return
-        val currentWord = state.currentWord ?: return
-
         val isCorrect = index == state.correctAnswerIndex
-        recordResult(currentWord, isCorrect)
-        _uiState.value = _uiState.value.copy(
-            selectedAnswerIndex = index,
-            isCardFlipped = true
-        )
+        _uiState.value = state.copy(selectedAnswerIndex = index)
+        applyAnswer(if (isCorrect) Rating.Good else Rating.Again)
+    }
+
+    private fun applyAnswer(rating: Rating) {
+        val currentWord = _uiState.value.currentWord ?: return
+        val wasNew = currentWord.phase == CardPhase.Added.value
+        val xpGained = XP_BY_RATING[rating] ?: 0
+        recordResult(currentWord, isCorrect = rating != Rating.Again, xp = xpGained)
+        _uiState.value = _uiState.value.copy(isCardFlipped = true)
+        viewModelScope.launch {
+            updateWordProgressUseCase(currentWord, rating)
+                .onSuccess { newWord ->
+                    if (_uiState.value.currentWord?.id == currentWord.id) {
+                        _uiState.value = _uiState.value.copy(
+                            progressDelta = WordProgressDelta.from(currentWord, newWord, wasNew)
+                        )
+                    }
+                }
+        }
         scheduleAutoAdvance()
     }
 
-    private fun recordResult(currentWord: Word, isCorrect: Boolean) {
+    private fun recordResult(currentWord: Word, isCorrect: Boolean, xp: Int) {
         val state = _uiState.value
         val result = FlashcardResult(wordId = currentWord.id, isCorrect = isCorrect)
-        val xpGained = if (isCorrect) XP_PER_CORRECT else 0
         _uiState.value = state.copy(
             results = state.results + result,
-            totalXpEarned = state.totalXpEarned + xpGained,
-            showXpPopup = isCorrect,
-            xpPopupAmount = xpGained
+            totalXpEarned = state.totalXpEarned + xp,
+            showXpPopup = xp > 0,
+            xpPopupAmount = xp
+        )
+    }
+
+    private fun computeGradePreview() {
+        val word = _uiState.value.currentWord ?: return
+        _uiState.value = _uiState.value.copy(
+            gradePreview = calculateGradePreviewUseCase(word)
         )
     }
 
@@ -224,8 +250,11 @@ class FlashcardGameViewModel @Inject constructor(
                 isCardFlipped = false,
                 selectedAnswerIndex = null,
                 numberedOptions = options,
-                correctAnswerIndex = correctIdx
+                correctAnswerIndex = correctIdx,
+                progressDelta = null,
+                gradePreview = null
             )
+            computeGradePreview()
         }
     }
 
@@ -301,7 +330,9 @@ class FlashcardGameViewModel @Inject constructor(
             errorMessage = null,
             numberedOptions = emptyList(),
             correctAnswerIndex = 0,
-            selectedAnswerIndex = null
+            selectedAnswerIndex = null,
+            progressDelta = null,
+            gradePreview = null
         )
     }
 

@@ -2,7 +2,10 @@ package com.memowave.app.ui.screen.flashcard
 
 import com.memowave.app.domain.model.Category
 import com.memowave.app.domain.model.FlashcardResult
+import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
+import com.memowave.app.domain.model.WordGrade
+import java.time.LocalDateTime
 
 enum class FlashcardPhase {
     LOBBY,
@@ -11,7 +14,7 @@ enum class FlashcardPhase {
 }
 
 enum class FlashcardGameMode {
-    BINARY,
+    RECALL,
     NUMBERED
 }
 
@@ -20,7 +23,7 @@ data class FlashcardGameUiState(
     val phase: FlashcardPhase = FlashcardPhase.LOBBY,
 
     // Game mode
-    val gameMode: FlashcardGameMode = FlashcardGameMode.BINARY,
+    val gameMode: FlashcardGameMode = FlashcardGameMode.RECALL,
 
     // Settings
     val categories: List<Category> = emptyList(),
@@ -43,6 +46,13 @@ data class FlashcardGameUiState(
     val correctAnswerIndex: Int = 0,
     val selectedAnswerIndex: Int? = null,
 
+    // Progress delta for the most recent answer (null when no recent answer / between cards)
+    val progressDelta: WordProgressDelta? = null,
+
+    // Preview of FSRS outcomes for each Rating, to be displayed on rating buttons.
+    // null while being calculated or before card is flipped.
+    val gradePreview: Map<Rating, WordGrade>? = null,
+
     // UI
     val showSettingsSheet: Boolean = false,
     val showExitConfirmation: Boolean = false,
@@ -54,4 +64,30 @@ data class FlashcardGameUiState(
     val correctCount: Int get() = results.count { it.isCorrect }
     val wrongCount: Int get() = results.count { !it.isCorrect }
     val isLastCard: Boolean get() = currentIndex >= words.size - 1
+}
+
+data class WordProgressDelta(
+    val wasNew: Boolean,
+    val oldStability: Double,
+    val newStability: Double,
+    val oldDifficulty: Double,
+    val newDifficulty: Double,
+    val oldInterval: Int,
+    val newInterval: Int,
+    val oldDueDate: LocalDateTime,
+    val newDueDate: LocalDateTime
+) {
+    companion object {
+        fun from(old: Word, new: Word, wasNew: Boolean) = WordProgressDelta(
+            wasNew = wasNew,
+            oldStability = old.stability,
+            newStability = new.stability,
+            oldDifficulty = old.difficulty,
+            newDifficulty = new.difficulty,
+            oldInterval = old.interval,
+            newInterval = new.interval,
+            oldDueDate = old.dueDate,
+            newDueDate = new.dueDate
+        )
+    }
 }
