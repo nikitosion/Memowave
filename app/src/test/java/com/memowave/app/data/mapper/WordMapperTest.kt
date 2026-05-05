@@ -91,7 +91,7 @@ class WordMapperTest {
 
         assertEquals("dog.png", word.imageUrl)
         assertEquals("dog.png", backEntity.imageUrl)
-        assertEquals("pёс".replace('ё', 'ё'), word.translation) // sanity
+        assertEquals("пёс", word.translation)
         assertEquals(listOf("good dog"), word.examples)
         assertEquals("n", word.note)
         assertEquals(true, word.isFavorite)
