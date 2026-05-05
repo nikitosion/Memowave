@@ -3,6 +3,7 @@ package com.memowave.app.ui.screen.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.R
+import com.memowave.app.core.auth.AuthState
 import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.core.util.StringProvider
 import com.memowave.app.data.local.TokenManager
@@ -64,7 +65,9 @@ class SplashViewModel @Inject constructor(
                 notificationManager.showError(
                     strings.getString(R.string.notification_session_expired)
                 )
-                runCatching { logoutUseCase() } // Clear stored token + mark unauthenticated
+                runCatching {
+                    logoutUseCase(AuthState.Unauthenticated.Reason.SessionExpired)
+                }
                 _navEvents.send(SplashNavEvent.ToLogin)
             }
         }
