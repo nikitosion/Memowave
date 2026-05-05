@@ -27,8 +27,11 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideSignUpUseCase(authRepository: AuthRepository): SignUpUseCase {
-        return SignUpUseCase(authRepository)
+    fun provideSignUpUseCase(
+        authRepository: AuthRepository,
+        authStateManager: AuthStateManager,
+    ): SignUpUseCase {
+        return SignUpUseCase(authRepository, authStateManager)
     }
 
     @Provides

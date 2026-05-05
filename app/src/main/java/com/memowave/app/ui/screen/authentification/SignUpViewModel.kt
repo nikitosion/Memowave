@@ -73,7 +73,7 @@ class SignUpViewModel @Inject constructor(
                 is AuthResult.Success -> {
                     _uiState.update { it.copy(form = SignUpFormState(), isLoading = false) }
                     notificationManager.showSuccess(strings.getString(R.string.notification_registration_success))
-                    _navEvents.send(AuthNavEvent.BackToLogin)
+                    _navEvents.send(AuthNavEvent.ToMain)
                 }
 
                 is AuthResult.Failure -> {

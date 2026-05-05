@@ -209,9 +209,9 @@ fun SignUpScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navEvents.collect { event ->
-            if (event is AuthNavEvent.BackToLogin) {
-                navController.navigate("login") {
-                    popUpTo("login") { inclusive = true }
+            if (event is AuthNavEvent.ToMain) {
+                navController.navigate("main_page") {
+                    popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
             }

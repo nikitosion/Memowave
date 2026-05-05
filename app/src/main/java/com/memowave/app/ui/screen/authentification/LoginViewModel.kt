@@ -70,6 +70,7 @@ class LoginViewModel @Inject constructor(
             when (val result = performLogin(email, password)) {
                 is AuthResult.Success -> {
                     _uiState.update { it.copy(isLoading = false) }
+                    notificationManager.showSuccess(strings.getString(R.string.notification_login_success))
                     _navEvents.send(AuthNavEvent.ToMain)
                 }
 

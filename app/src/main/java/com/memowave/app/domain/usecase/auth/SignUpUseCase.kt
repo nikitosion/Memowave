@@ -1,11 +1,13 @@
 package com.memowave.app.domain.usecase.auth
 
+import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val authStateManager: AuthStateManager,
 ) {
     suspend operator fun invoke(
         username: String,
@@ -21,6 +23,10 @@ class SignUpUseCase @Inject constructor(
             imageUrl = "https://example.com/default-profile.png"
         )
 
-        return authRepository.register(newUser = newUser)
+        val result = authRepository.register(newUser = newUser)
+        if (result.isSuccess) {
+            authStateManager.setAuthenticated()
+        }
+        return result
     }
 }

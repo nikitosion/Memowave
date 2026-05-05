@@ -1,11 +1,13 @@
 package com.memowave.app.domain.usecase.auth
 
+import com.memowave.app.core.auth.AuthStateManager
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -14,7 +16,8 @@ import org.junit.Test
 class SignUpUseCaseTest {
 
     private val repository: AuthRepository = mockk()
-    private val useCase = SignUpUseCase(repository)
+    private val authStateManager: AuthStateManager = mockk(relaxed = true)
+    private val useCase = SignUpUseCase(repository, authStateManager)
 
     @Test
     fun `repository receives a UserRegistration with the supplied fields`() = runTest {
@@ -29,16 +32,17 @@ class SignUpUseCaseTest {
     }
 
     @Test
-    fun `successful repository result is propagated`() = runTest {
+    fun `successful sign up marks user as authenticated`() = runTest {
         coEvery { repository.register(any()) } returns Result.success(Unit)
 
         val result = useCase("u", "e@x.com", "p")
 
         assertTrue(result.isSuccess)
+        verify(exactly = 1) { authStateManager.setAuthenticated() }
     }
 
     @Test
-    fun `failed repository result is propagated`() = runTest {
+    fun `failed sign up does not mark user as authenticated`() = runTest {
         val error = RuntimeException("server down")
         coEvery { repository.register(any()) } returns Result.failure(error)
 
@@ -46,6 +50,7 @@ class SignUpUseCaseTest {
 
         assertTrue(result.isFailure)
         assertEquals(error, result.exceptionOrNull())
+        verify(exactly = 0) { authStateManager.setAuthenticated() }
     }
 
     @Test

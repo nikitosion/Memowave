@@ -96,37 +96,33 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
     val authState by appViewModel.authStateManager.authState.collectAsState()
 
     val sessionExpiredMessage = stringResource(R.string.notification_session_expired)
-    val loginSuccessMessage = stringResource(R.string.notification_login_success)
     val logoutSuccessMessage = stringResource(R.string.notification_logout_success)
 
     var isFirstLaunch by remember { mutableStateOf(true) }
 
-    // Handle authentication state changes and navigate accordingly.
-    // The first emission is skipped — Splash drives bootstrap navigation directly.
+    // Drive logout-side navigation/notifications from the auth state. The
+    // login-side ("welcome back" / "registration success") is owned by the
+    // individual auth screens to avoid the cross-source notification race
+    // that would otherwise pit a screen-specific message against a generic one.
     LaunchedEffect(authState) {
         if (isFirstLaunch) {
             isFirstLaunch = false
             return@LaunchedEffect
         }
 
-        when (val state = authState) {
-            is AuthState.Unauthenticated -> {
-                when (state.reason) {
-                    AuthState.Unauthenticated.Reason.SessionExpired ->
-                        appViewModel.notificationManager.showError(sessionExpiredMessage)
-                    AuthState.Unauthenticated.Reason.ManualLogout ->
-                        appViewModel.notificationManager.showSuccess(logoutSuccessMessage)
-                    AuthState.Unauthenticated.Reason.Initial -> { /* silent */ }
-                }
-
-                navController.navigate(Screen.Login.route) {
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
-                }
+        val state = authState
+        if (state is AuthState.Unauthenticated) {
+            when (state.reason) {
+                AuthState.Unauthenticated.Reason.SessionExpired ->
+                    appViewModel.notificationManager.showError(sessionExpiredMessage)
+                AuthState.Unauthenticated.Reason.ManualLogout ->
+                    appViewModel.notificationManager.showSuccess(logoutSuccessMessage)
+                AuthState.Unauthenticated.Reason.Initial -> { /* silent */ }
             }
 
-            is AuthState.Authenticated -> {
-                appViewModel.notificationManager.showSuccess(loginSuccessMessage)
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
             }
         }
     }
