@@ -16,7 +16,8 @@ sealed interface LibraryEvent {
         val translation: String,
         val categoryId: Long?,
         val examples: List<String>,
-        val note: String?
+        val note: String?,
+        val imageFileName: String?
     ) : LibraryEvent
 
     data object AddCategoryClicked : LibraryEvent

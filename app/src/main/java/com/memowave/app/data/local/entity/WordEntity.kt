@@ -19,6 +19,7 @@ data class WordEntity(
     val translation: String,
     val categoryId: Long? = null,
     val example: List<String> = emptyList(),
+    val imageUrl: String? = null,
     val note: String? = null,
     val isFavorite: Boolean = false,
     val isSynced: Boolean = false,

@@ -9,6 +9,9 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.sync.SyncWorker
 import dagger.hilt.android.HiltAndroidApp
@@ -17,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltAndroidApp
-class MemowaveApp : Application(), Configuration.Provider {
+class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.Factory {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -25,10 +28,15 @@ class MemowaveApp : Application(), Configuration.Provider {
     @Inject
     lateinit var tokenManager: TokenManager
 
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader = imageLoader
 
     override fun onCreate() {
         super.onCreate()
