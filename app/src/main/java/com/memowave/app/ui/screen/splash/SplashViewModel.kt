@@ -46,7 +46,7 @@ class SplashViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val storedToken = tokenManager.cachedToken.value
+            val storedToken = tokenManager.cachedAccessToken.value
             if (storedToken.isNullOrEmpty()) {
                 _navEvents.send(SplashNavEvent.ToLogin)
                 return@launch

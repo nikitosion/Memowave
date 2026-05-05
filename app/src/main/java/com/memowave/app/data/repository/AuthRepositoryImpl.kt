@@ -8,7 +8,6 @@ import com.memowave.app.data.remote.dto.user.UserLoginReqDto
 import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -40,21 +39,12 @@ class AuthRepositoryImpl @Inject constructor(
                 return Result.failure(Exception("Ошибка при входе: ${response.code()}"))
             }
 
-            val token =
-                response.body()?.token ?: return Result.failure(Exception("Токен не получен"))
+            val body = response.body()
+                ?: return Result.failure(Exception("Токены не получены"))
 
-            tokenManager.saveToken(token)
+            tokenManager.saveTokens(body.accessToken, body.refreshToken)
 
             Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun checkTokenExist(): Result<Boolean> {
-        return try {
-            val token = tokenManager.token.first()
-            Result.success(!token.isNullOrEmpty())
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -66,6 +56,11 @@ class AuthRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 return Result.failure(Exception("Ошибка при регистрации: ${response.code()}"))
             }
+
+            val body = response.body()
+                ?: return Result.failure(Exception("Токены не получены"))
+
+            tokenManager.saveTokens(body.accessToken, body.refreshToken)
 
             Result.success(Unit)
         } catch (e: Exception) {

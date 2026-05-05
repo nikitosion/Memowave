@@ -24,33 +24,33 @@ class TokenManager @Inject constructor(
     private val cryptoManager: CryptoManager,
     @ApplicationScope private val appScope: CoroutineScope,
 ) {
-    private val TOKEN_KEY = stringPreferencesKey("jwt_token")
+    private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+    private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
 
-    /** Reactive stream of the decrypted JWT token (or null if missing). */
-    val token: Flow<String?> = dataStore.data.map { prefs ->
-        prefs[TOKEN_KEY]?.let { encrypted -> cryptoManager.decryptString(encrypted) }
+    /** Reactive stream of the decrypted access token (or null if missing). */
+    val accessToken: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[ACCESS_TOKEN_KEY]?.let { encrypted -> cryptoManager.decryptString(encrypted) }
     }
 
-    private val _cachedToken = MutableStateFlow<String?>(null)
+    private val _cachedAccessToken = MutableStateFlow<String?>(null)
 
     /**
-     * In-memory snapshot of the latest token value. Read synchronously by
+     * In-memory snapshot of the latest access token. Read synchronously by
      * non-suspend call sites such as [com.memowave.app.data.remote.interceptor.AuthInterceptor].
      *
      * Populated synchronously at app startup via [primeBlocking] and kept in
      * sync with disk by a collector launched in [init].
      */
-    val cachedToken: StateFlow<String?> = _cachedToken.asStateFlow()
+    val cachedAccessToken: StateFlow<String?> = _cachedAccessToken.asStateFlow()
 
     init {
-        // Keep the in-memory cache in sync with disk for the lifetime of the app.
         appScope.launch {
-            token.collect { _cachedToken.value = it }
+            accessToken.collect { _cachedAccessToken.value = it }
         }
     }
 
     /**
-     * Synchronously primes [cachedToken] from disk. Call exactly once from
+     * Synchronously primes [cachedAccessToken] from disk. Call exactly once from
      * [android.app.Application.onCreate] *before* any network request can fire,
      * so [com.memowave.app.data.remote.interceptor.AuthInterceptor] sees a non-null
      * token on the very first request after a cold start.
@@ -59,12 +59,24 @@ class TokenManager @Inject constructor(
      * at app startup. Bounded and one-time.
      */
     fun primeBlocking() {
-        _cachedToken.value = runBlocking { token.first() }
+        _cachedAccessToken.value = runBlocking { accessToken.first() }
     }
 
-    suspend fun saveToken(token: String) {
+    /**
+     * Reads the refresh token directly from disk. Refresh is needed only inside
+     * [com.memowave.app.data.remote.interceptor.TokenAuthenticator] on a 401, so
+     * we don't keep a long-lived in-memory cache of it.
+     */
+    suspend fun getRefreshToken(): String? {
+        val prefs = dataStore.data.first()
+        return prefs[REFRESH_TOKEN_KEY]?.let { cryptoManager.decryptString(it) }
+    }
+
+    /** Atomically writes both tokens; partial state is impossible. */
+    suspend fun saveTokens(access: String, refresh: String) {
         dataStore.edit { prefs ->
-            prefs[TOKEN_KEY] = cryptoManager.encryptString(token)
+            prefs[ACCESS_TOKEN_KEY] = cryptoManager.encryptString(access)
+            prefs[REFRESH_TOKEN_KEY] = cryptoManager.encryptString(refresh)
         }
     }
 

@@ -20,7 +20,7 @@ interface ApiService {
     suspend fun login(@Body request: UserLoginReqDto): Response<AuthResponseDto>
 
     @POST("auth/register")
-    suspend fun register(@Body request: UserRegistration): Response<Unit>
+    suspend fun register(@Body request: UserRegistration): Response<AuthResponseDto>
 
     @GET("users/me")
     suspend fun getUserInfo(): Response<UserDto>
