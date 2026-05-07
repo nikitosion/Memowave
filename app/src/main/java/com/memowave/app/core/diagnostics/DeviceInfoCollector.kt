@@ -38,6 +38,15 @@ class DeviceInfoCollector @Inject constructor(
         )
     }
 
+    /**
+     * Human-readable label sent as `session` on login/register so the user can
+     * recognise this device in the active-sessions list.
+     */
+    fun sessionName(): String {
+        val info = collect()
+        return "${info.manufacturer} ${info.model} (Android ${info.androidVersion})"
+    }
+
     fun format(info: DeviceInfo): String = buildString {
         appendLine("App version: ${info.appVersion} (${info.appVersionCode})")
         appendLine("Android: ${info.androidVersion} (API ${info.apiLevel})")

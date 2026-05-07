@@ -22,7 +22,11 @@ class LogoutUseCase @Inject constructor(
     suspend operator fun invoke(
         reason: AuthState.Unauthenticated.Reason = AuthState.Unauthenticated.Reason.ManualLogout,
     ): Result<Unit> {
+        // Repository runs first so the network `set-denied` call completes (or
+        // times out) before navigation triggered by `setUnauthenticated` cancels
+        // the calling viewModelScope.
+        val result = authRepository.logout()
         authStateManager.setUnauthenticated(reason)
-        return authRepository.logout()
+        return result
     }
 }

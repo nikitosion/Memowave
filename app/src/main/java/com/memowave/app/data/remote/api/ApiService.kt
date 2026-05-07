@@ -3,6 +3,7 @@ package com.memowave.app.data.remote.api
 import com.memowave.app.data.remote.dto.AuthResponseDto
 import com.memowave.app.data.remote.dto.library.CategoryDto
 import com.memowave.app.data.remote.dto.library.WordDto
+import com.memowave.app.data.remote.dto.security.SessionDto
 import com.memowave.app.data.remote.dto.user.ChangePasswordDto
 import com.memowave.app.data.remote.dto.user.UserDto
 import com.memowave.app.data.remote.dto.user.UserLoginReqDto
@@ -57,4 +58,13 @@ interface ApiService {
 
     @DELETE("words/{wordId}")
     suspend fun deleteWord(@Path("wordId") wordId: Int): Response<Unit>
+
+    @GET("sessions")
+    suspend fun getActiveSessions(): Response<List<SessionDto>>
+
+    @GET("sessions/{sessionId}")
+    suspend fun getSession(@Path("sessionId") sessionId: Int): Response<SessionDto>
+
+    @PUT("sessions/{sessionId}/set-denied")
+    suspend fun denySession(@Path("sessionId") sessionId: Int): Response<Unit>
 }

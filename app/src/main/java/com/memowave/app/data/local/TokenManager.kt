@@ -3,6 +3,7 @@ package com.memowave.app.data.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.memowave.app.core.security.CryptoManager
 import com.memowave.app.di.ApplicationScope
@@ -26,6 +27,7 @@ class TokenManager @Inject constructor(
 ) {
     private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
     private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+    private val SESSION_ID_KEY = intPreferencesKey("session_id")
 
     /** Reactive stream of the decrypted access token (or null if missing). */
     val accessToken: Flow<String?> = dataStore.data.map { prefs ->
@@ -78,6 +80,16 @@ class TokenManager @Inject constructor(
             prefs[ACCESS_TOKEN_KEY] = cryptoManager.encryptString(access)
             prefs[REFRESH_TOKEN_KEY] = cryptoManager.encryptString(refresh)
         }
+    }
+
+    /** Reactive stream of the current session id (null if missing). */
+    val sessionId: Flow<Int?> = dataStore.data.map { prefs -> prefs[SESSION_ID_KEY] }
+
+    /** One-shot read used by the logout flow that fires `set-denied`. */
+    suspend fun getSessionId(): Int? = dataStore.data.first()[SESSION_ID_KEY]
+
+    suspend fun saveSessionId(id: Int) {
+        dataStore.edit { prefs -> prefs[SESSION_ID_KEY] = id }
     }
 
     suspend fun clear() {

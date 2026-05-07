@@ -1,10 +1,12 @@
 package com.memowave.app.domain.usecase.auth
 
 import com.memowave.app.core.auth.AuthStateManager
+import com.memowave.app.core.diagnostics.DeviceInfoCollector
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -17,7 +19,10 @@ class SignUpUseCaseTest {
 
     private val repository: AuthRepository = mockk()
     private val authStateManager: AuthStateManager = mockk(relaxed = true)
-    private val useCase = SignUpUseCase(repository, authStateManager)
+    private val deviceInfoCollector: DeviceInfoCollector = mockk<DeviceInfoCollector>().also {
+        every { it.sessionName() } returns "TestVendor TestModel (Android 14)"
+    }
+    private val useCase = SignUpUseCase(repository, authStateManager, deviceInfoCollector)
 
     @Test
     fun `repository receives a UserRegistration with the supplied fields`() = runTest {
@@ -29,6 +34,7 @@ class SignUpUseCaseTest {
         assertEquals("Alice", captured.captured.username)
         assertEquals("alice@x.com", captured.captured.email)
         assertEquals("Pwd1!aaa", captured.captured.password)
+        assertEquals("TestVendor TestModel (Android 14)", captured.captured.session)
     }
 
     @Test

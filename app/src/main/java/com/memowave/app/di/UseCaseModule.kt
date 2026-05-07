@@ -1,7 +1,9 @@
 package com.memowave.app.di
 
 import com.memowave.app.core.auth.AuthStateManager
+import com.memowave.app.core.diagnostics.DeviceInfoCollector
 import com.memowave.app.domain.repository.AuthRepository
+import com.memowave.app.domain.repository.SessionRepository
 import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.usecase.auth.ChangePasswordUseCase
 import com.memowave.app.domain.usecase.auth.DeleteAccountUseCase
@@ -11,6 +13,8 @@ import com.memowave.app.domain.usecase.auth.ResetPasswordUseCase
 import com.memowave.app.domain.usecase.auth.SignUpUseCase
 import com.memowave.app.domain.repository.UserRepository
 import com.memowave.app.domain.usecase.profile.UpdateUsernameUseCase
+import com.memowave.app.domain.usecase.security.DenySessionUseCase
+import com.memowave.app.domain.usecase.security.GetActiveSessionsUseCase
 import com.memowave.app.domain.usecase.settings.GetSettingsUseCase
 import com.memowave.app.domain.usecase.settings.ResetFsrsToDefaultsUseCase
 import com.memowave.app.domain.usecase.settings.UpdateAppLanguageUseCase
@@ -45,9 +49,22 @@ object UseCaseModule {
     fun provideSignUpUseCase(
         authRepository: AuthRepository,
         authStateManager: AuthStateManager,
+        deviceInfoCollector: DeviceInfoCollector,
     ): SignUpUseCase {
-        return SignUpUseCase(authRepository, authStateManager)
+        return SignUpUseCase(authRepository, authStateManager, deviceInfoCollector)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetActiveSessionsUseCase(
+        sessionRepository: SessionRepository,
+    ): GetActiveSessionsUseCase = GetActiveSessionsUseCase(sessionRepository)
+
+    @Provides
+    @Singleton
+    fun provideDenySessionUseCase(
+        sessionRepository: SessionRepository,
+    ): DenySessionUseCase = DenySessionUseCase(sessionRepository)
 
     @Provides
     @Singleton

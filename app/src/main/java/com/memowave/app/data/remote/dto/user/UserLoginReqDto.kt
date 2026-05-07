@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class UserLoginReqDto(
     val email: String,
     val password: String,
+    val session: String,
 )
 

@@ -8,4 +8,5 @@ data class UserRegistration(
     val password: String,
     val imageUrl: String,
     val email: String,
+    val session: String,
 )
