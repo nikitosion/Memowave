@@ -1,7 +1,6 @@
 package com.memowave.app.ui.screen.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memowave.app.R
 import com.memowave.app.domain.model.user.User
+import com.memowave.app.ui.navigation.Screen
+import com.memowave.app.ui.screen.settings.components.ProfileHeaderCard
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -58,8 +59,8 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
 
     ProfileScreenContent(
         user = uiState.user,
-        onSettingsClick = { navController.navigate("app_settings") },
-        refreshProfileInfo = { profileViewModel.loadUserProfile(4L) }
+        onSettingsClick = { navController.navigate(Screen.AppSettings.route) },
+        onProfileHeaderClick = { navController.navigate(Screen.SettingsPersonal.route) }
     )
 }
 
@@ -67,7 +68,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
 fun ProfileScreenContent(
     user: User,
     onSettingsClick: () -> Unit,
-    refreshProfileInfo: () -> Unit
+    onProfileHeaderClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -93,48 +94,11 @@ fun ProfileScreenContent(
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
-        Row(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
-                    shape = RoundedCornerShape(40.dp)
-                )
-                .padding(16.dp)
-                .clickable { refreshProfileInfo() },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(80.dp),
-                    painter = painterResource(id = R.drawable.round_circle_24),
-                    contentDescription = "User profile image",
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                )
-                Column() {
-                    Text(
-                        text = user.username ?: "Username is missing",
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.W500
-                    )
-                    Text(
-                        text = user.email ?: "Email is missing",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
-            }
-            Icon(
-                painter = painterResource(id = R.drawable.round_chevron_right_24),
-                contentDescription = "Go to profile button"
-            )
-        }
+        ProfileHeaderCard(
+            modifier = Modifier.padding(top = 20.dp),
+            user = user,
+            onClick = onProfileHeaderClick
+        )
 
         Column(
             modifier = Modifier

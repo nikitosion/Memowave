@@ -29,6 +29,15 @@ class UserMapper {
         return User(
             username = dto.username,
             email = dto.email,
+            imageUrl = dto.imageUrl,
+        )
+    }
+
+    fun domainToDto(user: User): UserDto {
+        return UserDto(
+            username = user.username,
+            email = user.email,
+            imageUrl = user.imageUrl,
         )
     }
 }

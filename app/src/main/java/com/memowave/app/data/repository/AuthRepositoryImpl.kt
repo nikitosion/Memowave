@@ -4,10 +4,12 @@ import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.local.dao.UserDao
 import com.memowave.app.data.mapper.UserMapper
 import com.memowave.app.data.remote.api.ApiService
+import com.memowave.app.data.remote.dto.user.ChangePasswordDto
 import com.memowave.app.data.remote.dto.user.UserLoginReqDto
 import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
+import com.memowave.app.domain.usecase.auth.ChangePasswordError
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -82,6 +84,35 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String
+    ): Result<Unit> {
+        return try {
+            val response = apiService.changePassword(
+                ChangePasswordDto(currentPassword = currentPassword, newPassword = newPassword)
+            )
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    when (response.code()) {
+                        401 -> ChangePasswordError.WrongCurrentPassword
+                        403 -> ChangePasswordError.Forbidden
+                        in 500..599 -> ChangePasswordError.ServerError
+                        else -> ChangePasswordError.Unknown
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteAccount(): Result<Unit> {
+        return Result.failure(NotImplementedError("Delete account is not implemented yet"))
     }
 
     override suspend fun logout(): Result<Unit> {

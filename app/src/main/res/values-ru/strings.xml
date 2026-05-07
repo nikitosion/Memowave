@@ -59,9 +59,169 @@
     <string name="flashcard_delta_days_suffix">дн</string>
     <string name="flashcard_delta_a11y_change">%1$s изменилось с %2$s на %3$s</string>
     <string name="flashcard_delta_learning_badge">На изучении</string>
+    <string name="flashcard_badge_new">New!</string>
     <string name="flashcard_rating_again">Забыл</string>
     <string name="flashcard_rating_hard">Сложно</string>
     <string name="flashcard_rating_good">Норм</string>
     <string name="flashcard_rating_easy">Легко</string>
+
+    <!-- Settings hub -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_section_account">Аккаунт</string>
+    <string name="settings_section_learning">Обучение</string>
+    <string name="settings_section_app">Приложение</string>
+    <string name="settings_personal">Личная информация</string>
+    <string name="settings_security">Безопасность</string>
+    <string name="settings_goals">Цели</string>
+    <string name="settings_algorithm">Алгоритм</string>
+    <string name="settings_appearance">Оформление</string>
+    <string name="settings_notifications">Уведомления</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_report_bug">Сообщить об ошибке</string>
+    <string name="settings_logout">Выйти из аккаунта</string>
+    <string name="settings_logout_confirm_title">Выйти из аккаунта?</string>
+    <string name="settings_logout_confirm_message">Чтобы продолжить, нужно будет войти снова.</string>
+    <string name="settings_logout_confirm_action">Выйти</string>
+    <string name="settings_cancel">Отмена</string>
+    <string name="settings_user_unknown">Пользователь</string>
+
+    <!-- Settings: Personal information -->
+    <string name="settings_personal_section_contact">Контакт</string>
+    <string name="settings_personal_section_security">Безопасность</string>
+    <string name="settings_personal_email">Email</string>
+    <string name="settings_personal_email_tooltip">Чтобы сменить email, обратитесь в поддержку: support@memowave.app</string>
+    <string name="settings_personal_username">Имя пользователя</string>
+    <string name="settings_personal_username_save">Сохранить</string>
+    <string name="settings_personal_username_updated">Имя пользователя обновлено</string>
+    <string name="settings_personal_username_too_short">Минимум 2 символа</string>
+    <string name="settings_personal_username_too_long">Не более 32 символов</string>
+    <string name="settings_personal_username_update_failed">Не удалось обновить имя</string>
+    <string name="settings_personal_change_password">Сменить пароль</string>
+    <string name="settings_personal_current_password">Текущий пароль</string>
+    <string name="settings_personal_new_password">Новый пароль</string>
+    <string name="settings_personal_repeat_password">Повторите новый пароль</string>
+    <string name="settings_personal_update_password">Обновить пароль</string>
+    <string name="settings_personal_passwords_dont_match">Пароли не совпадают</string>
+    <string name="settings_personal_same_password">Новый пароль должен отличаться от текущего</string>
+    <string name="settings_personal_password_updated">Пароль обновлён</string>
+    <string name="settings_personal_password_wrong">Неверный текущий пароль</string>
+    <string name="settings_personal_password_forbidden">Действие запрещено</string>
+    <string name="settings_personal_password_server_error">Ошибка сервера. Попробуйте позже.</string>
+    <string name="settings_personal_danger_zone">Опасная зона</string>
+    <string name="settings_personal_delete_account">Удалить аккаунт</string>
+    <string name="settings_personal_delete_description">Все ваши слова, прогресс и достижения будут безвозвратно удалены.</string>
+    <string name="settings_personal_delete_confirm">Вы уверены?</string>
+    <string name="settings_personal_delete_coming_soon">Скоро будет доступно</string>
+
+    <!-- Settings: Security -->
+
+    <!-- Settings: Appearance -->
+    <string name="settings_appearance_section_theme">Тема</string>
+    <string name="settings_appearance_section_language">Язык</string>
+    <string name="settings_appearance_section_animations">Анимации</string>
+    <string name="settings_appearance_theme_light">Светлая</string>
+    <string name="settings_appearance_theme_dark">Тёмная</string>
+    <string name="settings_appearance_theme_system">Системная</string>
+    <string name="settings_appearance_language_label">Язык приложения</string>
+    <string name="settings_appearance_language_system">Системный</string>
+    <string name="settings_appearance_language_ru">Русский</string>
+    <string name="settings_appearance_language_en">English</string>
+    <string name="settings_appearance_reduce_motion">Уменьшить движение</string>
+    <string name="settings_appearance_reduce_motion_supporting">Сократить или отключить анимации</string>
+
+    <!-- Settings: Goals -->
+    <string name="settings_goals_section_week">Учебная неделя</string>
+    <string name="settings_goals_days_label">Учебные дни</string>
+    <string name="settings_goals_reminder_time">Время напоминания</string>
+    <string name="settings_goals_weekly_target">Слов в неделю</string>
+    <string name="settings_goals_words_format">%1$d слов</string>
+    <string name="settings_goals_link_algorithm">Алгоритм повторений</string>
+    <string name="day_short_mon">П</string>
+    <string name="day_short_tue">В</string>
+    <string name="day_short_wed">С</string>
+    <string name="day_short_thu">Ч</string>
+    <string name="day_short_fri">П</string>
+    <string name="day_short_sat">С</string>
+    <string name="day_short_sun">В</string>
+
+    <!-- Settings: Algorithm -->
+    <string name="settings_algorithm_section_basic">Базовые</string>
+    <string name="settings_algorithm_section_fine">Тонкая настройка</string>
+    <string name="settings_algorithm_retention">Целевая запоминаемость</string>
+    <string name="settings_algorithm_retention_helper_left">Комфортно</string>
+    <string name="settings_algorithm_retention_helper_right">Сложно</string>
+    <string name="settings_algorithm_max_interval">Максимальный интервал</string>
+    <string name="settings_algorithm_easy_bonus">Бонус за «Легко»</string>
+    <string name="settings_algorithm_hard_penalty">Штраф за «Сложно»</string>
+    <string name="settings_algorithm_reset">Сбросить настройки</string>
+    <string name="settings_algorithm_reset_confirm">Сбросить настройки алгоритма?</string>
+    <string name="settings_algorithm_days_format">%1$d дн</string>
+    <string name="settings_algorithm_years_format">%1$.1f л</string>
+    <string name="settings_algorithm_retention_explainer">~%1$d из 100 повторов могут не вспомниться</string>
+    <string name="settings_algorithm_retention_intervals_label">Рост интервалов</string>
+    <string name="settings_algorithm_max_interval_explainer">Карточки не будут повторяться реже этого периода.</string>
+    <string name="settings_algorithm_easy_bonus_explainer">На сколько оценка «Легко» растягивает следующий интервал.</string>
+    <string name="settings_algorithm_hard_penalty_explainer">На сколько оценка «Сложно» сокращает следующий интервал.</string>
+
+    <!-- Settings: Notifications -->
+    <string name="settings_notifications_section_main">Главное</string>
+    <string name="settings_notifications_section_types">Типы</string>
+    <string name="settings_notifications_section_quiet">Тихие часы</string>
+    <string name="settings_notifications_master">Включить уведомления</string>
+    <string name="settings_notifications_master_supporting">Главный переключатель. Отключение глушит все уведомления ниже.</string>
+    <string name="settings_notifications_study">Напоминания об уроках</string>
+    <string name="settings_notifications_study_supporting">Ежедневное напоминание в указанное в «Целях» время.</string>
+    <string name="settings_notifications_streak_risk">Риск streak\'а</string>
+    <string name="settings_notifications_streak_risk_supporting">За 2 часа до полуночи, если сегодня ещё не было занятий.</string>
+    <string name="settings_notifications_milestones">Достижения</string>
+    <string name="settings_notifications_milestones_supporting">Поздравления: 100/500/1000 выученных слов, streak\'и и т.п.</string>
+    <string name="settings_notifications_quiet_enable">Включить тихие часы</string>
+    <string name="settings_notifications_quiet_supporting">В этот промежуток уведомления не приходят. Можно задавать через полночь.</string>
+    <string name="settings_notifications_quiet_from">С</string>
+    <string name="settings_notifications_quiet_to">До</string>
+    <string name="settings_notifications_permission_required">Уведомления заблокированы. Откройте настройки приложения.</string>
+    <string name="settings_notifications_open_app_settings">Открыть настройки</string>
+    <string name="settings_notifications_channel_study">Напоминания об уроках</string>
+    <string name="settings_notifications_channel_study_desc">Ежедневные напоминания об изучении</string>
+    <string name="settings_notifications_channel_streak">Предупреждения о streak\'е</string>
+    <string name="settings_notifications_channel_streak_desc">Уведомление, когда streak под угрозой</string>
+    <string name="settings_notifications_channel_milestone">Достижения</string>
+    <string name="settings_notifications_channel_milestone_desc">Поздравления с прогрессом</string>
+    <string name="settings_notifications_reminder_title">Время заниматься</string>
+    <string name="settings_notifications_reminder_text">Продолжите там, где остановились</string>
+
+    <!-- Settings: About -->
+    <string name="settings_about_version_format">Memowave %1$s (%2$d)</string>
+    <string name="settings_about_version_copied">Скопировано</string>
+    <string name="settings_about_section_documents">Документы</string>
+    <string name="settings_about_section_contacts">Контакты</string>
+    <string name="settings_about_terms">Условия использования</string>
+    <string name="settings_about_privacy">Политика конфиденциальности</string>
+    <string name="settings_about_licenses">Лицензии открытого ПО</string>
+    <string name="settings_about_support">Поддержка</string>
+    <string name="settings_about_support_email">support@memowave.app</string>
+    <string name="settings_about_telegram">Telegram-канал</string>
+    <string name="settings_about_developer">О разработчике</string>
+    <string name="settings_about_coming_soon">Скоро будет доступно</string>
+
+    <!-- Settings: Report a bug -->
+    <string name="settings_report_headline">Расскажите, что пошло не так</string>
+    <string name="settings_report_description_label">Опишите проблему</string>
+    <string name="settings_report_description_placeholder">Что произошло? Что вы делали перед этим?</string>
+    <string name="settings_report_attach">Прикладывать диагностические данные</string>
+    <string name="settings_report_send">Отправить отчёт</string>
+    <string name="settings_report_category_crash">Сбой</string>
+    <string name="settings_report_category_design">Дизайн</string>
+    <string name="settings_report_category_translation">Перевод</string>
+    <string name="settings_report_category_performance">Производительность</string>
+    <string name="settings_report_category_other">Другое</string>
+    <string name="settings_report_subject_format">[Memowave] %1$s</string>
+    <string name="settings_report_no_email_app">Нет приложения для отправки писем</string>
+
+    <!-- Common -->
+    <string name="action_save">Сохранить</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_dismiss">Закрыть</string>
+    <string name="action_change">Изменить</string>
 </resources>
 

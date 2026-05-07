@@ -76,8 +76,168 @@
     <string name="flashcard_delta_days_suffix">d</string>
     <string name="flashcard_delta_a11y_change">%1$s changed from %2$s to %3$s</string>
     <string name="flashcard_delta_learning_badge">Being studied</string>
+    <string name="flashcard_badge_new">New!</string>
     <string name="flashcard_rating_again">Forgot</string>
     <string name="flashcard_rating_hard">Hard</string>
     <string name="flashcard_rating_good">OK</string>
     <string name="flashcard_rating_easy">Easy</string>
+
+    <!-- Settings hub -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_learning">Learning</string>
+    <string name="settings_section_app">App</string>
+    <string name="settings_personal">Personal information</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_goals">Goals</string>
+    <string name="settings_algorithm">Algorithm</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_about">About</string>
+    <string name="settings_report_bug">Report a bug</string>
+    <string name="settings_logout">Sign out</string>
+    <string name="settings_logout_confirm_title">Sign out?</string>
+    <string name="settings_logout_confirm_message">You will need to sign in again to access your account.</string>
+    <string name="settings_logout_confirm_action">Sign out</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_user_unknown">Unknown user</string>
+
+    <!-- Settings: Personal information -->
+    <string name="settings_personal_section_contact">Contact</string>
+    <string name="settings_personal_section_security">Security</string>
+    <string name="settings_personal_email">Email</string>
+    <string name="settings_personal_email_tooltip">To change email, please contact support: support@memowave.app</string>
+    <string name="settings_personal_username">Username</string>
+    <string name="settings_personal_username_save">Save</string>
+    <string name="settings_personal_username_updated">Username updated</string>
+    <string name="settings_personal_username_too_short">Must be at least 2 characters</string>
+    <string name="settings_personal_username_too_long">Must be no more than 32 characters</string>
+    <string name="settings_personal_username_update_failed">Failed to update username</string>
+    <string name="settings_personal_change_password">Change password</string>
+    <string name="settings_personal_current_password">Current password</string>
+    <string name="settings_personal_new_password">New password</string>
+    <string name="settings_personal_repeat_password">Repeat new password</string>
+    <string name="settings_personal_update_password">Update password</string>
+    <string name="settings_personal_passwords_dont_match">Passwords don\'t match</string>
+    <string name="settings_personal_same_password">New password must be different from current</string>
+    <string name="settings_personal_password_updated">Password updated</string>
+    <string name="settings_personal_password_wrong">Wrong current password</string>
+    <string name="settings_personal_password_forbidden">Action not allowed</string>
+    <string name="settings_personal_password_server_error">Server error. Try again later.</string>
+    <string name="settings_personal_danger_zone">Danger zone</string>
+    <string name="settings_personal_delete_account">Delete account</string>
+    <string name="settings_personal_delete_description">All your words, progress and achievements will be permanently deleted.</string>
+    <string name="settings_personal_delete_confirm">Are you sure?</string>
+    <string name="settings_personal_delete_coming_soon">Coming soon</string>
+
+    <!-- Settings: Security -->
+
+    <!-- Settings: Appearance -->
+    <string name="settings_appearance_section_theme">Theme</string>
+    <string name="settings_appearance_section_language">Language</string>
+    <string name="settings_appearance_section_animations">Animations</string>
+    <string name="settings_appearance_theme_light">Light</string>
+    <string name="settings_appearance_theme_dark">Dark</string>
+    <string name="settings_appearance_theme_system">System</string>
+    <string name="settings_appearance_language_label">App language</string>
+    <string name="settings_appearance_language_system">System</string>
+    <string name="settings_appearance_language_ru">Русский</string>
+    <string name="settings_appearance_language_en">English</string>
+    <string name="settings_appearance_reduce_motion">Reduce motion</string>
+    <string name="settings_appearance_reduce_motion_supporting">Shorten or disable animations</string>
+
+    <!-- Settings: Goals -->
+    <string name="settings_goals_section_week">Study week</string>
+    <string name="settings_goals_days_label">Study days</string>
+    <string name="settings_goals_reminder_time">Reminder time</string>
+    <string name="settings_goals_weekly_target">Words per week</string>
+    <string name="settings_goals_words_format">%1$d words</string>
+    <string name="settings_goals_link_algorithm">Review algorithm</string>
+    <string name="day_short_mon">M</string>
+    <string name="day_short_tue">T</string>
+    <string name="day_short_wed">W</string>
+    <string name="day_short_thu">T</string>
+    <string name="day_short_fri">F</string>
+    <string name="day_short_sat">S</string>
+    <string name="day_short_sun">S</string>
+
+    <!-- Settings: Algorithm -->
+    <string name="settings_algorithm_section_basic">Basics</string>
+    <string name="settings_algorithm_section_fine">Fine-tuning</string>
+    <string name="settings_algorithm_retention">Target retention</string>
+    <string name="settings_algorithm_retention_helper_left">Comfortable</string>
+    <string name="settings_algorithm_retention_helper_right">Challenging</string>
+    <string name="settings_algorithm_max_interval">Maximum interval</string>
+    <string name="settings_algorithm_easy_bonus">Easy bonus</string>
+    <string name="settings_algorithm_hard_penalty">Hard penalty</string>
+    <string name="settings_algorithm_reset">Reset to defaults</string>
+    <string name="settings_algorithm_reset_confirm">Reset algorithm settings?</string>
+    <string name="settings_algorithm_days_format">%1$d days</string>
+    <string name="settings_algorithm_years_format">%1$.1f years</string>
+    <string name="settings_algorithm_retention_explainer">~%1$d of 100 reviews may slip</string>
+    <string name="settings_algorithm_retention_intervals_label">Interval growth</string>
+    <string name="settings_algorithm_max_interval_explainer">Cards won\'t be reviewed less often than this.</string>
+    <string name="settings_algorithm_easy_bonus_explainer">How much an "Easy" rating stretches the next interval.</string>
+    <string name="settings_algorithm_hard_penalty_explainer">How much a "Hard" rating shortens the next interval.</string>
+
+    <!-- Settings: Notifications -->
+    <string name="settings_notifications_section_main">General</string>
+    <string name="settings_notifications_section_types">Types</string>
+    <string name="settings_notifications_section_quiet">Quiet hours</string>
+    <string name="settings_notifications_master">Enable notifications</string>
+    <string name="settings_notifications_master_supporting">Master toggle. Disabling silences everything below.</string>
+    <string name="settings_notifications_study">Study reminders</string>
+    <string name="settings_notifications_study_supporting">Daily reminder at the time set in Goals.</string>
+    <string name="settings_notifications_streak_risk">Streak at risk</string>
+    <string name="settings_notifications_streak_risk_supporting">Two hours before midnight, if you haven\'t studied yet.</string>
+    <string name="settings_notifications_milestones">Achievements</string>
+    <string name="settings_notifications_milestones_supporting">Celebrate progress: 100/500/1000 words learned, streaks, etc.</string>
+    <string name="settings_notifications_quiet_enable">Enable quiet hours</string>
+    <string name="settings_notifications_quiet_supporting">No notifications during this window. The range can cross midnight.</string>
+    <string name="settings_notifications_quiet_from">From</string>
+    <string name="settings_notifications_quiet_to">To</string>
+    <string name="settings_notifications_permission_required">Notifications are blocked. Open app settings to enable.</string>
+    <string name="settings_notifications_open_app_settings">Open app settings</string>
+    <string name="settings_notifications_channel_study">Study reminders</string>
+    <string name="settings_notifications_channel_study_desc">Daily reminders to study words</string>
+    <string name="settings_notifications_channel_streak">Streak warnings</string>
+    <string name="settings_notifications_channel_streak_desc">Warns you when your streak is about to end</string>
+    <string name="settings_notifications_channel_milestone">Achievements</string>
+    <string name="settings_notifications_channel_milestone_desc">Celebrate progress milestones</string>
+    <string name="settings_notifications_reminder_title">Time to study</string>
+    <string name="settings_notifications_reminder_text">Pick up where you left off</string>
+
+    <!-- Settings: About -->
+    <string name="settings_about_version_format">Memowave %1$s (%2$d)</string>
+    <string name="settings_about_version_copied">Copied</string>
+    <string name="settings_about_section_documents">Documents</string>
+    <string name="settings_about_section_contacts">Contacts</string>
+    <string name="settings_about_terms">Terms of use</string>
+    <string name="settings_about_privacy">Privacy policy</string>
+    <string name="settings_about_licenses">Open source licenses</string>
+    <string name="settings_about_support">Support</string>
+    <string name="settings_about_support_email">support@memowave.app</string>
+    <string name="settings_about_telegram">Telegram channel</string>
+    <string name="settings_about_developer">About developer</string>
+    <string name="settings_about_coming_soon">Coming soon</string>
+
+    <!-- Settings: Report a bug -->
+    <string name="settings_report_headline">Tell us what went wrong</string>
+    <string name="settings_report_description_label">Describe the issue</string>
+    <string name="settings_report_description_placeholder">What happened? What were you doing right before it?</string>
+    <string name="settings_report_attach">Attach diagnostic data</string>
+    <string name="settings_report_send">Send report</string>
+    <string name="settings_report_category_crash">Crash</string>
+    <string name="settings_report_category_design">Design</string>
+    <string name="settings_report_category_translation">Translation</string>
+    <string name="settings_report_category_performance">Performance</string>
+    <string name="settings_report_category_other">Other</string>
+    <string name="settings_report_subject_format">[Memowave] %1$s</string>
+    <string name="settings_report_no_email_app">No email app available</string>
+
+    <!-- Common -->
+    <string name="action_save">Save</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_change">Change</string>
 </resources>
