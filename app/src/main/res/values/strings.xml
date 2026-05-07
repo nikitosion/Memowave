@@ -89,6 +89,20 @@
     <string name="settings_section_app">App</string>
     <string name="settings_personal">Personal information</string>
     <string name="settings_security">Security</string>
+
+    <!-- Settings: Security / active sessions -->
+    <string name="security_sessions_header">These are the devices currently signed in to your account. Sign out from any device you don\'t recognise.</string>
+    <string name="security_sessions_empty">No active sessions</string>
+    <string name="security_sessions_current_chip">Current</string>
+    <string name="security_sessions_revoke">Sign out</string>
+    <string name="security_sessions_revoke_confirm_title">Sign out of this device?</string>
+    <string name="security_sessions_revoke_confirm_message">The session on \"%1$s\" will be ended immediately.</string>
+    <string name="security_sessions_revoke_confirm_yes">Sign out</string>
+    <string name="security_sessions_revoke_confirm_cancel">Cancel</string>
+    <string name="security_sessions_revoke_success">Session ended</string>
+    <string name="security_sessions_revoke_error">Could not end the session. Please try again.</string>
+    <string name="security_sessions_load_error">Could not load active sessions</string>
+    <string name="security_sessions_retry">Retry</string>
     <string name="settings_goals">Goals</string>
     <string name="settings_algorithm">Algorithm</string>
     <string name="settings_appearance">Appearance</string>

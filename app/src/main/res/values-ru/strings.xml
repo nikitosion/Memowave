@@ -72,6 +72,20 @@
     <string name="settings_section_app">Приложение</string>
     <string name="settings_personal">Личная информация</string>
     <string name="settings_security">Безопасность</string>
+
+    <!-- Settings: Безопасность / активные сессии -->
+    <string name="security_sessions_header">Это устройства, на которых сейчас выполнен вход в ваш аккаунт. Выйдите из тех, что вы не узнаёте.</string>
+    <string name="security_sessions_empty">Активных сессий нет</string>
+    <string name="security_sessions_current_chip">Текущая</string>
+    <string name="security_sessions_revoke">Выйти</string>
+    <string name="security_sessions_revoke_confirm_title">Завершить сессию?</string>
+    <string name="security_sessions_revoke_confirm_message">Сессия «%1$s» будет немедленно прекращена.</string>
+    <string name="security_sessions_revoke_confirm_yes">Завершить</string>
+    <string name="security_sessions_revoke_confirm_cancel">Отмена</string>
+    <string name="security_sessions_revoke_success">Сессия завершена</string>
+    <string name="security_sessions_revoke_error">Не удалось завершить сессию. Попробуйте ещё раз.</string>
+    <string name="security_sessions_load_error">Не удалось загрузить активные сессии</string>
+    <string name="security_sessions_retry">Повторить</string>
     <string name="settings_goals">Цели</string>
     <string name="settings_algorithm">Алгоритм</string>
     <string name="settings_appearance">Оформление</string>
