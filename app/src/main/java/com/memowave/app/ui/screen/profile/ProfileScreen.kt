@@ -54,7 +54,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
     val uiState by profileViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        profileViewModel.loadUserProfile(4L)
+        profileViewModel.loadUserProfile()
     }
 
     ProfileScreenContent(

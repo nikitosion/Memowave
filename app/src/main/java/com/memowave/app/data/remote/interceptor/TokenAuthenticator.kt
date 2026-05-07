@@ -35,7 +35,7 @@ class TokenAuthenticator @Inject constructor(
     private val refreshLock = Any()
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (responseCount(response) >= MAX_RETRIES) return null
+        if (responseCount(response) >= MAX_RETRIES) return giveUp()
 
         val failedAccess = response.request.header("Authorization")
             ?.removePrefix("Bearer ")
@@ -49,12 +49,16 @@ class TokenAuthenticator @Inject constructor(
             val refresh = runBlocking { tokenManager.getRefreshToken() }
             if (refresh.isNullOrEmpty()) return giveUp()
 
+            // Any failure to obtain a fresh token pair (network error, 5xx,
+            // 401, malformed body) is treated as session expiry: the original
+            // request already got 401, so nothing useful can happen without a
+            // valid refresh. Surfacing SessionExpired immediately beats
+            // leaving the user on a blank screen with stale tokens.
             val refreshResponse = runBlocking {
                 runCatching { refreshApiService.refresh(RefreshTokenReqDto(refresh)) }
-            }.getOrElse { return null }
+            }.getOrElse { return giveUp() }
 
-            if (refreshResponse.code() == 401) return giveUp()
-            if (!refreshResponse.isSuccessful) return null
+            if (!refreshResponse.isSuccessful) return giveUp()
 
             val body = refreshResponse.body() ?: return giveUp()
 
