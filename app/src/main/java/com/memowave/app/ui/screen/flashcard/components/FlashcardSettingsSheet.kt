@@ -1,6 +1,5 @@
 package com.memowave.app.ui.screen.flashcard.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,16 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -29,10 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.memowave.app.domain.model.Category
 import com.memowave.app.ui.common.notification.NotificationHost
 import com.memowave.app.ui.common.notification.NotificationManager
+import com.memowave.app.ui.common.settings.SectionDivider
+import com.memowave.app.ui.common.settings.SettingsItemColumn
+import com.memowave.app.ui.common.settings.SettingsSection
+import com.memowave.app.ui.common.settings.SettingsToggleRow
+import com.memowave.app.ui.common.settings.mutedFilterChipColors
 import com.memowave.app.ui.screen.flashcard.FlashcardGameMode
 import com.memowave.app.ui.screen.flashcard.FlashcardPhase
 import com.memowave.app.ui.theme.MemowaveTheme
@@ -140,7 +138,6 @@ private fun FlashcardSettingsSheetContent(
         }
 
         SettingsSection(title = "Колода") {
-            // Word count
             SettingsItemColumn(label = "Количество слов") {
                 Row(
                     modifier = Modifier
@@ -182,7 +179,6 @@ private fun FlashcardSettingsSheetContent(
 
             SectionDivider()
 
-            // Category selector
             SettingsItemColumn(label = "Набор слов") {
                 Row(
                     modifier = Modifier
@@ -234,101 +230,6 @@ private fun FlashcardSettingsSheetContent(
     }
 }
 
-@Composable
-private fun SettingsSection(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = title.uppercase(),
-            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.2.sp),
-            fontWeight = FontWeight.W700,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            content()
-        }
-    }
-}
-
-@Composable
-private fun SettingsItemColumn(
-    label: String,
-    content: @Composable () -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.W500,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        content()
-    }
-}
-
-@Composable
-private fun SectionDivider() {
-    HorizontalDivider(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-    )
-}
-
-@Composable
-private fun SettingsToggleRow(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.padding(end = 12.dp),
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.W500,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = mutedSwitchColors()
-        )
-    }
-}
-
-@Composable
-private fun mutedFilterChipColors() = FilterChipDefaults.filterChipColors(
-    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-    selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-    disabledSelectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-)
-
-@Composable
-private fun mutedSwitchColors() = SwitchDefaults.colors(
-    checkedThumbColor = MaterialTheme.colorScheme.onSecondaryContainer,
-    checkedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-    checkedBorderColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.4f),
-    uncheckedThumbColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-    uncheckedBorderColor = MaterialTheme.colorScheme.outlineVariant
-)
-
 @Preview(showBackground = true)
 @Composable
 private fun FlashcardSettingsSheetContentPreview() {
@@ -340,32 +241,6 @@ private fun FlashcardSettingsSheetContentPreview() {
             gamePhase = FlashcardPhase.GAME,
             showTranslationFirst = false,
             selectedCategoryId = 1L,
-            categories = listOf(
-                Category(id = 1L, name = "Базовые"),
-                Category(id = 2L, name = "Еда"),
-                Category(id = 3L, name = "Путешествия"),
-                Category(id = 4L, name = "Работа")
-            ),
-            onWordCountChanged = {},
-            onShuffledChanged = {},
-            onShowTranslationFirstChanged = {},
-            onGameModeChanged = {},
-            onCategorySelected = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FlashcardSettingsSheetContentAllWordsPreview() {
-    MemowaveTheme {
-        FlashcardSettingsSheetContent(
-            wordCount = 0,
-            isShuffled = false,
-            gameMode = FlashcardGameMode.NUMBERED,
-            gamePhase = FlashcardPhase.LOBBY,
-            showTranslationFirst = true,
-            selectedCategoryId = null,
             categories = listOf(
                 Category(id = 1L, name = "Базовые"),
                 Category(id = 2L, name = "Еда"),

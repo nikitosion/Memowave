@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -29,8 +30,13 @@ import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
+private val ICON_BUTTON_SIZE = 48.dp
+
 /**
- * Reusable top bar with consistent back button placement.
+ * Reusable top bar with consistent back button placement and centered title.
+ *
+ * Right slot reserves at least the same width as the back button so the title
+ * stays visually centered even when no actions are provided.
  *
  * @param onBackClick Callback for back navigation. If null, back button is hidden.
  * @param title Optional center title text.
@@ -82,8 +88,9 @@ fun MemowaveTopBar(
                 Box(modifier = Modifier.weight(1f))
             }
 
-            // Trailing: actions
+            // Trailing: actions, balanced with back button width when there is a back button
             Row(
+                modifier = Modifier.widthIn(min = if (onBackClick != null) ICON_BUTTON_SIZE else 0.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 content = actions
@@ -108,7 +115,7 @@ private fun MemowaveTopBarWithTitlePreview() {
     MemowaveTheme {
         MemowaveTopBar(
             onBackClick = {},
-            title = "3/15 \u2022 Изучение"
+            title = "3/15 • Изучение"
         )
     }
 }
