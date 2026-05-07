@@ -1,7 +1,7 @@
 package com.memowave.app.domain.usecase.word
 
 import com.memowave.app.domain.algorithm.CardPhase
-import com.memowave.app.domain.algorithm.FSRS
+import com.memowave.app.domain.algorithm.FSRSFactory
 import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.WordRepository
@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 class UpdateWordProgressUseCase @Inject constructor(
     private val repository: WordRepository,
-    private val fsrs: FSRS
+    private val fsrsFactory: FSRSFactory
 ) {
     suspend operator fun invoke(word: Word, rating: Rating): Result<Word> {
-        val gradeList = fsrs.calculate(word)
+        val gradeList = fsrsFactory.current().calculate(word)
         // gradeList: [0]=Easy(rating=4), [1]=Good(rating=3), [2]=Hard(rating=2), [3]=Again(rating=1)
         val currentGrade = gradeList[4 - rating.value]
 
