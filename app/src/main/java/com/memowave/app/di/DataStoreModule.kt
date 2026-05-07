@@ -8,7 +8,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.memowave.app.data.local.model.UserProfile
+import com.memowave.app.data.local.serializer.AppSettingsSerializer
 import com.memowave.app.data.local.serializer.UserProfileSerializer
+import com.memowave.app.domain.model.settings.AppSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +41,17 @@ object DataStoreModule {
         return DataStoreFactory.create(
             serializer = serializer,
             produceFile = { context.dataStoreFile("user_profile.pb") }
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppSettingsDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<AppSettings> {
+        return DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            produceFile = { context.dataStoreFile("app_settings.pb") }
         )
     }
 }

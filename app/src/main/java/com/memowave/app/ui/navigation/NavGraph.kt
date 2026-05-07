@@ -31,6 +31,14 @@ import com.memowave.app.ui.screen.profile.ProfileRoute
 import com.memowave.app.ui.screen.profile.ProfileViewModel
 import com.memowave.app.ui.screen.flashcard.FlashcardRoute
 import com.memowave.app.ui.screen.settings.AppSettingsRoute
+import com.memowave.app.ui.screen.settings.about.AboutRoute
+import com.memowave.app.ui.screen.settings.algorithm.AlgorithmRoute
+import com.memowave.app.ui.screen.settings.appearance.AppearanceRoute
+import com.memowave.app.ui.screen.settings.goals.GoalsRoute
+import com.memowave.app.ui.screen.settings.notifications.NotificationsRoute
+import com.memowave.app.ui.screen.settings.personal.PersonalInfoRoute
+import com.memowave.app.ui.screen.settings.report_bug.ReportBugRoute
+import com.memowave.app.ui.screen.settings.security.SecurityRoute
 import com.memowave.app.ui.screen.splash.SplashRoute
 import com.memowave.app.ui.screen.splash.SplashViewModel
 
@@ -81,12 +89,27 @@ sealed class Screen(
     object ResetPassword : Screen(route = "reset_password/{userId}") {
         const val USER_ID_ARG = "userId"
     }
-    object AppSettings : Screen(route = "app_settings")
+    object AppSettings : Screen(route = "app_settings", hasCustomTopBar = true)
+    object SettingsPersonal : Screen(route = "app_settings/personal", hasCustomTopBar = true)
+    object SettingsSecurity : Screen(route = "app_settings/security", hasCustomTopBar = true)
+    object SettingsGoals : Screen(route = "app_settings/goals", hasCustomTopBar = true)
+    object SettingsAlgorithm : Screen(route = "app_settings/algorithm", hasCustomTopBar = true)
+    object SettingsAppearance : Screen(route = "app_settings/appearance", hasCustomTopBar = true)
+    object SettingsNotifications : Screen(route = "app_settings/notifications", hasCustomTopBar = true)
+    object SettingsAbout : Screen(route = "app_settings/about", hasCustomTopBar = true)
+    object SettingsReportBug : Screen(route = "app_settings/report_bug", hasCustomTopBar = true)
     object Flashcard : Screen(route = "flashcard", hasCustomTopBar = true)
 
     companion object {
         val allScreens =
-            listOf(MainPage, Library, Games, Profile, Splash, Login, ForgotPassword, SignUp, ResetPassword, Flashcard)
+            listOf(
+                MainPage, Library, Games, Profile,
+                Splash, Login, ForgotPassword, SignUp, ResetPassword,
+                AppSettings, SettingsPersonal, SettingsSecurity,
+                SettingsGoals, SettingsAlgorithm, SettingsAppearance,
+                SettingsNotifications, SettingsAbout, SettingsReportBug,
+                Flashcard
+            )
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
 }
@@ -148,8 +171,31 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             ProfileRoute(navController, profileViewModel)
         }
         composable(Screen.AppSettings.route) {
-            val profileViewModel = hiltViewModel<ProfileViewModel>()
-            AppSettingsRoute(navController, profileViewModel)
+            AppSettingsRoute(navController = navController)
+        }
+        composable(Screen.SettingsPersonal.route) {
+            PersonalInfoRoute(navController = navController)
+        }
+        composable(Screen.SettingsSecurity.route) {
+            SecurityRoute(navController = navController)
+        }
+        composable(Screen.SettingsGoals.route) {
+            GoalsRoute(navController = navController)
+        }
+        composable(Screen.SettingsAlgorithm.route) {
+            AlgorithmRoute(navController = navController)
+        }
+        composable(Screen.SettingsAppearance.route) {
+            AppearanceRoute(navController = navController)
+        }
+        composable(Screen.SettingsNotifications.route) {
+            NotificationsRoute(navController = navController)
+        }
+        composable(Screen.SettingsAbout.route) {
+            AboutRoute(navController = navController)
+        }
+        composable(Screen.SettingsReportBug.route) {
+            ReportBugRoute(navController = navController)
         }
 
         composable(Screen.Flashcard.route) {

@@ -135,6 +135,9 @@ dependencies {
     // Coil 3 - image loading
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // AppCompat (for application locale switching)
+    implementation(libs.androidx.appcompat)
 }
 
 fun com.android.build.api.dsl.ApplicationBuildType.configureApiUrl() {

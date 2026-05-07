@@ -12,13 +12,17 @@ import com.memowave.app.data.mapper.WordMapper
 import com.memowave.app.data.remote.api.ApiService
 import com.memowave.app.data.repository.AuthRepositoryImpl
 import com.memowave.app.data.repository.CategoryRepositoryImpl
+import com.memowave.app.data.repository.SettingsRepositoryImpl
 import com.memowave.app.data.repository.UserRepositoryImpl
 import com.memowave.app.data.repository.WordRepositoryImpl
 import com.memowave.app.data.sync.SyncManager
 import com.memowave.app.domain.repository.AuthRepository
 import com.memowave.app.domain.repository.CategoryRepository
+import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.repository.UserRepository
 import com.memowave.app.domain.repository.WordRepository
+import com.memowave.app.domain.model.settings.AppSettings
+import androidx.datastore.core.DataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -114,4 +118,10 @@ object RepositoryModule {
             syncManager = syncManager
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        dataStore: DataStore<AppSettings>
+    ): SettingsRepository = SettingsRepositoryImpl(dataStore)
 }

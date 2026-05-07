@@ -12,9 +12,16 @@ import androidx.work.WorkManager
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.memowave.app.core.notifications.MemowaveNotificationChannels
+import com.memowave.app.core.notifications.ReminderScheduler
 import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.sync.SyncWorker
+import com.memowave.app.di.ApplicationScope
+import com.memowave.app.domain.usecase.settings.GetSettingsUseCase
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -31,6 +38,16 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
     @Inject
     lateinit var imageLoader: ImageLoader
 
+    @Inject
+    lateinit var reminderScheduler: ReminderScheduler
+
+    @Inject
+    lateinit var getSettingsUseCase: GetSettingsUseCase
+
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -46,6 +63,8 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
         // auto-login probe in LoginViewModel.init). One-time DataStore read.
         tokenManager.primeBlocking()
         scheduleSyncWorker()
+        MemowaveNotificationChannels.ensureCreated(this)
+        observeReminderSettings()
     }
 
     private fun scheduleSyncWorker() {
@@ -66,5 +85,19 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
             ExistingPeriodicWorkPolicy.KEEP,
             syncRequest
         )
+    }
+
+    private fun observeReminderSettings() {
+        applicationScope.launch {
+            getSettingsUseCase()
+                .distinctUntilChanged { old, new ->
+                    old.notificationsEnabled == new.notificationsEnabled &&
+                        old.studyRemindersEnabled == new.studyRemindersEnabled &&
+                        old.reminderHour == new.reminderHour &&
+                        old.reminderMinute == new.reminderMinute &&
+                        old.goalDaysOfWeek == new.goalDaysOfWeek
+                }
+                .collect { settings -> reminderScheduler.schedule(settings) }
+        }
     }
 }

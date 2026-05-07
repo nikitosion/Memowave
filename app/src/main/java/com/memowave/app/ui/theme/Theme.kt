@@ -9,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.memowave.app.domain.model.settings.ThemeMode
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -273,15 +274,18 @@ val LocalAppWarningColors = staticCompositionLocalOf { lightWarningColors }
 
 @Composable
 fun MemowaveTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> darkScheme
-        else -> lightScheme
+    val systemDark = isSystemInDarkTheme()
+    val isDark = when (themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> systemDark
     }
-    val warningColors = if (darkTheme) darkWarningColors else lightWarningColors
+    val colorScheme = if (isDark) darkScheme else lightScheme
+    val warningColors = if (isDark) darkWarningColors else lightWarningColors
 
     CompositionLocalProvider(LocalAppWarningColors provides warningColors) {
         MaterialTheme(

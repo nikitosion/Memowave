@@ -23,6 +23,7 @@ enum class CardPhase(val value: Int) {
 class FSRS(
     private val requestRetention: Double,
     private val params: List<Double>,
+    private val maxInterval: Int = 36500,
     private val isReview: Boolean = false,
 ) {
 
@@ -246,7 +247,7 @@ class FSRS(
 
     private fun nextInterval(
         stability: Double,
-        maxInterval: Int = 36500, lastInterval: Int = 0
+        lastInterval: Int = 0
     ): Int {
         val fuzzFactor = generateFuzzFactor()
         val rawInterval = stability / factor * (requestRetention.pow(1 / decay) - 1)
