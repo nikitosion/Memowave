@@ -8,6 +8,7 @@ import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
+import com.memowave.app.domain.usecase.streak.RecordWordReviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import com.memowave.app.domain.usecase.word.UpdateWordProgressUseCase
@@ -45,7 +46,8 @@ class QuizGameViewModel @Inject constructor(
     private val getWordsByCategoryUseCase: GetWordsByCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val updateWordProgressUseCase: UpdateWordProgressUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val recordWordReviewUseCase: RecordWordReviewUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QuizGameUiState())
@@ -261,6 +263,9 @@ class QuizGameViewModel @Inject constructor(
                         progressDelta = delta,
                         summaries = _uiState.value.summaries + summary
                     )
+                    if (isCorrect) {
+                        recordWordReviewUseCase()
+                    }
                 }
         }
     }

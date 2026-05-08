@@ -437,5 +437,20 @@
     <string name="quiz_streak">Серия: %1$d</string>
     <string name="quiz_finished">Время вышло!</string>
     <string name="quiz_duration_title">Длительность раунда</string>
+
+    <!-- Уведомления (заглушка) -->
+    <string name="coming_soon_notifications">Уведомления будут реализованы позже</string>
+
+    <!-- Главный экран: карточка стрика -->
+    <plurals name="streak_card_days">
+        <item quantity="one">%d день подряд</item>
+        <item quantity="few">%d дня подряд</item>
+        <item quantity="many">%d дней подряд</item>
+        <item quantity="other">%d дней подряд</item>
+    </plurals>
+    <string name="streak_card_best">Рекорд: %d дн.</string>
+    <string name="streak_card_subtitle_empty">Начни стрик сегодня</string>
+    <string name="streak_card_today_progress">Прогресс за сегодня</string>
+    <string name="streak_card_today_done">Цель на сегодня выполнена</string>
 </resources>
 

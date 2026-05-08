@@ -26,6 +26,7 @@ import com.memowave.app.ui.screen.main_page.components.BaseWordStatictics
 import com.memowave.app.ui.screen.main_page.components.ContinueLearningButton
 import com.memowave.app.ui.screen.main_page.components.InterestingFacts
 import com.memowave.app.ui.screen.main_page.components.LearningMode
+import com.memowave.app.ui.screen.main_page.components.StreakCard
 import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.theme.MemowaveTheme
 
@@ -110,8 +111,12 @@ fun MainPageScreen(
             modeIconResId = lastMode.iconResId,
             onClick = onLaunchLastMode,
         )
+        StreakCard(
+            state = state.streak,
+            modifier = Modifier.padding(top = 20.dp),
+        )
         BaseWordStatictics(
-            modifier = Modifier.padding(top = 28.dp),
+            modifier = Modifier.padding(top = 20.dp),
             newCount = state.newCount,
             dueCount = state.dueCount,
             learnedCount = state.learnedCount,

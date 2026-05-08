@@ -41,7 +41,12 @@ class GoalsViewModel @Inject constructor(
     }
 
     fun onWeeklyGoalChange(words: Int) {
-        viewModelScope.launch { updateWeeklyGoalUseCase(words) }
+        // Покрутка слайдера: только локально, чтобы не писать в DataStore на каждый тик.
+        _uiState.update { it.copy(weeklyWordGoal = words) }
+    }
+
+    fun onWeeklyGoalCommit() {
+        viewModelScope.launch { updateWeeklyGoalUseCase(_uiState.value.weeklyWordGoal) }
     }
 
     fun onToggleDay(iso: Int) {

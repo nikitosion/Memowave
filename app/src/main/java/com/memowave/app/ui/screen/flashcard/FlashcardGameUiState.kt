@@ -46,6 +46,9 @@ data class FlashcardGameUiState(
 
     val gradePreview: Map<Rating, WordGrade>? = null,
 
+    // SUMMARY phase: how many words remain today to keep the streak alive.
+    // Snapshot taken from GetStreakStateUseCase when entering SUMMARY; 0 when the
+    // daily target is already met.
     val streakWordsRemaining: Int = 0,
 
     val nextPrepCountdownSeconds: Int? = null,

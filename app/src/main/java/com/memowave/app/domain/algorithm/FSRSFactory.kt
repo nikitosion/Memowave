@@ -70,6 +70,6 @@ class FSRSFactory @Inject constructor(
             fsrsHardPenalty == other.fsrsHardPenalty
 
     private companion object {
-        const val DEFAULT_MAX_INTERVAL = 36500
+        const val DEFAULT_MAX_INTERVAL = 365
     }
 }
