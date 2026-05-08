@@ -277,6 +277,76 @@
     <string name="settings_report_subject_format">[Memowave] %1$s</string>
     <string name="settings_report_no_email_app">No email app available</string>
 
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Not synced</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">New word</string>
+    <string name="word_edit_title_edit">Edit word</string>
+    <string name="word_edit_save">Save</string>
+    <string name="word_edit_cancel">Cancel</string>
+    <string name="word_edit_delete">Delete word</string>
+    <string name="word_edit_field_original">Original</string>
+    <string name="word_edit_field_translation">Translation</string>
+    <string name="word_edit_field_example">Example (optional)</string>
+    <string name="word_edit_field_category">Category</string>
+    <string name="word_edit_category_none">No category</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Algorithm</string>
+    <string name="word_edit_algo_phase_caption">Phase</string>
+    <string name="word_edit_algo_due_caption">Next review</string>
+    <string name="word_edit_algo_review_count">Reviews</string>
+    <string name="word_edit_algo_interval">Interval</string>
+    <string name="word_edit_algo_stability">Stability</string>
+    <string name="word_edit_algo_difficulty">Difficulty</string>
+    <string name="word_edit_algo_days_format">%1$d d</string>
+    <string name="word_edit_algo_stability_format">%1$.1f d</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">New</string>
+    <string name="word_edit_algo_phase_learning">Learning</string>
+    <string name="word_edit_algo_phase_review">Review</string>
+    <string name="word_edit_algo_phase_relearn">Relearn</string>
+    <string name="word_edit_algo_due_today">Today</string>
+    <string name="word_edit_algo_due_tomorrow">Tomorrow</string>
+    <string name="word_edit_algo_due_overdue">Overdue</string>
+    <string name="word_edit_algo_due_ready">Ready to learn</string>
+    <string name="word_edit_algo_due_in_days_format">In %1$d d</string>
+    <string name="word_edit_algo_last_review_format">Last reviewed: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Not yet reviewed</string>
+    <string name="word_edit_algo_reset">Reset progress</string>
+    <string name="word_edit_algo_reset_banner">Progress will be reset on save</string>
+    <string name="word_edit_algo_reset_undo">Undo</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Created: %1$s</string>
+    <string name="word_edit_meta_updated">Updated: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Delete word?</string>
+    <string name="word_edit_delete_confirm_message">The word will be removed from your library and synced on the next online connection.</string>
+    <string name="word_edit_delete_confirm_yes">Delete</string>
+    <string name="word_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Discard changes?</string>
+    <string name="word_edit_discard_message">Your changes will be lost.</string>
+    <string name="word_edit_discard_yes">Discard</string>
+    <string name="word_edit_discard_no">Stay</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Saving…</string>
+    <string name="word_edit_op_deleting">Deleting…</string>
+    <string name="word_edit_op_save_success_new">Word added</string>
+    <string name="word_edit_op_save_success_edit">Word updated</string>
+    <string name="word_edit_op_delete_success">Word deleted</string>
+    <string name="word_edit_op_save_error">Could not save</string>
+    <string name="word_edit_op_delete_error">Could not delete</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Cancel</string>
+    <string name="word_edit_a11y_save">Save</string>
+
     <!-- Common -->
     <string name="action_save">Save</string>
     <string name="action_confirm">Confirm</string>

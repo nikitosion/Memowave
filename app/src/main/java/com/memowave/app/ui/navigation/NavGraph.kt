@@ -41,6 +41,7 @@ import com.memowave.app.ui.screen.settings.report_bug.ReportBugRoute
 import com.memowave.app.ui.screen.settings.security.SecurityRoute
 import com.memowave.app.ui.screen.splash.SplashRoute
 import com.memowave.app.ui.screen.splash.SplashViewModel
+import com.memowave.app.ui.screen.word_edit.WordEditRoute
 
 sealed class Screen(
     val route: String,
@@ -100,6 +101,13 @@ sealed class Screen(
     object SettingsReportBug : Screen(route = "app_settings/report_bug", hasCustomTopBar = true)
     object Flashcard : Screen(route = "flashcard", hasCustomTopBar = true)
 
+    object WordNew : Screen(route = "word_new", hasCustomTopBar = true)
+
+    object WordEdit : Screen(route = "word_edit/{wordId}", hasCustomTopBar = true) {
+        const val WORD_ID_ARG = "wordId"
+        fun routeFor(id: Long) = "word_edit/$id"
+    }
+
     companion object {
         val allScreens =
             listOf(
@@ -108,7 +116,7 @@ sealed class Screen(
                 AppSettings, SettingsPersonal, SettingsSecurity,
                 SettingsGoals, SettingsAlgorithm, SettingsAppearance,
                 SettingsNotifications, SettingsAbout, SettingsReportBug,
-                Flashcard
+                Flashcard, WordNew, WordEdit
             )
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
@@ -225,6 +233,19 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
         ) {
             val viewModel = hiltViewModel<ResetPasswordViewModel>()
             ResetPasswordRoute(viewModel = viewModel, navController = navController)
+        }
+
+        composable(Screen.WordNew.route) {
+            WordEditRoute(navController = navController)
+        }
+
+        composable(
+            route = Screen.WordEdit.route,
+            arguments = listOf(
+                navArgument(Screen.WordEdit.WORD_ID_ARG) { type = NavType.LongType }
+            )
+        ) {
+            WordEditRoute(navController = navController)
         }
     }
 }

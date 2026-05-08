@@ -10,8 +10,6 @@ data class LibraryUiState(
     val selectedCategoryId: Long? = null,
     val searchQuery: String = "",
     val errorMessage: String? = null,
-    val isWordDialogOpen: Boolean = false,
-    val editingWord: Word? = null,
     val isCategoryDialogOpen: Boolean = false,
     val editingCategory: Category? = null
 )

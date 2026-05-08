@@ -7,19 +7,12 @@ sealed interface LibraryEvent {
     data object Load : LibraryEvent
     data class SearchChanged(val query: String) : LibraryEvent
     data class CategorySelected(val categoryId: Long?) : LibraryEvent
+
+    /** Word events — navigation handled by [LibraryRoute]. */
     data object AddWordClicked : LibraryEvent
     data class EditWordClicked(val word: Word) : LibraryEvent
-    data class DeleteWordClicked(val wordId: Long) : LibraryEvent
-    data object DismissWordDialog : LibraryEvent
-    data class SaveWord(
-        val original: String,
-        val translation: String,
-        val categoryId: Long?,
-        val examples: List<String>,
-        val note: String?,
-        val imageFileName: String?
-    ) : LibraryEvent
 
+    /** Category events — currently routed through dialog. */
     data object AddCategoryClicked : LibraryEvent
     data class EditCategoryClicked(val category: Category) : LibraryEvent
     data class DeleteCategoryClicked(val categoryId: Long) : LibraryEvent

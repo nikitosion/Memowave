@@ -264,6 +264,76 @@
     <string name="settings_report_subject_format">[Memowave] %1$s</string>
     <string name="settings_report_no_email_app">Нет приложения для отправки писем</string>
 
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Не синхронизировано</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">Новое слово</string>
+    <string name="word_edit_title_edit">Редактировать слово</string>
+    <string name="word_edit_save">Сохранить</string>
+    <string name="word_edit_cancel">Отмена</string>
+    <string name="word_edit_delete">Удалить слово</string>
+    <string name="word_edit_field_original">Оригинал</string>
+    <string name="word_edit_field_translation">Перевод</string>
+    <string name="word_edit_field_example">Пример (необязательно)</string>
+    <string name="word_edit_field_category">Категория</string>
+    <string name="word_edit_category_none">Без категории</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Алгоритм</string>
+    <string name="word_edit_algo_phase_caption">Фаза</string>
+    <string name="word_edit_algo_due_caption">След. повтор</string>
+    <string name="word_edit_algo_review_count">Повторений</string>
+    <string name="word_edit_algo_interval">Интервал</string>
+    <string name="word_edit_algo_stability">Стабильность</string>
+    <string name="word_edit_algo_difficulty">Сложность</string>
+    <string name="word_edit_algo_days_format">%1$d дн</string>
+    <string name="word_edit_algo_stability_format">%1$.1f дн</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">Новое</string>
+    <string name="word_edit_algo_phase_learning">Изучение</string>
+    <string name="word_edit_algo_phase_review">Повторение</string>
+    <string name="word_edit_algo_phase_relearn">Переучивание</string>
+    <string name="word_edit_algo_due_today">Сегодня</string>
+    <string name="word_edit_algo_due_tomorrow">Завтра</string>
+    <string name="word_edit_algo_due_overdue">Просрочено</string>
+    <string name="word_edit_algo_due_ready">Готово к изучению</string>
+    <string name="word_edit_algo_due_in_days_format">Через %1$d дн</string>
+    <string name="word_edit_algo_last_review_format">Последний повтор: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Ещё не повторялось</string>
+    <string name="word_edit_algo_reset">Сбросить прогресс</string>
+    <string name="word_edit_algo_reset_banner">Прогресс будет сброшен при сохранении</string>
+    <string name="word_edit_algo_reset_undo">Отменить</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Создано: %1$s</string>
+    <string name="word_edit_meta_updated">Обновлено: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Удалить слово?</string>
+    <string name="word_edit_delete_confirm_message">Слово будет удалено из библиотеки и синхронизировано при следующем подключении.</string>
+    <string name="word_edit_delete_confirm_yes">Удалить</string>
+    <string name="word_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Отменить изменения?</string>
+    <string name="word_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="word_edit_discard_yes">Отменить</string>
+    <string name="word_edit_discard_no">Остаться</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Сохраняем…</string>
+    <string name="word_edit_op_deleting">Удаляем…</string>
+    <string name="word_edit_op_save_success_new">Слово добавлено</string>
+    <string name="word_edit_op_save_success_edit">Слово обновлено</string>
+    <string name="word_edit_op_delete_success">Слово удалено</string>
+    <string name="word_edit_op_save_error">Не удалось сохранить</string>
+    <string name="word_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Отмена</string>
+    <string name="word_edit_a11y_save">Сохранить</string>
+
     <!-- Common -->
     <string name="action_save">Сохранить</string>
     <string name="action_confirm">Подтвердить</string>
