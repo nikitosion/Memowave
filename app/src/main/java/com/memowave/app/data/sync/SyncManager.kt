@@ -26,6 +26,7 @@ class SyncManager @Inject constructor(
             val success = when (operation.entityType) {
                 SyncEntityType.CATEGORY -> syncCategoryOperation(operation)
                 SyncEntityType.WORD -> syncWordOperation(operation)
+                SyncEntityType.USER_XP -> syncUserXpOperation(operation)
             }
 
             if (success) {
@@ -154,6 +155,38 @@ class SyncManager @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.w(e, "Network error syncing word ${item.id}")
+            false
+        }
+    }
+
+    private suspend fun syncUserXpOperation(item: SyncQueueEntity): Boolean {
+        return try {
+            val xpDelta = item.entityId.toInt()
+            val userResponse = apiService.getUserInfo()
+            when {
+                !userResponse.isSuccessful -> {
+                    if (userResponse.code() in 400..499) {
+                        Timber.e("Sync USER_XP failed to fetch user with ${userResponse.code()}, dropping")
+                        return true
+                    }
+                    return false
+                }
+                else -> {
+                    val currentDto = userResponse.body() ?: return true
+                    val newExperience = (currentDto.experience ?: 0) + xpDelta
+                    val updateResponse = apiService.updateUserInfo(currentDto.copy(experience = newExperience))
+                    when {
+                        updateResponse.isSuccessful -> true
+                        updateResponse.code() in 400..499 -> {
+                            Timber.e("Sync USER_XP update failed with ${updateResponse.code()}, dropping")
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Timber.w(e, "Network error syncing user XP ${item.id}")
             false
         }
     }
