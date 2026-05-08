@@ -51,6 +51,18 @@
     <string name="notification_login_success">Вход выполнен успешно!</string>
     <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова</string>
     <string name="notification_registration_success">Регистрация выполнена успешно!</string>
+    <string name="auth_error_user_id_missing">Не удалось получить идентификатор пользователя</string>
+
+    <!-- Auth: email verification -->
+    <string name="auth_verify_email_title">Подтверждение почты</string>
+    <string name="auth_verify_email_subtitle">Введите код, который мы отправили вам на почту</string>
+    <string name="auth_verify_email_submit">Подтвердить</string>
+    <string name="auth_verify_email_resend">Отправить код снова</string>
+    <string name="auth_verify_email_resend_in">Отправить код снова через %d сек</string>
+    <string name="auth_verify_email_resend_success">Код отправлен повторно</string>
+    <string name="auth_verify_email_invalid_code">Неверный или просроченный код</string>
+    <string name="auth_verify_email_failed_generic">Не удалось подтвердить почту</string>
+    <string name="auth_verify_email_send_failed">Не удалось отправить код</string>
     <string name="flashcard_delta_stability">Стабильность</string>
     <string name="flashcard_delta_difficulty">Сложность</string>
     <string name="flashcard_delta_interval">Интервал</string>

@@ -25,6 +25,8 @@ import com.memowave.app.ui.screen.authentification.ResetPasswordRoute
 import com.memowave.app.ui.screen.authentification.ResetPasswordViewModel
 import com.memowave.app.ui.screen.authentification.SignUpRoute
 import com.memowave.app.ui.screen.authentification.SignUpViewModel
+import com.memowave.app.ui.screen.authentification.VerifyEmailRoute
+import com.memowave.app.ui.screen.authentification.VerifyEmailViewModel
 import com.memowave.app.ui.screen.library.LibraryRoute
 import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
@@ -86,6 +88,18 @@ sealed class Screen(
     object ResetPassword : Screen(route = "reset_password/{userId}") {
         const val USER_ID_ARG = "userId"
     }
+
+    /**
+     * Email-verification destination. Reached from [SignUp] (mandatory verification
+     * after registration) or [ForgotPassword] (gating the password-reset step).
+     * Both `userId` and `flow` are passed as path args; see
+     * [com.memowave.app.ui.screen.authentification.helper.AuthNavEvent.ToVerifyEmail].
+     */
+    object VerifyEmail : Screen(route = "verify_email/{userId}/{flow}") {
+        const val USER_ID_ARG = "userId"
+        const val FLOW_ARG = "flow"
+        fun routeFor(userId: Long, flow: String) = "verify_email/$userId/$flow"
+    }
     object AppSettings : Screen(route = "app_settings", hasCustomTopBar = true)
     object SettingsPersonal : Screen(route = "app_settings/personal", hasCustomTopBar = true)
     object SettingsSecurity : Screen(route = "app_settings/security", hasCustomTopBar = true)
@@ -117,7 +131,7 @@ sealed class Screen(
         val allScreens =
             listOf(
                 MainPage, Library, Profile,
-                Splash, Login, ForgotPassword, SignUp, ResetPassword,
+                Splash, Login, ForgotPassword, SignUp, ResetPassword, VerifyEmail,
                 AppSettings, SettingsPersonal, SettingsSecurity,
                 SettingsGoals, SettingsAlgorithm, SettingsAppearance,
                 SettingsNotifications, SettingsAbout, SettingsReportBug,
@@ -243,6 +257,17 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
         ) {
             val viewModel = hiltViewModel<ResetPasswordViewModel>()
             ResetPasswordRoute(viewModel = viewModel, navController = navController)
+        }
+
+        composable(
+            route = Screen.VerifyEmail.route,
+            arguments = listOf(
+                navArgument(Screen.VerifyEmail.USER_ID_ARG) { type = NavType.LongType },
+                navArgument(Screen.VerifyEmail.FLOW_ARG) { type = NavType.StringType },
+            )
+        ) {
+            val viewModel = hiltViewModel<VerifyEmailViewModel>()
+            VerifyEmailRoute(viewModel = viewModel, navController = navController)
         }
 
         composable(Screen.WordNew.route) {
