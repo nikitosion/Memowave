@@ -9,6 +9,7 @@ import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
+import com.memowave.app.domain.usecase.streak.RecordWordReviewUseCase
 import com.memowave.app.domain.usecase.word.CalculateGradePreviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
@@ -45,7 +46,8 @@ class TranslationGameViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val updateWordProgressUseCase: UpdateWordProgressUseCase,
     private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val recordWordReviewUseCase: RecordWordReviewUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TranslationGameUiState())
@@ -271,6 +273,9 @@ class TranslationGameViewModel @Inject constructor(
                             progressDelta = delta,
                             summaries = _uiState.value.summaries + summary
                         )
+                    }
+                    if (isCorrect) {
+                        recordWordReviewUseCase()
                     }
                 }
         }

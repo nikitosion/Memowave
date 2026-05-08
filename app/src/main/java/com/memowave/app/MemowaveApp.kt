@@ -17,12 +17,13 @@ import com.memowave.app.core.notifications.ReminderScheduler
 import com.memowave.app.data.local.TokenManager
 import com.memowave.app.data.sync.SyncWorker
 import com.memowave.app.di.ApplicationScope
-import com.memowave.app.domain.usecase.settings.GetSettingsUseCase
+import com.memowave.app.domain.repository.SettingsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -42,7 +43,7 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
     lateinit var reminderScheduler: ReminderScheduler
 
     @Inject
-    lateinit var getSettingsUseCase: GetSettingsUseCase
+    lateinit var settingsRepository: SettingsRepository
 
     @Inject
     @ApplicationScope
@@ -65,6 +66,7 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
         scheduleSyncWorker()
         MemowaveNotificationChannels.ensureCreated(this)
         observeReminderSettings()
+        rolloverStaleStreakOnce()
     }
 
     private fun scheduleSyncWorker() {
@@ -88,16 +90,43 @@ class MemowaveApp : Application(), Configuration.Provider, SingletonImageLoader.
     }
 
     private fun observeReminderSettings() {
+        // TODO: модуль уведомлений временно отключён. Принудительно снимаем любые
+        // запланированные WorkManager-задачи и не подписываемся на изменения настроек.
+        // Когда фича вернётся — восстановить подписку на settings flow и schedule().
+        reminderScheduler.cancel()
+    }
+
+    /**
+     * Если последний день стрика старше «вчера», обнуляем его текущее значение.
+     * Лучший рекорд (`longestStreak`) сохраняем. Запускается один раз на старте.
+     */
+    private fun rolloverStaleStreakOnce() {
         applicationScope.launch {
-            getSettingsUseCase()
-                .distinctUntilChanged { old, new ->
-                    old.notificationsEnabled == new.notificationsEnabled &&
-                        old.studyRemindersEnabled == new.studyRemindersEnabled &&
-                        old.reminderHour == new.reminderHour &&
-                        old.reminderMinute == new.reminderMinute &&
-                        old.goalDaysOfWeek == new.goalDaysOfWeek
-                }
-                .collect { settings -> reminderScheduler.schedule(settings) }
+            val s = settingsRepository.getSettings().first()
+            val today = LocalDate.now()
+            val yesterdayIso = today.minusDays(1).toString()
+            val todayIso = today.toString()
+            val streakAlive = s.lastStreakDate == todayIso || s.lastStreakDate == yesterdayIso
+            val activityToday = s.lastActivityDate == todayIso
+            if (!streakAlive && s.currentStreak != 0) {
+                settingsRepository.setStreakState(
+                    currentStreak = 0,
+                    longestStreak = s.longestStreak,
+                    lastStreakDate = s.lastStreakDate,
+                    wordsCompletedToday = if (activityToday) s.wordsCompletedToday else 0,
+                    lastActivityDate = if (activityToday) s.lastActivityDate else null,
+                )
+            } else if (!activityToday && s.wordsCompletedToday != 0) {
+                // Стрик ещё жив (вчерашняя дата), но дневной счётчик протух — сбрасываем,
+                // чтобы UI сразу показывал 0/N с момента запуска.
+                settingsRepository.setStreakState(
+                    currentStreak = s.currentStreak,
+                    longestStreak = s.longestStreak,
+                    lastStreakDate = s.lastStreakDate,
+                    wordsCompletedToday = 0,
+                    lastActivityDate = null,
+                )
+            }
         }
     }
 }
