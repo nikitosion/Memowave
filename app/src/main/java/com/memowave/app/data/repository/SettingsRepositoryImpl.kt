@@ -50,7 +50,7 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun setFsrsMaximumInterval(days: Int) {
-        dataStore.updateData { it.copy(fsrsMaximumInterval = days.coerceIn(30, 36500)) }
+        dataStore.updateData { it.copy(fsrsMaximumInterval = days.coerceIn(30, 365)) }
     }
 
     override suspend fun setFsrsEasyBonus(value: Double) {
@@ -65,7 +65,7 @@ class SettingsRepositoryImpl(
         dataStore.updateData {
             it.copy(
                 fsrsRequestRetention = FSRSConfig.REQUEST_RETENTION,
-                fsrsMaximumInterval = 36500,
+                fsrsMaximumInterval = 365,
                 fsrsEasyBonus = FSRSConfig.DEFAULT_PARAMS[16],
                 fsrsHardPenalty = FSRSConfig.DEFAULT_PARAMS[15]
             )
@@ -109,6 +109,24 @@ class SettingsRepositoryImpl(
 
     override suspend fun setLastFlashcardGameMode(mode: String) {
         dataStore.updateData { it.copy(lastFlashcardGameMode = mode) }
+    }
+
+    override suspend fun setStreakState(
+        currentStreak: Int,
+        longestStreak: Int,
+        lastStreakDate: String?,
+        wordsCompletedToday: Int,
+        lastActivityDate: String?,
+    ) {
+        dataStore.updateData {
+            it.copy(
+                currentStreak = currentStreak.coerceAtLeast(0),
+                longestStreak = longestStreak.coerceAtLeast(0),
+                lastStreakDate = lastStreakDate,
+                wordsCompletedToday = wordsCompletedToday.coerceAtLeast(0),
+                lastActivityDate = lastActivityDate,
+            )
+        }
     }
 
     private companion object {

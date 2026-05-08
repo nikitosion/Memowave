@@ -24,6 +24,8 @@ import com.memowave.app.domain.usecase.settings.UpdateReduceMotionUseCase
 import com.memowave.app.domain.usecase.settings.UpdateReminderTimeUseCase
 import com.memowave.app.domain.usecase.settings.UpdateThemeUseCase
 import com.memowave.app.domain.usecase.settings.UpdateWeeklyGoalUseCase
+import com.memowave.app.domain.usecase.streak.GetStreakStateUseCase
+import com.memowave.app.domain.usecase.streak.RecordWordReviewUseCase
 import com.memowave.app.domain.validator.PasswordValidator
 import dagger.Module
 import dagger.Provides
@@ -156,4 +158,16 @@ object UseCaseModule {
     fun provideResetFsrsToDefaultsUseCase(
         repository: SettingsRepository
     ): ResetFsrsToDefaultsUseCase = ResetFsrsToDefaultsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideRecordWordReviewUseCase(
+        repository: SettingsRepository
+    ): RecordWordReviewUseCase = RecordWordReviewUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetStreakStateUseCase(
+        repository: SettingsRepository
+    ): GetStreakStateUseCase = GetStreakStateUseCase(repository)
 }

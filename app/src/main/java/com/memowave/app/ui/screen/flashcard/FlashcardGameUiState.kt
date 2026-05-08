@@ -65,8 +65,9 @@ data class FlashcardGameUiState(
     // null while being calculated or before card is flipped.
     val gradePreview: Map<Rating, WordGrade>? = null,
 
-    // SUMMARY phase: how many words remain to save the current streak (placeholder until
-    // the real streak feature lands — randomized once when entering SUMMARY).
+    // SUMMARY phase: how many words remain today to keep the streak alive.
+    // Snapshot taken from GetStreakStateUseCase when entering SUMMARY; 0 when the
+    // daily target is already met.
     val streakWordsRemaining: Int = 0,
 
     // NEXT_PREP phase countdown. null means no timer (cancelled or phase not active).

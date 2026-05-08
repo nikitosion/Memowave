@@ -30,4 +30,16 @@ interface SettingsRepository {
 
     suspend fun setLastLearningMode(modeId: String)
     suspend fun setLastFlashcardGameMode(mode: String)
+
+    /**
+     * Атомарно записывает все поля стрика. Все обновления стрика проходят через
+     * этот единственный метод, чтобы параллельные оценивания не гонялись.
+     */
+    suspend fun setStreakState(
+        currentStreak: Int,
+        longestStreak: Int,
+        lastStreakDate: String?,
+        wordsCompletedToday: Int,
+        lastActivityDate: String?,
+    )
 }

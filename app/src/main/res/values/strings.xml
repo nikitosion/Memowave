@@ -413,4 +413,19 @@
     <string name="action_confirm">Confirm</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_change">Change</string>
+
+    <!-- Notifications gating -->
+    <string name="coming_soon_notifications">Notifications will be implemented later</string>
+
+    <!-- Main page: streak card -->
+    <plurals name="streak_card_days">
+        <item quantity="one">%d day in a row</item>
+        <item quantity="few">%d days in a row</item>
+        <item quantity="many">%d days in a row</item>
+        <item quantity="other">%d days in a row</item>
+    </plurals>
+    <string name="streak_card_best">Best: %d days</string>
+    <string name="streak_card_subtitle_empty">Start your streak today</string>
+    <string name="streak_card_today_progress">Today\'s progress</string>
+    <string name="streak_card_today_done">Goal reached for today</string>
 </resources>

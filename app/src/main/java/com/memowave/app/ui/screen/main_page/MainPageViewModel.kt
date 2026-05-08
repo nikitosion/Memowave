@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.domain.algorithm.CardPhase
 import com.memowave.app.domain.repository.SettingsRepository
+import com.memowave.app.domain.usecase.streak.GetStreakStateUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
@@ -20,6 +21,7 @@ private const val LEARNED_INTERVAL_DAYS = 21
 class MainPageViewModel @Inject constructor(
     private val getWordsUseCase: GetWordsUseCase,
     private val settingsRepository: SettingsRepository,
+    private val getStreakStateUseCase: GetStreakStateUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainPageUiState())
@@ -27,7 +29,16 @@ class MainPageViewModel @Inject constructor(
 
     init {
         loadLastMode()
+        observeStreak()
         refresh()
+    }
+
+    private fun observeStreak() {
+        viewModelScope.launch {
+            getStreakStateUseCase().collect { streak ->
+                _uiState.value = _uiState.value.copy(streak = streak)
+            }
+        }
     }
 
     fun refresh() {

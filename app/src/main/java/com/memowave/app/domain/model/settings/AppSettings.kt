@@ -14,7 +14,7 @@ data class AppSettings(
     val reminderMinute: Int = 0,
 
     val fsrsRequestRetention: Double = 0.95,
-    val fsrsMaximumInterval: Int = 36500,
+    val fsrsMaximumInterval: Int = 365,
     val fsrsEasyBonus: Double = 1.8729,
     val fsrsHardPenalty: Double = 0.6014,
 
@@ -30,4 +30,12 @@ data class AppSettings(
 
     val lastLearningModeId: String = "Каротчки",
     val lastFlashcardGameMode: String = "RECALL",
+
+    // Streak state. Dates are ISO LocalDate strings ("YYYY-MM-DD") to keep
+    // kotlinx.serialization happy without a custom serializer.
+    val currentStreak: Int = 0,
+    val longestStreak: Int = 0,
+    val lastStreakDate: String? = null,
+    val wordsCompletedToday: Int = 0,
+    val lastActivityDate: String? = null,
 )

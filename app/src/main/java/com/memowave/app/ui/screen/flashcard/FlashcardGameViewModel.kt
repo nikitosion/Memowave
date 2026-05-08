@@ -9,6 +9,8 @@ import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
 import com.memowave.app.domain.usecase.word.CalculateGradePreviewUseCase
+import com.memowave.app.domain.usecase.streak.GetStreakStateUseCase
+import com.memowave.app.domain.usecase.streak.RecordWordReviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import com.memowave.app.domain.usecase.word.UpdateWordProgressUseCase
@@ -24,7 +26,6 @@ import kotlinx.coroutines.launch
 
 private const val AUTO_ADVANCE_MILLIS = 2200L
 private const val NEXT_PREP_TOTAL_SECONDS = 5
-private val STREAK_TARGET_RANGE = 1..7
 
 private val XP_BY_RATING = mapOf(
     Rating.Again to 0,
@@ -40,7 +41,9 @@ class FlashcardGameViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val updateWordProgressUseCase: UpdateWordProgressUseCase,
     private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val recordWordReviewUseCase: RecordWordReviewUseCase,
+    private val getStreakStateUseCase: GetStreakStateUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardGameUiState())
@@ -245,6 +248,9 @@ class FlashcardGameViewModel @Inject constructor(
                             summaries = _uiState.value.summaries + summary
                         )
                     }
+                    if (isCorrect) {
+                        recordWordReviewUseCase()
+                    }
                 }
         }
         scheduleAutoAdvance()
@@ -282,10 +288,15 @@ class FlashcardGameViewModel @Inject constructor(
         if (state.phase != FlashcardPhase.GAME) return
 
         if (state.isLastCard) {
-            _uiState.value = state.copy(
-                phase = FlashcardPhase.SUMMARY,
-                streakWordsRemaining = STREAK_TARGET_RANGE.random()
-            )
+            _uiState.value = state.copy(phase = FlashcardPhase.SUMMARY)
+            viewModelScope.launch {
+                val streak = getStreakStateUseCase().first()
+                if (_uiState.value.phase == FlashcardPhase.SUMMARY) {
+                    _uiState.value = _uiState.value.copy(
+                        streakWordsRemaining = streak.wordsRemainingToday
+                    )
+                }
+            }
         } else {
             moveToNextCard()
         }

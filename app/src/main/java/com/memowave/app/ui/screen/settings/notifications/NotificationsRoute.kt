@@ -1,15 +1,13 @@
 package com.memowave.app.ui.screen.settings.notifications
 
-import android.Manifest
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,15 +15,17 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.memowave.app.R
+import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.common.settings.AccentTone
 import com.memowave.app.ui.common.settings.SettingsRow
 import com.memowave.app.ui.common.settings.SettingsScaffold
 import com.memowave.app.ui.common.settings.SettingsSection
 import com.memowave.app.ui.common.settings.SettingsToggleRow
-import com.memowave.app.ui.navigation.Screen
+import com.memowave.app.ui.screen.settings.about.AboutEntryPoint
 import com.memowave.app.ui.screen.settings.notifications.components.PermissionRationaleCard
 import com.memowave.app.ui.screen.settings.notifications.components.TimeBlock
 import com.memowave.app.ui.theme.MemowaveTheme
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun NotificationsRoute(
@@ -33,34 +33,30 @@ fun NotificationsRoute(
     viewModel: NotificationsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            viewModel.setMasterEnabled(true)
-        } else {
-            viewModel.onPermissionDenied()
-        }
+    val context = LocalContext.current
+    val notificationManager: NotificationManager = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            AboutEntryPoint::class.java
+        ).notificationManager()
     }
+    val comingSoon = stringResource(R.string.coming_soon_notifications)
+    val showComingSoon: () -> Unit = { notificationManager.showInfo(comingSoon) }
 
+    // Все колбэки временно перенаправлены в тост — модуль уведомлений будет
+    // реализован позже. Состояние тогглов читается из DataStore только для
+    // отображения, реальные записи отключены.
     NotificationsContent(
         uiState = uiState,
         onBackClick = { navController.popBackStack() },
-        onMasterToggle = { enable ->
-            if (enable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                viewModel.setMasterEnabled(enable)
-            }
-        },
-        onReminderTimeClick = { navController.navigate(Screen.SettingsGoals.route) },
-        onStudyToggle = viewModel::setStudyReminders,
-        onStreakRiskToggle = viewModel::setStreakRisk,
-        onMilestonesToggle = viewModel::setMilestones,
-        onQuietHoursToggle = viewModel::setQuietHoursEnabled,
-        onQuietStartChange = viewModel::setQuietStart,
-        onQuietEndChange = viewModel::setQuietEnd
+        onMasterToggle = { showComingSoon() },
+        onReminderTimeClick = showComingSoon,
+        onStudyToggle = { showComingSoon() },
+        onStreakRiskToggle = { showComingSoon() },
+        onMilestonesToggle = { showComingSoon() },
+        onQuietHoursToggle = { showComingSoon() },
+        onQuietStartChange = { _, _ -> showComingSoon() },
+        onQuietEndChange = { _, _ -> showComingSoon() }
     )
 }
 

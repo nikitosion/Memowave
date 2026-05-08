@@ -36,6 +36,7 @@ fun GoalsRoute(
         onToggleDay = viewModel::onToggleDay,
         onReminderTimeChange = viewModel::onReminderTimeChange,
         onWeeklyGoalChange = { viewModel.onWeeklyGoalChange(it.toInt()) },
+        onWeeklyGoalCommit = viewModel::onWeeklyGoalCommit,
         formatWords = { count -> context.getString(R.string.settings_goals_words_format, count) }
     )
 }
@@ -48,6 +49,7 @@ private fun GoalsContent(
     onToggleDay: (Int) -> Unit,
     onReminderTimeChange: (hour: Int, minute: Int) -> Unit,
     onWeeklyGoalChange: (Float) -> Unit,
+    onWeeklyGoalCommit: () -> Unit,
     formatWords: (Int) -> String,
 ) {
     SettingsScaffold(
@@ -75,6 +77,7 @@ private fun GoalsContent(
                 title = stringResource(R.string.settings_goals_weekly_target),
                 value = uiState.weeklyWordGoal.toFloat(),
                 onValueChange = onWeeklyGoalChange,
+                onValueChangeFinished = onWeeklyGoalCommit,
                 valueRange = 5f..200f,
                 steps = (200 - 5) / 5 - 1,
                 valueFormatter = { formatWords(it.toInt()) }
@@ -106,6 +109,7 @@ private fun GoalsContentPreview() {
             onToggleDay = {},
             onReminderTimeChange = { _, _ -> },
             onWeeklyGoalChange = {},
+            onWeeklyGoalCommit = {},
             formatWords = { "$it words" }
         )
     }
