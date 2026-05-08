@@ -73,9 +73,8 @@ data class LearningModeConfig(
 
 internal val LEARNING_MODES = listOf(
     LearningModeConfig("Каротчки", R.drawable.playing_cards_24, route = Screen.Flashcard.route),
-    LearningModeConfig("Перевод", R.drawable.round_translate_24),
-    LearningModeConfig("Викторина", R.drawable.electric_bolt_24),
-    LearningModeConfig("Слово-пазл", R.drawable.baseline_extension_24),
+    LearningModeConfig("Перевод", R.drawable.round_translate_24, route = Screen.Translation.route),
+    LearningModeConfig("Викторина", R.drawable.electric_bolt_24, route = Screen.Quiz.route),
 )
 
 @Composable
@@ -127,16 +126,19 @@ fun MainPageScreen(
                         else 12.dp
                     )
             ) {
+                val isSoloRow = rowModes.size == 1
                 rowModes.forEachIndexed { index, mode ->
                     LearningMode(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                start = if (index == 0) 0.dp
-                                else 6.dp,
-                                end = if (index == 1) 0.dp
-                                else 6.dp
-                            ),
+                        modifier = if (isSoloRow) {
+                            Modifier.fillMaxWidth()
+                        } else {
+                            Modifier
+                                .weight(1f)
+                                .padding(
+                                    start = if (index == 0) 0.dp else 6.dp,
+                                    end = if (index == 1) 0.dp else 6.dp
+                                )
+                        },
                         cornerRadius = 30f,
                         figureSize = 250.dp,
                         modeName = mode.id,

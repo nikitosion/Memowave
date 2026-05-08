@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,17 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
-import com.memowave.app.ui.screen.flashcard.FlashcardWordSummary
+import com.memowave.app.ui.screen.learning_shared.LearningWordSummary
 
-/**
- * Modal bottom sheet listing every [FlashcardWordSummary] from the just-finished
- * session. Each row is expandable to reveal the full FSRS delta. Only one row is
- * expanded at a time to keep the sheet uncluttered.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WordSummaryListSheet(
-    summaries: List<FlashcardWordSummary>,
+    summaries: List<LearningWordSummary>,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)

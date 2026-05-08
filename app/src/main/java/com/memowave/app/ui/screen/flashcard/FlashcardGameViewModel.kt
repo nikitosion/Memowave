@@ -7,11 +7,16 @@ import com.memowave.app.domain.model.FlashcardResult
 import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
 import com.memowave.app.domain.repository.SettingsRepository
+import com.memowave.app.domain.repository.UserRepository
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
 import com.memowave.app.domain.usecase.word.CalculateGradePreviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import com.memowave.app.domain.usecase.word.UpdateWordProgressUseCase
+import com.memowave.app.ui.screen.learning_shared.LearningPhase
+import com.memowave.app.ui.screen.learning_shared.LearningWordSummary
+import com.memowave.app.ui.screen.learning_shared.LoadState
+import com.memowave.app.ui.screen.learning_shared.WordProgressDelta
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -40,7 +45,8 @@ class FlashcardGameViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val updateWordProgressUseCase: UpdateWordProgressUseCase,
     private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardGameUiState())
@@ -66,7 +72,7 @@ class FlashcardGameViewModel @Inject constructor(
             is FlashcardGameEvent.LoadCategories -> loadCategories()
             is FlashcardGameEvent.SelectCategory -> {
                 _uiState.value = _uiState.value.copy(selectedCategoryId = event.categoryId)
-                if (_uiState.value.phase == FlashcardPhase.NEXT_PREP) {
+                if (_uiState.value.phase == LearningPhase.NEXT_PREP) {
                     cancelNextPrepTimer()
                 }
             }
@@ -92,7 +98,7 @@ class FlashcardGameViewModel @Inject constructor(
             }
             is FlashcardGameEvent.RestartGame -> restartGame()
             is FlashcardGameEvent.ShowSettings -> {
-                if (_uiState.value.phase == FlashcardPhase.NEXT_PREP) {
+                if (_uiState.value.phase == LearningPhase.NEXT_PREP) {
                     cancelNextPrepTimer()
                 }
                 if (!_uiState.value.showSettingsSheet) {
@@ -105,7 +111,7 @@ class FlashcardGameViewModel @Inject constructor(
                 }
             }
             is FlashcardGameEvent.RequestExit -> {
-                if (_uiState.value.phase == FlashcardPhase.GAME && _uiState.value.results.isNotEmpty()) {
+                if (_uiState.value.phase == LearningPhase.GAME && _uiState.value.results.isNotEmpty()) {
                     _uiState.value = _uiState.value.copy(showExitConfirmation = true)
                 } else {
                     _uiState.value = _uiState.value.copy(showExitConfirmation = false)
@@ -196,7 +202,7 @@ class FlashcardGameViewModel @Inject constructor(
                     results = emptyList(),
                     summaries = emptyList(),
                     totalXpEarned = 0,
-                    phase = FlashcardPhase.GAME,
+                    phase = LearningPhase.GAME,
                     numberedOptions = options,
                     correctAnswerIndex = correctIdx,
                     selectedAnswerIndex = null,
@@ -235,7 +241,7 @@ class FlashcardGameViewModel @Inject constructor(
                 .onSuccess { newWord ->
                     if (_uiState.value.currentWord?.id == currentWord.id) {
                         val delta = WordProgressDelta.from(currentWord, newWord, wasNew)
-                        val summary = FlashcardWordSummary(
+                        val summary = LearningWordSummary(
                             word = currentWord,
                             isCorrect = isCorrect,
                             delta = delta
@@ -279,11 +285,15 @@ class FlashcardGameViewModel @Inject constructor(
     private fun advanceCard() {
         advanceJob?.cancel()
         val state = _uiState.value
-        if (state.phase != FlashcardPhase.GAME) return
+        if (state.phase != LearningPhase.GAME) return
 
         if (state.isLastCard) {
+            val xp = state.totalXpEarned
+            if (xp > 0) {
+                viewModelScope.launch { userRepository.addExperience(xp) }
+            }
             _uiState.value = state.copy(
-                phase = FlashcardPhase.SUMMARY,
+                phase = LearningPhase.SUMMARY,
                 streakWordsRemaining = STREAK_TARGET_RANGE.random()
             )
         } else {
@@ -322,7 +332,7 @@ class FlashcardGameViewModel @Inject constructor(
         advanceJob?.cancel()
         viewModelScope.launch { settingsRepository.setLastFlashcardGameMode(mode.name) }
 
-        if (mode == FlashcardGameMode.NUMBERED && state.phase == FlashcardPhase.GAME) {
+        if (mode == FlashcardGameMode.NUMBERED && state.phase == LearningPhase.GAME) {
             val currentWord = state.currentWord
             if (currentWord != null) {
                 viewModelScope.launch {
@@ -379,7 +389,7 @@ class FlashcardGameViewModel @Inject constructor(
         advanceJob?.cancel()
         cancelNextPrepTimer()
         _uiState.value = _uiState.value.copy(
-            phase = FlashcardPhase.LOBBY,
+            phase = LearningPhase.LOBBY,
             words = emptyList(),
             currentIndex = 0,
             isCardFlipped = false,
@@ -400,7 +410,7 @@ class FlashcardGameViewModel @Inject constructor(
     private fun enterNextPrep() {
         advanceJob?.cancel()
         cancelNextPrepTimer()
-        _uiState.value = _uiState.value.copy(phase = FlashcardPhase.NEXT_PREP)
+        _uiState.value = _uiState.value.copy(phase = LearningPhase.NEXT_PREP)
         if (_uiState.value.selectedCategoryHasWords) {
             startNextPrepTimer()
         }
@@ -414,7 +424,7 @@ class FlashcardGameViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(nextPrepCountdownSeconds = s)
                 delay(1000)
             }
-            if (_uiState.value.phase == FlashcardPhase.NEXT_PREP &&
+            if (_uiState.value.phase == LearningPhase.NEXT_PREP &&
                 _uiState.value.selectedCategoryHasWords
             ) {
                 confirmNextSession()
@@ -441,7 +451,7 @@ class FlashcardGameViewModel @Inject constructor(
      * false if the caller should navigate back.
      */
     fun handleBackPress(): Boolean {
-        return if (_uiState.value.phase == FlashcardPhase.GAME && _uiState.value.results.isNotEmpty()) {
+        return if (_uiState.value.phase == LearningPhase.GAME && _uiState.value.results.isNotEmpty()) {
             _uiState.value = _uiState.value.copy(showExitConfirmation = true)
             true
         } else {

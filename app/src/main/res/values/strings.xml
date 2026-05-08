@@ -413,4 +413,29 @@
     <string name="action_confirm">Confirm</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_change">Change</string>
+
+    <!-- Translation mode -->
+    <string name="translation_lobby_title">Translation</string>
+    <string name="translation_lobby_subtitle">Type the translation and press Done</string>
+    <string name="translation_prompt_label">Translate</string>
+    <string name="translation_input_hint">Your translation</string>
+    <string name="translation_done">Done</string>
+    <string name="translation_show_first_letter">Hint (%1$d)</string>
+    <string name="translation_reveal">Reveal</string>
+    <string name="translation_correct">Correct!</string>
+    <string name="translation_close_label">Close enough</string>
+    <string name="translation_wrong_label">Incorrect</string>
+    <string name="translation_correct_answer_was">Correct answer: %1$s</string>
+    <string name="translation_strictness_title">Typo strictness</string>
+    <string name="translation_strictness_strict">Strict</string>
+    <string name="translation_strictness_normal">Normal</string>
+    <string name="translation_strictness_lenient">Lenient</string>
+
+    <!-- Quiz mode -->
+    <string name="quiz_lobby_title">Quiz</string>
+    <string name="quiz_lobby_subtitle">Pick the correct translation in %1$d seconds</string>
+    <string name="quiz_time_left">%1$ds</string>
+    <string name="quiz_streak">Streak: %1$d</string>
+    <string name="quiz_finished">Time\'s up!</string>
+    <string name="quiz_duration_title">Round duration</string>
 </resources>

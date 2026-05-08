@@ -90,5 +90,9 @@ class FSRSFactoryTest {
             endHour: Int,
             endMinute: Int
         ) {}
+        override suspend fun setLastLearningMode(modeId: String) {}
+        override suspend fun setLastFlashcardGameMode(mode: String) {}
+        override suspend fun setLastTranslationStrictness(strictness: String) {}
+        override suspend fun setLastQuizDurationSeconds(seconds: Int) {}
     }
 }

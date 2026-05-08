@@ -30,4 +30,6 @@ interface SettingsRepository {
 
     suspend fun setLastLearningMode(modeId: String)
     suspend fun setLastFlashcardGameMode(mode: String)
+    suspend fun setLastTranslationStrictness(strictness: String)
+    suspend fun setLastQuizDurationSeconds(seconds: Int)
 }

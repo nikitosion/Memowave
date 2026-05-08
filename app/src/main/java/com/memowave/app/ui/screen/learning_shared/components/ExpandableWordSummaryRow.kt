@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -20,9 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,24 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
-import com.memowave.app.domain.algorithm.CardPhase
-import com.memowave.app.domain.model.Word
-import com.memowave.app.ui.screen.flashcard.FlashcardWordSummary
-import com.memowave.app.ui.screen.flashcard.WordProgressDelta
-import com.memowave.app.ui.theme.MemowaveTheme
-import java.time.LocalDateTime
+import com.memowave.app.ui.screen.learning_shared.LearningWordSummary
 
-/**
- * Expandable row used inside the full-list bottom sheet. Wraps [WordSummaryRow]
- * with a chevron and reveals the full FSRS dynamics ([WordProgressDeltaBlocks])
- * along with the first example sentence (if any) when expanded.
- */
 @Composable
 fun ExpandableWordSummaryRow(
-    summary: FlashcardWordSummary,
+    summary: LearningWordSummary,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -122,59 +108,5 @@ fun ExpandableWordSummaryRow(
                 }
             }
         }
-    }
-}
-
-// --- Previews ---
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun ExpandableWordSummaryRowExpandedPreview() {
-    MemowaveTheme {
-        ExpandableWordSummaryRow(
-            summary = FlashcardWordSummary(
-                word = Word(
-                    id = 1L,
-                    original = "ephemeral",
-                    translation = "мимолётный",
-                    examples = listOf("Beauty is ephemeral, but ideas can last."),
-                    phase = CardPhase.Review.value
-                ),
-                isCorrect = true,
-                delta = WordProgressDelta(
-                    wasNew = false,
-                    oldStability = 2.5, newStability = 4.1,
-                    oldDifficulty = 5.0, newDifficulty = 4.2,
-                    oldInterval = 1, newInterval = 6,
-                    oldDueDate = LocalDateTime.of(2026, 5, 1, 12, 0),
-                    newDueDate = LocalDateTime.of(2026, 5, 8, 12, 0)
-                )
-            ),
-            expanded = true,
-            onExpandedChange = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun ExpandableWordSummaryRowCollapsedPreview() {
-    MemowaveTheme {
-        ExpandableWordSummaryRow(
-            summary = FlashcardWordSummary(
-                word = Word(id = 2L, original = "ubiquitous", translation = "повсеместный"),
-                isCorrect = false,
-                delta = WordProgressDelta(
-                    wasNew = false,
-                    oldStability = 12.0, newStability = 3.2,
-                    oldDifficulty = 4.0, newDifficulty = 6.8,
-                    oldInterval = 15, newInterval = 1,
-                    oldDueDate = LocalDateTime.of(2026, 5, 5, 12, 0),
-                    newDueDate = LocalDateTime.of(2026, 4, 21, 12, 0)
-                )
-            ),
-            expanded = false,
-            onExpandedChange = {}
-        )
     }
 }

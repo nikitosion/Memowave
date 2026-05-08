@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -29,11 +29,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
-import com.memowave.app.ui.screen.flashcard.WordProgressDelta
-import com.memowave.app.ui.theme.MemowaveTheme
+import com.memowave.app.ui.screen.learning_shared.WordProgressDelta
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -202,8 +200,6 @@ private fun ParameterChangeChip(
 private enum class Trend { UP, DOWN, FLAT }
 private enum class Sentiment { GOOD, BAD, NEUTRAL }
 
-/** Trend drives the arrow icon (literal numeric direction). */
-/** Sentiment drives the color — "good" when the change helps the learner. */
 private fun sentimentOf(trend: Trend, higherIsBetter: Boolean): Sentiment = when (trend) {
     Trend.UP -> if (higherIsBetter) Sentiment.GOOD else Sentiment.BAD
     Trend.DOWN -> if (higherIsBetter) Sentiment.BAD else Sentiment.GOOD
@@ -252,57 +248,4 @@ private fun fmtDate(v: LocalDateTime): String {
     val locale = Locale.getDefault()
     val formatter = remember(locale) { DateTimeFormatter.ofPattern("d MMM", locale) }
     return v.format(formatter)
-}
-
-// --- Previews ---
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-private fun WordProgressDeltaBlocksCorrectPreview() {
-    MemowaveTheme {
-        WordProgressDeltaBlocks(
-            delta = WordProgressDelta(
-                wasNew = false,
-                oldStability = 2.5, newStability = 4.1,
-                oldDifficulty = 5.0, newDifficulty = 4.2,
-                oldInterval = 1, newInterval = 6,
-                oldDueDate = LocalDateTime.of(2026, 4, 20, 12, 0),
-                newDueDate = LocalDateTime.of(2026, 4, 27, 12, 0)
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-private fun WordProgressDeltaBlocksWrongPreview() {
-    MemowaveTheme {
-        WordProgressDeltaBlocks(
-            delta = WordProgressDelta(
-                wasNew = false,
-                oldStability = 12.0, newStability = 3.2,
-                oldDifficulty = 4.0, newDifficulty = 6.8,
-                oldInterval = 15, newInterval = 1,
-                oldDueDate = LocalDateTime.of(2026, 5, 5, 12, 0),
-                newDueDate = LocalDateTime.of(2026, 4, 21, 12, 0)
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-private fun WordProgressDeltaBlocksNewPreview() {
-    MemowaveTheme {
-        WordProgressDeltaBlocks(
-            delta = WordProgressDelta(
-                wasNew = true,
-                oldStability = 2.5, newStability = 3.1,
-                oldDifficulty = 2.5, newDifficulty = 4.7,
-                oldInterval = 0, newInterval = 0,
-                oldDueDate = LocalDateTime.of(2026, 4, 24, 12, 0),
-                newDueDate = LocalDateTime.of(2026, 4, 24, 12, 10)
-            )
-        )
-    }
 }

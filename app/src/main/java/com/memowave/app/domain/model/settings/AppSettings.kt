@@ -30,4 +30,6 @@ data class AppSettings(
 
     val lastLearningModeId: String = "Каротчки",
     val lastFlashcardGameMode: String = "RECALL",
+    val lastTranslationStrictness: String = "NORMAL", // STRICT / NORMAL / LENIENT
+    val lastQuizDurationSeconds: Int = 60,            // 30 / 60 / 120
 )

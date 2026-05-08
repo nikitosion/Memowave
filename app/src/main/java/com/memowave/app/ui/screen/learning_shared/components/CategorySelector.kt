@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -46,28 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.domain.model.Category
-import com.memowave.app.ui.screen.flashcard.LoadState
+import com.memowave.app.ui.screen.learning_shared.LoadState
 import com.memowave.app.ui.theme.MemowaveTheme
 
 private val EXPANDED_LIST_MAX_HEIGHT = 320.dp
 
-/**
- * Inline expandable category picker. Trigger card shows the current selection;
- * tapping it animates open a list of categories (including the "All words"
- * pseudo-entry) where each row carries name, optional description and a word
- * count chip. Selecting a row closes the panel.
- *
- * The expanded list is bounded ([EXPANDED_LIST_MAX_HEIGHT]) and scrollable, so
- * the surrounding screen layout (e.g. the settings button below) stays visible
- * regardless of how many categories the user has.
- *
- * Shows distinct visual states for [LoadState.LOADING] (spinner), [LoadState.ERROR]
- * ("Ошибка загрузки"), and [LoadState.LOADED] (real content). [LoadState.IDLE] is
- * treated like LOADING — a brief flash before the first fetch completes.
- *
- * Reusable: takes only domain models — works on any screen that needs a
- * category picker.
- */
 @Composable
 fun CategorySelector(
     categories: List<Category>,
@@ -80,9 +63,6 @@ fun CategorySelector(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    // Chevron points down when collapsed, up when expanded. Using
-    // round_chevron_right_24 rotated +90° (down) and -90° (up); the animation
-    // sweeps through 0° (right) — short and smooth.
     val rotation by animateFloatAsState(
         targetValue = if (expanded) -90f else 90f,
         animationSpec = tween(durationMillis = 220),
@@ -108,7 +88,6 @@ fun CategorySelector(
             .clip(RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
-        // Trigger row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -172,8 +151,6 @@ fun CategorySelector(
         ) {
             Column {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-                // Bounded + scrollable so the surrounding UI stays accessible
-                // regardless of category count.
                 Column(
                     modifier = Modifier
                         .heightIn(max = EXPANDED_LIST_MAX_HEIGHT)
@@ -328,7 +305,6 @@ private fun CategoryRow(
                 )
             }
         }
-        // Row-level pill: empty -> "Нет слов", otherwise count.
         StatusPill(
             text = if (isEmpty) stringResource(R.string.flashcard_lobby_category_empty_hint)
             else pluralStringResource(R.plurals.flashcard_lobby_category_words_count, count, count),
@@ -348,48 +324,12 @@ private fun CategorySelectorPreview() {
             CategorySelector(
                 categories = listOf(
                     Category(id = 1L, name = "Базовые", description = "Самые частые слова"),
-                    Category(id = 2L, name = "Еда", description = "Продукты и блюда"),
-                    Category(id = 3L, name = "Путешествия", description = "Аэропорт, отель, транспорт"),
-                    Category(id = 4L, name = "Пустая", description = "Пока без слов")
+                    Category(id = 2L, name = "Еда", description = "Продукты и блюда")
                 ),
                 selectedCategoryId = 1L,
-                wordCounts = mapOf(1L to 24, 2L to 12, 3L to 8, 4L to 0),
-                totalWordsCount = 44,
+                wordCounts = mapOf(1L to 24, 2L to 12),
+                totalWordsCount = 36,
                 loadState = LoadState.LOADED,
-                onCategorySelected = {}
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CategorySelectorLoadingPreview() {
-    MemowaveTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
-            CategorySelector(
-                categories = emptyList(),
-                selectedCategoryId = null,
-                wordCounts = emptyMap(),
-                totalWordsCount = 0,
-                loadState = LoadState.LOADING,
-                onCategorySelected = {}
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CategorySelectorErrorPreview() {
-    MemowaveTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
-            CategorySelector(
-                categories = emptyList(),
-                selectedCategoryId = null,
-                wordCounts = emptyMap(),
-                totalWordsCount = 0,
-                loadState = LoadState.ERROR,
                 onCategorySelected = {}
             )
         }

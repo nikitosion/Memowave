@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,25 +35,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
-import com.memowave.app.domain.algorithm.CardPhase
-import com.memowave.app.domain.model.Word
-import com.memowave.app.ui.screen.flashcard.FlashcardWordSummary
-import com.memowave.app.ui.screen.flashcard.WordProgressDelta
-import com.memowave.app.ui.theme.MemowaveTheme
-import java.time.LocalDateTime
+import com.memowave.app.ui.screen.learning_shared.LearningWordSummary
 
 private const val INLINE_WORDS_PREVIEW_COUNT = 3
 
+/**
+ * Generic SUMMARY screen shared by every learning mode. Shows a circular score,
+ * three stat tiles (correct / wrong / xp), the per-word session list, primary
+ * "Continue" CTA and a secondary "Back" button. Optionally shows a streak banner.
+ */
 @Composable
-fun FlashcardSummaryContent(
+fun LearningSummaryContent(
     correctCount: Int,
     wrongCount: Int,
     totalXp: Int,
     totalWords: Int,
-    summaries: List<FlashcardWordSummary>,
+    summaries: List<LearningWordSummary>,
     streakWordsRemaining: Int,
     onPlayAgain: () -> Unit,
     onGoBack: () -> Unit,
@@ -189,14 +188,12 @@ fun FlashcardSummaryContent(
 
 @Composable
 private fun SessionWordsSection(
-    summaries: List<FlashcardWordSummary>,
+    summaries: List<LearningWordSummary>,
     onShowAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val visible = summaries.take(INLINE_WORDS_PREVIEW_COUNT)
     val hasMore = summaries.size > INLINE_WORDS_PREVIEW_COUNT
-    // Track which inline row is expanded; only one open at a time, like the
-    // bottom sheet variant — keeps the section compact.
     var expandedId by remember { mutableStateOf<Long?>(null) }
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -221,8 +218,6 @@ private fun SessionWordsSection(
                     onExpandedChange = { wantOpen ->
                         expandedId = if (wantOpen) summary.word.id else null
                     },
-                    // Inline rows live inside one shared card — turn off the
-                    // per-row background so they read as a single grouped list.
                     containerColor = Color.Transparent
                 )
                 if (index < visible.lastIndex) {
@@ -287,58 +282,6 @@ private fun StatItem(
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Center
-        )
-    }
-}
-
-// --- Previews ---
-
-private fun sampleSummary(
-    id: Long,
-    original: String,
-    translation: String,
-    isCorrect: Boolean,
-    wasNew: Boolean,
-    oldI: Int,
-    newI: Int
-) = FlashcardWordSummary(
-    word = Word(
-        id = id,
-        original = original,
-        translation = translation,
-        phase = if (wasNew) CardPhase.Added.value else CardPhase.Review.value,
-        examples = listOf("Sample sentence using $original.")
-    ),
-    isCorrect = isCorrect,
-    delta = WordProgressDelta(
-        wasNew = wasNew,
-        oldStability = 2.5, newStability = 4.0,
-        oldDifficulty = 4.0, newDifficulty = 4.2,
-        oldInterval = oldI, newInterval = newI,
-        oldDueDate = LocalDateTime.of(2026, 5, 1, 12, 0),
-        newDueDate = LocalDateTime.of(2026, 5, 8, 12, 0)
-    )
-)
-
-@Preview(showBackground = true, device = "spec:height=900dp,width=411dp")
-@Composable
-private fun FlashcardSummaryContentPreview() {
-    MemowaveTheme {
-        FlashcardSummaryContent(
-            correctCount = 12,
-            wrongCount = 3,
-            totalXp = 300,
-            totalWords = 15,
-            summaries = listOf(
-                sampleSummary(1L, "ephemeral", "мимолётный", true, false, 1, 6),
-                sampleSummary(2L, "serendipity", "счастливая случайность", true, true, 0, 0),
-                sampleSummary(3L, "ubiquitous", "повсеместный", false, false, 12, 1),
-                sampleSummary(4L, "quintessential", "типичный", true, false, 4, 10),
-                sampleSummary(5L, "voracious", "ненасытный", true, false, 2, 5)
-            ),
-            streakWordsRemaining = 3,
-            onPlayAgain = {},
-            onGoBack = {}
         )
     }
 }

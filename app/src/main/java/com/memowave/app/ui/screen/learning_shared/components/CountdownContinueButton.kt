@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -34,16 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.MemowaveTheme
 
-/**
- * Continue button with a built-in drain countdown bar. The base background is
- * [MaterialTheme.colorScheme.onPrimaryContainer]; a slightly whitish overlay
- * fills from full to empty as [countdownSeconds] decreases (drain). When
- * [countdownSeconds] is null the timer is hidden and the button looks like a
- * regular CTA.
- *
- * Reusable: knows nothing about flashcards — drop into any flow that needs an
- * auto-confirming CTA.
- */
 @Composable
 fun CountdownContinueButton(
     text: String,
@@ -76,7 +66,6 @@ fun CountdownContinueButton(
             .clickable(enabled = enabled, onClick = onClick)
             .semantics { contentDescription = a11y }
     ) {
-        // Drain progress overlay — slightly whitish layer that shrinks from full to empty
         if (countdownSeconds != null) {
             Box(
                 modifier = Modifier
@@ -93,7 +82,6 @@ fun CountdownContinueButton(
                     .background(Color.White.copy(alpha = 0.22f))
             )
         }
-        // Foreground: label + optional separator + seconds
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,33 +124,6 @@ private fun CountdownContinueButtonRunningPreview() {
             text = "Продолжить",
             countdownSeconds = 3,
             onClick = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun CountdownContinueButtonIdlePreview() {
-    MemowaveTheme {
-        CountdownContinueButton(
-            text = "Продолжить",
-            countdownSeconds = null,
-            onClick = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun CountdownContinueButtonDisabledPreview() {
-    MemowaveTheme {
-        CountdownContinueButton(
-            text = "Продолжить",
-            countdownSeconds = null,
-            onClick = {},
-            enabled = false,
             modifier = Modifier.padding(16.dp)
         )
     }
