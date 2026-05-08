@@ -30,6 +30,7 @@ class UserMapper {
             username = dto.username,
             email = dto.email,
             imageUrl = dto.imageUrl,
+            experience = dto.experience ?: 0,
         )
     }
 
@@ -38,6 +39,7 @@ class UserMapper {
             username = user.username,
             email = user.email,
             imageUrl = user.imageUrl,
+            experience = user.experience,
         )
     }
 }

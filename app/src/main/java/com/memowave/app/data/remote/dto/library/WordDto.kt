@@ -12,7 +12,13 @@ data class WordDto(
     val translate: String = "",
     val example: String = "",
     val imageUrl: String? = null,
-    val repetitionCount: Int = 0,
+    val stability: Double = 2.5,
+    val difficulty: Double = 2.5,
+    val interval: Int = 0,
     @Serializable(with = LocalDateTimeSerializer::class)
-    val nextRepetitionDate: LocalDateTime? = null
+    val dueDate: LocalDateTime? = null,
+    val reviewCount: Int = 0,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val lastReview: LocalDateTime? = null,
+    val phase: Int = 0,
 )

@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -38,7 +38,6 @@ fun AnimatedPlayButton(
 
     val infiniteTransition = rememberInfiniteTransition(label = "blob")
 
-    // Main rotation - creates the "escalator belt" effect
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 2f * PI.toFloat(),
@@ -49,7 +48,6 @@ fun AnimatedPlayButton(
         label = "rotation"
     )
 
-    // Pulsation offsets for different blob points
     val pulse1 by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 2f * PI.toFloat(),
@@ -122,12 +120,10 @@ private fun DrawScope.drawBlobShape(
     val pointCount = 6
     val path = Path()
 
-    // Generate animated blob points
     val points = mutableListOf<Pair<Float, Float>>()
     for (i in 0 until pointCount) {
         val angle = rotation + (2f * PI.toFloat() / pointCount) * i
 
-        // Each point has a slightly different pulsation
         val pulseOffset = when (i % 3) {
             0 -> sin(pulse1 + i) * baseRadius * 0.12f
             1 -> sin(pulse2 + i * 0.7f) * baseRadius * 0.10f
@@ -140,7 +136,6 @@ private fun DrawScope.drawBlobShape(
         points.add(Pair(x, y))
     }
 
-    // Draw smooth blob using cubic bezier curves through the points
     if (points.isNotEmpty()) {
         path.moveTo(
             (points.last().first + points[0].first) / 2,

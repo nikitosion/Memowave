@@ -79,11 +79,13 @@ object RepositoryModule {
     @Singleton
     fun provideUserRepository(
         apiService: ApiService,
-        userMapper: UserMapper
+        userMapper: UserMapper,
+        syncQueueDao: SyncQueueDao,
     ): UserRepository {
         return UserRepositoryImpl(
             apiService = apiService,
-            userMapper = userMapper
+            userMapper = userMapper,
+            syncQueueDao = syncQueueDao,
         )
     }
 

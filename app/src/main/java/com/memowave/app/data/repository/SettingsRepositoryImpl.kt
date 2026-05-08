@@ -111,6 +111,15 @@ class SettingsRepositoryImpl(
         dataStore.updateData { it.copy(lastFlashcardGameMode = mode) }
     }
 
+    override suspend fun setLastTranslationStrictness(strictness: String) {
+        dataStore.updateData { it.copy(lastTranslationStrictness = strictness) }
+    }
+
+    override suspend fun setLastQuizDurationSeconds(seconds: Int) {
+        val clamped = seconds.coerceIn(15, 600)
+        dataStore.updateData { it.copy(lastQuizDurationSeconds = clamped) }
+    }
+
     private companion object {
         const val MIN_WEEKLY_GOAL = 5
         const val MAX_WEEKLY_GOAL = 500

@@ -15,7 +15,13 @@ class WordMapper {
             translation = dto.translate,
             examples = listOf(dto.example),
             imageUrl = dto.imageUrl,
-            reviewCount = dto.repetitionCount,
+            stability = dto.stability,
+            difficulty = dto.difficulty,
+            interval = dto.interval,
+            dueDate = dto.dueDate ?: LocalDateTime.now(),
+            reviewCount = dto.reviewCount,
+            lastReview = dto.lastReview,
+            phase = dto.phase,
         )
     }
 
@@ -26,8 +32,13 @@ class WordMapper {
             translate = word.translation,
             example = word.examples.firstOrNull() ?: "",
             imageUrl = word.imageUrl,
-            repetitionCount = word.reviewCount,
-            nextRepetitionDate = LocalDateTime.now()
+            stability = word.stability,
+            difficulty = word.difficulty,
+            interval = word.interval,
+            dueDate = word.dueDate,
+            reviewCount = word.reviewCount,
+            lastReview = word.lastReview,
+            phase = word.phase,
         )
     }
 
@@ -38,8 +49,13 @@ class WordMapper {
             translate = entity.translation,
             example = entity.example.firstOrNull() ?: "",
             imageUrl = entity.imageUrl,
-            repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now()
+            stability = entity.stability,
+            difficulty = entity.difficulty,
+            interval = entity.interval,
+            dueDate = entity.dueDate,
+            reviewCount = entity.reviewCount,
+            lastReview = entity.lastReview,
+            phase = entity.phase,
         )
     }
 
@@ -54,7 +70,14 @@ class WordMapper {
             imageUrl = dto.imageUrl,
             isSynced = true,
             createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
+            updatedAt = System.currentTimeMillis(),
+            stability = dto.stability,
+            difficulty = dto.difficulty,
+            interval = dto.interval,
+            dueDate = dto.dueDate ?: LocalDateTime.now(),
+            reviewCount = dto.reviewCount,
+            lastReview = dto.lastReview,
+            phase = dto.phase,
         )
     }
 

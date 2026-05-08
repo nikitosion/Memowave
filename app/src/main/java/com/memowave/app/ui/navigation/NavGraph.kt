@@ -30,6 +30,8 @@ import com.memowave.app.ui.screen.main_page.MainPageRoute
 import com.memowave.app.ui.screen.profile.ProfileRoute
 import com.memowave.app.ui.screen.profile.ProfileViewModel
 import com.memowave.app.ui.screen.flashcard.FlashcardRoute
+import com.memowave.app.ui.screen.quiz.QuizRoute
+import com.memowave.app.ui.screen.translation.TranslationRoute
 import com.memowave.app.ui.screen.settings.AppSettingsRoute
 import com.memowave.app.ui.screen.settings.about.AboutRoute
 import com.memowave.app.ui.screen.settings.algorithm.AlgorithmRoute
@@ -94,6 +96,8 @@ sealed class Screen(
     object SettingsAbout : Screen(route = "app_settings/about", hasCustomTopBar = true)
     object SettingsReportBug : Screen(route = "app_settings/report_bug", hasCustomTopBar = true)
     object Flashcard : Screen(route = "flashcard", hasCustomTopBar = true)
+    object Translation : Screen(route = "translation", hasCustomTopBar = true)
+    object Quiz : Screen(route = "quiz", hasCustomTopBar = true)
 
     object WordNew : Screen(route = "word_new", hasCustomTopBar = true)
 
@@ -117,7 +121,7 @@ sealed class Screen(
                 AppSettings, SettingsPersonal, SettingsSecurity,
                 SettingsGoals, SettingsAlgorithm, SettingsAppearance,
                 SettingsNotifications, SettingsAbout, SettingsReportBug,
-                Flashcard, WordNew, WordEdit, CategoryNew, CategoryEdit
+                Flashcard, Translation, Quiz, WordNew, WordEdit, CategoryNew, CategoryEdit
             )
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
@@ -206,6 +210,14 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
 
         composable(Screen.Flashcard.route) {
             FlashcardRoute(appViewModel, navController)
+        }
+
+        composable(Screen.Translation.route) {
+            TranslationRoute(appViewModel, navController)
+        }
+
+        composable(Screen.Quiz.route) {
+            QuizRoute(appViewModel, navController)
         }
 
         composable(Screen.Login.route) {

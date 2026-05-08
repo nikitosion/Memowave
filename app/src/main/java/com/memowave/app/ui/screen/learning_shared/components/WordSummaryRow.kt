@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,26 +21,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
-import com.memowave.app.domain.algorithm.CardPhase
-import com.memowave.app.domain.model.Word
-import com.memowave.app.ui.screen.flashcard.FlashcardWordSummary
-import com.memowave.app.ui.screen.flashcard.WordProgressDelta
-import com.memowave.app.ui.theme.MemowaveTheme
-import java.time.LocalDateTime
+import com.memowave.app.ui.screen.learning_shared.LearningWordSummary
+import com.memowave.app.ui.screen.learning_shared.WordProgressDelta
 
-/**
- * Compact one-line representation of a [FlashcardWordSummary]. Shows correct/wrong
- * dot, word.original + translation, and a small dynamics chip on the right
- * (interval delta with trend arrow, or NEW! badge for words that were new).
- *
- * Used both inline on the summary screen and inside the full-list bottom sheet.
- */
 @Composable
 fun WordSummaryRow(
-    summary: FlashcardWordSummary,
+    summary: LearningWordSummary,
     modifier: Modifier = Modifier,
     trailing: @Composable (() -> Unit)? = null
 ) {
@@ -77,11 +65,6 @@ fun WordSummaryRow(
     }
 }
 
-/**
- * Smaller, row-friendly variant of the NEW! badge. Same colors as
- * [NewWordBadge] but uses [MaterialTheme.typography.labelMedium] without the
- * accent display font, so it doesn't crowd long words next to it.
- */
 @Composable
 private fun NewWordBadgeCompact() {
     Text(
@@ -173,64 +156,3 @@ private fun CompactIntervalDeltaChip(delta: WordProgressDelta) {
 }
 
 private enum class CompactTrend { UP, DOWN, FLAT }
-
-// --- Previews ---
-
-private fun previewWord(original: String, translation: String, phase: Int = CardPhase.Review.value) =
-    Word(
-        id = 1L,
-        original = original,
-        translation = translation,
-        phase = phase
-    )
-
-private fun previewDelta(wasNew: Boolean, oldI: Int, newI: Int) = WordProgressDelta(
-    wasNew = wasNew,
-    oldStability = 2.5, newStability = 4.0,
-    oldDifficulty = 4.0, newDifficulty = 4.0,
-    oldInterval = oldI, newInterval = newI,
-    oldDueDate = LocalDateTime.of(2026, 5, 1, 12, 0),
-    newDueDate = LocalDateTime.of(2026, 5, 8, 12, 0)
-)
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun WordSummaryRowCorrectPreview() {
-    MemowaveTheme {
-        WordSummaryRow(
-            summary = FlashcardWordSummary(
-                word = previewWord("ephemeral", "мимолётный"),
-                isCorrect = true,
-                delta = previewDelta(wasNew = false, oldI = 1, newI = 6)
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun WordSummaryRowWrongPreview() {
-    MemowaveTheme {
-        WordSummaryRow(
-            summary = FlashcardWordSummary(
-                word = previewWord("ubiquitous", "повсеместный"),
-                isCorrect = false,
-                delta = previewDelta(wasNew = false, oldI = 12, newI = 1)
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun WordSummaryRowNewPreview() {
-    MemowaveTheme {
-        WordSummaryRow(
-            summary = FlashcardWordSummary(
-                word = previewWord("serendipity", "счастливая случайность", phase = CardPhase.Added.value),
-                isCorrect = true,
-                delta = previewDelta(wasNew = true, oldI = 0, newI = 0)
-            )
-        )
-    }
-}

@@ -32,7 +32,7 @@ import com.memowave.app.ui.common.settings.SettingsSection
 import com.memowave.app.ui.common.settings.SettingsToggleRow
 import com.memowave.app.ui.common.settings.mutedFilterChipColors
 import com.memowave.app.ui.screen.flashcard.FlashcardGameMode
-import com.memowave.app.ui.screen.flashcard.FlashcardPhase
+import com.memowave.app.ui.screen.learning_shared.LearningPhase
 import com.memowave.app.ui.theme.MemowaveTheme
 
 private val WORD_COUNT_OPTIONS = listOf(5, 10, 15, 20, 25, 0) // 0 = All
@@ -42,7 +42,7 @@ private val WORD_COUNT_OPTIONS = listOf(5, 10, 15, 20, 25, 0) // 0 = All
 fun FlashcardSettingsSheet(
     wordCount: Int,
     isShuffled: Boolean,
-    gamePhase: FlashcardPhase,
+    gamePhase: LearningPhase,
     gameMode: FlashcardGameMode,
     showTranslationFirst: Boolean,
     selectedCategoryId: Long?,
@@ -98,7 +98,7 @@ fun FlashcardSettingsSheet(
 private fun FlashcardSettingsSheetContent(
     wordCount: Int,
     isShuffled: Boolean,
-    gamePhase: FlashcardPhase,
+    gamePhase: LearningPhase,
     gameMode: FlashcardGameMode,
     showTranslationFirst: Boolean,
     selectedCategoryId: Long?,
@@ -145,7 +145,7 @@ private fun FlashcardSettingsSheetContent(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (gamePhase == FlashcardPhase.GAME) {
+                    if (gamePhase == LearningPhase.GAME) {
                         val label = if (wordCount == 0) "Все" else wordCount.toString()
                         FilterChip(
                             selected = true,
@@ -186,7 +186,7 @@ private fun FlashcardSettingsSheetContent(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (gamePhase == FlashcardPhase.GAME) {
+                    if (gamePhase == LearningPhase.GAME) {
                         val selectedCategory = categories.find { it.id == selectedCategoryId }
                         FilterChip(
                             selected = true,
@@ -238,7 +238,7 @@ private fun FlashcardSettingsSheetContentPreview() {
             wordCount = 10,
             isShuffled = true,
             gameMode = FlashcardGameMode.RECALL,
-            gamePhase = FlashcardPhase.GAME,
+            gamePhase = LearningPhase.GAME,
             showTranslationFirst = false,
             selectedCategoryId = 1L,
             categories = listOf(

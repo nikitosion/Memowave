@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,22 +23,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.domain.model.Category
 import com.memowave.app.ui.common.MemowaveTopBar
-import com.memowave.app.ui.screen.flashcard.LoadState
-import com.memowave.app.ui.theme.MemowaveTheme
+import com.memowave.app.ui.screen.learning_shared.LoadState
 
 /**
- * Phase between SUMMARY and the next session: header, subtitle, category
- * selector, optional empty-category hint, the [CountdownContinueButton] with a
- * 5s drain timer, and a settings gear. Any user interaction (selector tap,
- * settings tap, back) cancels the timer in the ViewModel.
+ * Generic NEXT_PREP screen between SUMMARY and the next session: header, subtitle,
+ * category selector, optional empty-category hint, [CountdownContinueButton] with
+ * a 5s drain timer, and a settings gear.
  */
 @Composable
-fun FlashcardNextPrepContent(
+fun LearningNextPrepContent(
     categories: List<Category>,
     selectedCategoryId: Long?,
     categoryWordCounts: Map<Long, Int>,
@@ -58,8 +55,6 @@ fun FlashcardNextPrepContent(
     ) {
         MemowaveTopBar(onBackClick = onBackClick)
 
-        // Middle area is scrollable so an expanded category list never pushes
-        // the bottom CTA + settings off-screen on shorter devices.
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -140,53 +135,5 @@ fun FlashcardNextPrepContent(
                 )
             }
         }
-    }
-}
-
-// --- Previews ---
-
-private val previewCategories = listOf(
-    Category(id = 1L, name = "Базовые", description = "Самые частые слова"),
-    Category(id = 2L, name = "Еда", description = "Продукты и блюда"),
-    Category(id = 3L, name = "Пустая", description = "Пока без слов")
-)
-
-@Preview(showBackground = true, device = "spec:height=900dp,width=411dp")
-@Composable
-private fun FlashcardNextPrepContentRunningPreview() {
-    MemowaveTheme {
-        FlashcardNextPrepContent(
-            categories = previewCategories,
-            selectedCategoryId = 1L,
-            categoryWordCounts = mapOf(1L to 24, 2L to 12, 3L to 0),
-            totalWordsCount = 36,
-            categoriesLoadState = LoadState.LOADED,
-            selectedCategoryHasWords = true,
-            countdownSeconds = 4,
-            onCategorySelected = {},
-            onSettingsClick = {},
-            onContinueClick = {},
-            onBackClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, device = "spec:height=900dp,width=411dp")
-@Composable
-private fun FlashcardNextPrepContentEmptyCategoryPreview() {
-    MemowaveTheme {
-        FlashcardNextPrepContent(
-            categories = previewCategories,
-            selectedCategoryId = 3L,
-            categoryWordCounts = mapOf(1L to 24, 2L to 12, 3L to 0),
-            totalWordsCount = 36,
-            categoriesLoadState = LoadState.LOADED,
-            selectedCategoryHasWords = false,
-            countdownSeconds = null,
-            onCategorySelected = {},
-            onSettingsClick = {},
-            onContinueClick = {},
-            onBackClick = {}
-        )
     }
 }

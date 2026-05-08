@@ -1,4 +1,4 @@
-package com.memowave.app.ui.screen.flashcard.components
+package com.memowave.app.ui.screen.learning_shared.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,20 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.memowave.app.R
 import com.memowave.app.ui.theme.LocalAppWarningColors
-import com.memowave.app.ui.theme.MemowaveTheme
 
-/**
- * Banner card showing how many words remain to save the current learning streak.
- * Pure presentation — pass in the count, the component owns no streak logic.
- *
- * Uses the app-wide warning palette (yellow-amber) from [LocalAppWarningColors],
- * giving a warm "fire" feel that pairs with the flame icon and reads as a
- * non-blocking reminder rather than an error or a regular surface card.
- */
 @Composable
 fun StreakProgressCard(
     wordsRemaining: Int,
@@ -75,21 +65,5 @@ fun StreakProgressCard(
             fontWeight = FontWeight.W600,
             color = warning.onContainer
         )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun StreakProgressCardPreview() {
-    MemowaveTheme {
-        StreakProgressCard(wordsRemaining = 3, modifier = Modifier.padding(16.dp))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 400)
-@Composable
-private fun StreakProgressCardOnePreview() {
-    MemowaveTheme {
-        StreakProgressCard(wordsRemaining = 1, modifier = Modifier.padding(16.dp))
     }
 }

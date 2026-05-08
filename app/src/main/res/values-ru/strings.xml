@@ -400,5 +400,30 @@
     <string name="action_confirm">Подтвердить</string>
     <string name="action_dismiss">Закрыть</string>
     <string name="action_change">Изменить</string>
+
+    <!-- Translation mode -->
+    <string name="translation_lobby_title">Перевод</string>
+    <string name="translation_lobby_subtitle">Введите перевод и нажмите «Готово»</string>
+    <string name="translation_prompt_label">Переведите</string>
+    <string name="translation_input_hint">Ваш перевод</string>
+    <string name="translation_done">Готово</string>
+    <string name="translation_show_first_letter">Подсказка (%1$d)</string>
+    <string name="translation_reveal">Показать</string>
+    <string name="translation_correct">Правильно!</string>
+    <string name="translation_close_label">Почти верно</string>
+    <string name="translation_wrong_label">Неправильно</string>
+    <string name="translation_correct_answer_was">Правильный ответ: %1$s</string>
+    <string name="translation_strictness_title">Строгость опечаток</string>
+    <string name="translation_strictness_strict">Строго</string>
+    <string name="translation_strictness_normal">Нормально</string>
+    <string name="translation_strictness_lenient">Мягко</string>
+
+    <!-- Quiz mode -->
+    <string name="quiz_lobby_title">Викторина</string>
+    <string name="quiz_lobby_subtitle">Выбирайте правильный перевод за %1$d секунд</string>
+    <string name="quiz_time_left">%1$dс</string>
+    <string name="quiz_streak">Серия: %1$d</string>
+    <string name="quiz_finished">Время вышло!</string>
+    <string name="quiz_duration_title">Длительность раунда</string>
 </resources>
 
