@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,84 +22,55 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.memowave.app.R
-import com.memowave.app.domain.model.Category
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.graphics.toColorInt
+import androidx.compose.ui.unit.dp
+import com.memowave.app.domain.model.Category
+import com.memowave.app.ui.common.category.CategoryIcons
+import com.memowave.app.ui.common.category.CategoryPalette
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun CategoryCard(
     category: Category,
     wordsCount: Int,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(
-                            color = category.color
-                                ?.let { Color(it.toColorInt()) }
-                                ?: MaterialTheme.colorScheme.primaryContainer
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (category.iconRes != null) {
-                        Icon(
-                            painter = painterResource(category.iconRes),
-                            contentDescription = null
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                ) {
+                CategoryIconBadge(
+                    color = category.color,
+                    iconName = category.iconName
+                )
+                Column(modifier = Modifier.padding(start = 12.dp)) {
                     Text(
                         text = category.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.W600
+                        fontWeight = FontWeight.W600,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "$wordsCount words",
+                        text = wordsCountLabel(wordsCount),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
-            }
-            Row {
-                IconButton(onClick = onEditClick) {
-                    Icon(
-                        painter = painterResource(R.drawable.round_edit_24),
-                        contentDescription = "Edit category"
-                    )
-                }
-                IconButton(onClick = onDeleteClick) {
-                    Icon(
-                        painter = painterResource(R.drawable.round_delete_24),
-                        contentDescription = "Delete category",
-                        tint = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -108,21 +78,54 @@ fun CategoryCard(
     }
 }
 
+@Composable
+private fun CategoryIconBadge(
+    color: String?,
+    iconName: String?
+) {
+    val parsed = CategoryPalette.parseHexColor(color)
+    val container = parsed ?: MaterialTheme.colorScheme.primaryContainer
+    val content = if (parsed != null) Color.White else MaterialTheme.colorScheme.onPrimaryContainer
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(container),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(CategoryIcons.resolveDrawable(iconName)),
+            contentDescription = null,
+            tint = content,
+            modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+/**
+ * Returns "1 word" / "5 words" — keeps Russian-language plurals approximate.
+ * Kept English to avoid hard-coding plural rules; switch to `pluralStringResource`
+ * if precise localisation is required.
+ */
+private fun wordsCountLabel(count: Int): String = when (count) {
+    1 -> "1 word"
+    else -> "$count words"
+}
+
 @Preview(showBackground = true)
 @Composable
-fun CategoryCardPreview() {
-
+private fun CategoryCardPreview() {
     MemowaveTheme {
         CategoryCard(
             category = Category(
                 id = 1,
-                name = "Test category",
-                color = "#FF9800",
-                iconRes = R.drawable.round_palette_24
+                name = "Природа",
+                color = "#FF22C55E",
+                iconName = "globe"
             ),
             wordsCount = 42,
-            onEditClick = {},
-            onDeleteClick = {}
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

@@ -1,25 +1,16 @@
 package com.memowave.app.ui.screen.library
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -28,28 +19,25 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.memowave.app.R
-import com.memowave.app.domain.model.Category
 import com.memowave.app.domain.model.Word
-import com.memowave.app.ui.common.BottomNavigationBar
-import com.memowave.app.ui.screen.library.components.CategoryEditDialog
+import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.screen.library.components.LibraryCategoriesTab
 import com.memowave.app.ui.screen.library.components.LibraryWordsTab
-import com.memowave.app.ui.screen.library.components.WordEditDialog
 import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
@@ -59,15 +47,25 @@ fun LibraryRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.onEvent(LibraryEvent.Load)
     }
 
     LibraryScreen(
         state = uiState,
-        onEvent = viewModel::onEvent,
-        onUploadImage = viewModel::uploadPickedImage,
-        onDiscardImage = viewModel::discardPendingImage
+        onEvent = { event ->
+            when (event) {
+                is LibraryEvent.AddWordClicked ->
+                    navController.navigate(Screen.WordNew.route)
+                is LibraryEvent.EditWordClicked ->
+                    navController.navigate(Screen.WordEdit.routeFor(event.word.id))
+                is LibraryEvent.AddCategoryClicked ->
+                    navController.navigate(Screen.CategoryNew.route)
+                is LibraryEvent.EditCategoryClicked ->
+                    navController.navigate(Screen.CategoryEdit.routeFor(event.category.id))
+                else -> viewModel.onEvent(event)
+            }
+        }
     )
 }
 
@@ -81,11 +79,9 @@ private enum class LibraryTab {
 fun LibraryScreen(
     state: LibraryUiState,
     onEvent: (LibraryEvent) -> Unit,
-    onUploadImage: suspend (android.net.Uri) -> Result<String> = { Result.failure(NotImplementedError()) },
-    onDiscardImage: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var selectedTab by remember { mutableStateOf(LibraryTab.WORDS) }
+    var selectedTab by rememberSaveable { mutableStateOf(LibraryTab.WORDS) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -94,54 +90,11 @@ fun LibraryScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
-                .padding(top = 32.dp, bottom = 0.dp)
+                .padding(top = 16.dp, bottom = 0.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    modifier = Modifier.height(52.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                    onClick = {}
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.bookmark_stacks_24),
-                        contentDescription = "Library"
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = "My stacks"
-                    )
-                }
-
-                IconButton(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        ),
-                    onClick = { },
-                ) {
-                    Icon(
-                        modifier = Modifier.size(28.dp),
-                        painter = painterResource(R.drawable.round_help_24),
-                        contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-            }
-
             // Tabs
             SingleChoiceSegmentedButtonRow(
                 modifier = Modifier
-                    .padding(top = 36.dp)
                     .fillMaxWidth()
             ) {
                 val segButtonHeight = 50.dp
@@ -226,43 +179,6 @@ fun LibraryScreen(
         }
     }
 
-    if (state.isWordDialogOpen) {
-        WordEditDialog(
-            categories = state.categories,
-            initialWord = state.editingWord,
-            onDismiss = { onEvent(LibraryEvent.DismissWordDialog) },
-            onSave = { original, translation, categoryId, examples, note, imageFileName ->
-                onEvent(
-                    LibraryEvent.SaveWord(
-                        original = original,
-                        translation = translation,
-                        categoryId = categoryId,
-                        examples = examples,
-                        note = note,
-                        imageFileName = imageFileName
-                    )
-                )
-            },
-            onUploadImage = onUploadImage,
-            onDiscardImage = onDiscardImage
-        )
-    }
-
-    if (state.isCategoryDialogOpen) {
-        CategoryEditDialog(
-            initialCategory = state.editingCategory,
-            onDismiss = { onEvent(LibraryEvent.DismissCategoryDialog) },
-            onSave = { name, description, colorHex ->
-                onEvent(
-                    LibraryEvent.SaveCategory(
-                        name = name,
-                        description = description,
-                        colorHex = colorHex
-                    )
-                )
-            }
-        )
-    }
 }
 
 @Preview(device = "spec:width=411dp,height=891dp", showSystemUi = false, showBackground = true)
@@ -299,11 +215,7 @@ private fun LibraryScreenWordsPreview() {
                                     categoryId = 2,
                                     examples = listOf("The ocean is deep and blue.")
                                 )
-                            ),
-                            /*categories = listOf(
-                                Category(id = 1L, name = "Базовые"),
-                                Category(id = 2L, name = "Путешествия")
-                            )*/
+                            )
                         ),
                         onEvent = {}
                     )
@@ -332,11 +244,7 @@ private fun LibraryScreenWithoutWordsPreview() {
                 ) {
                     LibraryScreen(
                         state = LibraryUiState(
-                            words = emptyList(),
-                            /*categories = listOf(
-                                Category(id = 1L, name = "Базовые"),
-                                Category(id = 2L, name = "Путешествия")
-                            )*/
+                            words = emptyList()
                         ),
                         onEvent = {}
                     )

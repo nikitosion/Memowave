@@ -2,7 +2,6 @@ package com.memowave.app.data.mapper
 
 import com.memowave.app.data.local.entity.CategoryEntity
 import com.memowave.app.data.remote.dto.library.CategoryDto
-import com.memowave.app.data.remote.dto.library.PackDto
 import com.memowave.app.domain.model.Category
 
 class CategoryMapper {
@@ -12,7 +11,8 @@ class CategoryMapper {
             id = entity.remoteId ?: 0L,
             name = entity.name,
             description = entity.description,
-            color = entity.colorHex
+            color = entity.colorHex,
+            iconName = entity.iconName
         )
     }
 
@@ -21,7 +21,8 @@ class CategoryMapper {
             id = category.id,
             name = category.name,
             description = category.description,
-            color = category.color
+            color = category.color,
+            iconName = category.iconName
         )
     }
 
@@ -31,6 +32,7 @@ class CategoryMapper {
             name = domain.name,
             description = domain.description,
             colorHex = domain.color,
+            iconName = domain.iconName,
             createdAt = domain.createdAt,
             updatedAt = domain.updatedAt
         )
@@ -42,6 +44,7 @@ class CategoryMapper {
             name = dto.name ?: "",
             description = dto.description,
             colorHex = dto.color,
+            iconName = dto.iconName,
             isSynced = true,
             remoteId = dto.id,
             createdAt = System.currentTimeMillis(),
@@ -53,8 +56,9 @@ class CategoryMapper {
         return Category(
             id = dto.id,
             name = dto.name ?: "",
-            description = dto.description ?: "",
-            color = dto.color ?: "#FFFFFF"
+            description = dto.description,
+            color = dto.color,
+            iconName = dto.iconName
         )
     }
 
@@ -64,6 +68,7 @@ class CategoryMapper {
             name = entity.name,
             description = entity.description,
             color = entity.colorHex,
+            iconName = entity.iconName,
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt
         )

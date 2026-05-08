@@ -7,7 +7,7 @@ data class Category(
     val name: String,
     val description: String? = null,
     val color: String? = null,
-    val iconRes: Int? = null,
+    val iconName: String? = null,
     val pack: PackDto? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

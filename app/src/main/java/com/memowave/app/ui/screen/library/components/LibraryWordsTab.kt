@@ -40,7 +40,7 @@ fun LibraryWordsTab(
 
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
         item {
@@ -69,8 +69,7 @@ fun LibraryWordsTab(
                 WordCard(
                     word = word,
                     category = state.categories.firstOrNull { it.id == word.categoryId },
-                    onEditClick = { onEvent(LibraryEvent.EditWordClicked(word)) },
-                    onDeleteClick = { onEvent(LibraryEvent.DeleteWordClicked(word.id)) }
+                    onClick = { onEvent(LibraryEvent.EditWordClicked(word)) }
                 )
             }
         }

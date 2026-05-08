@@ -264,6 +264,138 @@
     <string name="settings_report_subject_format">[Memowave] %1$s</string>
     <string name="settings_report_no_email_app">Нет приложения для отправки писем</string>
 
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Не синхронизировано</string>
+
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">Новая категория</string>
+    <string name="category_edit_title_edit">Редактировать категорию</string>
+    <string name="category_edit_field_name">Название</string>
+    <string name="category_edit_field_description">Описание</string>
+    <string name="category_edit_section_color">Цвет</string>
+    <string name="category_edit_section_icon">Иконка</string>
+    <string name="category_edit_section_stats">Статистика</string>
+    <string name="category_edit_section_words">Слова</string>
+    <string name="category_edit_color_clear">Без цвета</string>
+    <string name="category_edit_color_show_custom">Свой HEX</string>
+    <string name="category_edit_color_hide_custom">Скрыть HEX</string>
+    <string name="category_edit_color_custom_label">Свой цвет (HEX)</string>
+    <string name="category_edit_stat_total">Всего</string>
+    <string name="category_edit_stat_mastered">Изучено</string>
+    <string name="category_edit_stat_due">К повтору</string>
+    <string name="category_edit_phase_new">Новые</string>
+    <string name="category_edit_phase_learning">Изучение</string>
+    <string name="category_edit_phase_review">Повторение</string>
+    <string name="category_edit_phase_relearn">Переучивание</string>
+    <string name="category_edit_delete">Удалить категорию</string>
+    <string name="category_edit_delete_disabled_reason">Сначала перенесите или удалите слова из этой категории.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Удалить категорию?</string>
+    <string name="category_edit_delete_confirm_message">Категория будет удалена.</string>
+    <string name="category_edit_delete_confirm_yes">Удалить</string>
+    <string name="category_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Отменить изменения?</string>
+    <string name="category_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="category_edit_discard_yes">Отменить</string>
+    <string name="category_edit_discard_no">Остаться</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Сохраняем…</string>
+    <string name="category_edit_op_deleting">Удаляем…</string>
+    <string name="category_edit_op_save_success_new">Категория добавлена</string>
+    <string name="category_edit_op_save_success_edit">Категория обновлена</string>
+    <string name="category_edit_op_delete_success">Категория удалена</string>
+    <string name="category_edit_op_save_error">Не удалось сохранить</string>
+    <string name="category_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Отмена</string>
+    <string name="category_edit_a11y_save">Сохранить</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">По умолчанию</string>
+    <string name="category_icon_language">Язык</string>
+    <string name="category_icon_globe">Глобус</string>
+    <string name="category_icon_fire">Огонь</string>
+    <string name="category_icon_star">Звезда</string>
+    <string name="category_icon_crown">Корона</string>
+    <string name="category_icon_palette">Палитра</string>
+    <string name="category_icon_emoji">Эмодзи</string>
+    <string name="category_icon_cards">Карты</string>
+    <string name="category_icon_bolt">Молния</string>
+    <string name="category_icon_extension">Расширение</string>
+    <string name="category_icon_shop">Магазин</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">Новое слово</string>
+    <string name="word_edit_title_edit">Редактировать слово</string>
+    <string name="word_edit_save">Сохранить</string>
+    <string name="word_edit_cancel">Отмена</string>
+    <string name="word_edit_delete">Удалить слово</string>
+    <string name="word_edit_field_original">Оригинал</string>
+    <string name="word_edit_field_translation">Перевод</string>
+    <string name="word_edit_field_example">Пример (необязательно)</string>
+    <string name="word_edit_field_category">Категория</string>
+    <string name="word_edit_category_none">Без категории</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Алгоритм</string>
+    <string name="word_edit_algo_phase_caption">Фаза</string>
+    <string name="word_edit_algo_due_caption">След. повтор</string>
+    <string name="word_edit_algo_review_count">Повторений</string>
+    <string name="word_edit_algo_interval">Интервал</string>
+    <string name="word_edit_algo_stability">Стабильность</string>
+    <string name="word_edit_algo_difficulty">Сложность</string>
+    <string name="word_edit_algo_days_format">%1$d дн</string>
+    <string name="word_edit_algo_stability_format">%1$.1f дн</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">Новое</string>
+    <string name="word_edit_algo_phase_learning">Изучение</string>
+    <string name="word_edit_algo_phase_review">Повторение</string>
+    <string name="word_edit_algo_phase_relearn">Переучивание</string>
+    <string name="word_edit_algo_due_today">Сегодня</string>
+    <string name="word_edit_algo_due_tomorrow">Завтра</string>
+    <string name="word_edit_algo_due_overdue">Просрочено</string>
+    <string name="word_edit_algo_due_ready">Готово к изучению</string>
+    <string name="word_edit_algo_due_in_days_format">Через %1$d дн</string>
+    <string name="word_edit_algo_last_review_format">Последний повтор: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Ещё не повторялось</string>
+    <string name="word_edit_algo_reset">Сбросить прогресс</string>
+    <string name="word_edit_algo_reset_banner">Прогресс будет сброшен при сохранении</string>
+    <string name="word_edit_algo_reset_undo">Отменить</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Создано: %1$s</string>
+    <string name="word_edit_meta_updated">Обновлено: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Удалить слово?</string>
+    <string name="word_edit_delete_confirm_message">Слово будет удалено из библиотеки и синхронизировано при следующем подключении.</string>
+    <string name="word_edit_delete_confirm_yes">Удалить</string>
+    <string name="word_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Отменить изменения?</string>
+    <string name="word_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="word_edit_discard_yes">Отменить</string>
+    <string name="word_edit_discard_no">Остаться</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Сохраняем…</string>
+    <string name="word_edit_op_deleting">Удаляем…</string>
+    <string name="word_edit_op_save_success_new">Слово добавлено</string>
+    <string name="word_edit_op_save_success_edit">Слово обновлено</string>
+    <string name="word_edit_op_delete_success">Слово удалено</string>
+    <string name="word_edit_op_save_error">Не удалось сохранить</string>
+    <string name="word_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Отмена</string>
+    <string name="word_edit_a11y_save">Сохранить</string>
+
     <!-- Common -->
     <string name="action_save">Сохранить</string>
     <string name="action_confirm">Подтвердить</string>

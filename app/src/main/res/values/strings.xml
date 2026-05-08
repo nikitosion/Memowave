@@ -277,6 +277,138 @@
     <string name="settings_report_subject_format">[Memowave] %1$s</string>
     <string name="settings_report_no_email_app">No email app available</string>
 
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Not synced</string>
+
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">New category</string>
+    <string name="category_edit_title_edit">Edit category</string>
+    <string name="category_edit_field_name">Name</string>
+    <string name="category_edit_field_description">Description</string>
+    <string name="category_edit_section_color">Color</string>
+    <string name="category_edit_section_icon">Icon</string>
+    <string name="category_edit_section_stats">Statistics</string>
+    <string name="category_edit_section_words">Words</string>
+    <string name="category_edit_color_clear">No color</string>
+    <string name="category_edit_color_show_custom">Custom HEX</string>
+    <string name="category_edit_color_hide_custom">Hide HEX</string>
+    <string name="category_edit_color_custom_label">Custom HEX</string>
+    <string name="category_edit_stat_total">Total</string>
+    <string name="category_edit_stat_mastered">Mastered</string>
+    <string name="category_edit_stat_due">Due now</string>
+    <string name="category_edit_phase_new">New</string>
+    <string name="category_edit_phase_learning">Learning</string>
+    <string name="category_edit_phase_review">Review</string>
+    <string name="category_edit_phase_relearn">Relearn</string>
+    <string name="category_edit_delete">Delete category</string>
+    <string name="category_edit_delete_disabled_reason">Move or delete words from this category first.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Delete category?</string>
+    <string name="category_edit_delete_confirm_message">The category will be removed.</string>
+    <string name="category_edit_delete_confirm_yes">Delete</string>
+    <string name="category_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Discard changes?</string>
+    <string name="category_edit_discard_message">Your changes will be lost.</string>
+    <string name="category_edit_discard_yes">Discard</string>
+    <string name="category_edit_discard_no">Stay</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Saving…</string>
+    <string name="category_edit_op_deleting">Deleting…</string>
+    <string name="category_edit_op_save_success_new">Category added</string>
+    <string name="category_edit_op_save_success_edit">Category updated</string>
+    <string name="category_edit_op_delete_success">Category deleted</string>
+    <string name="category_edit_op_save_error">Could not save</string>
+    <string name="category_edit_op_delete_error">Could not delete</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Cancel</string>
+    <string name="category_edit_a11y_save">Save</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">Default</string>
+    <string name="category_icon_language">Language</string>
+    <string name="category_icon_globe">Globe</string>
+    <string name="category_icon_fire">Fire</string>
+    <string name="category_icon_star">Star</string>
+    <string name="category_icon_crown">Crown</string>
+    <string name="category_icon_palette">Palette</string>
+    <string name="category_icon_emoji">Emoji</string>
+    <string name="category_icon_cards">Cards</string>
+    <string name="category_icon_bolt">Bolt</string>
+    <string name="category_icon_extension">Extension</string>
+    <string name="category_icon_shop">Shop</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">New word</string>
+    <string name="word_edit_title_edit">Edit word</string>
+    <string name="word_edit_save">Save</string>
+    <string name="word_edit_cancel">Cancel</string>
+    <string name="word_edit_delete">Delete word</string>
+    <string name="word_edit_field_original">Original</string>
+    <string name="word_edit_field_translation">Translation</string>
+    <string name="word_edit_field_example">Example (optional)</string>
+    <string name="word_edit_field_category">Category</string>
+    <string name="word_edit_category_none">No category</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Algorithm</string>
+    <string name="word_edit_algo_phase_caption">Phase</string>
+    <string name="word_edit_algo_due_caption">Next review</string>
+    <string name="word_edit_algo_review_count">Reviews</string>
+    <string name="word_edit_algo_interval">Interval</string>
+    <string name="word_edit_algo_stability">Stability</string>
+    <string name="word_edit_algo_difficulty">Difficulty</string>
+    <string name="word_edit_algo_days_format">%1$d d</string>
+    <string name="word_edit_algo_stability_format">%1$.1f d</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">New</string>
+    <string name="word_edit_algo_phase_learning">Learning</string>
+    <string name="word_edit_algo_phase_review">Review</string>
+    <string name="word_edit_algo_phase_relearn">Relearn</string>
+    <string name="word_edit_algo_due_today">Today</string>
+    <string name="word_edit_algo_due_tomorrow">Tomorrow</string>
+    <string name="word_edit_algo_due_overdue">Overdue</string>
+    <string name="word_edit_algo_due_ready">Ready to learn</string>
+    <string name="word_edit_algo_due_in_days_format">In %1$d d</string>
+    <string name="word_edit_algo_last_review_format">Last reviewed: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Not yet reviewed</string>
+    <string name="word_edit_algo_reset">Reset progress</string>
+    <string name="word_edit_algo_reset_banner">Progress will be reset on save</string>
+    <string name="word_edit_algo_reset_undo">Undo</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Created: %1$s</string>
+    <string name="word_edit_meta_updated">Updated: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Delete word?</string>
+    <string name="word_edit_delete_confirm_message">The word will be removed from your library and synced on the next online connection.</string>
+    <string name="word_edit_delete_confirm_yes">Delete</string>
+    <string name="word_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Discard changes?</string>
+    <string name="word_edit_discard_message">Your changes will be lost.</string>
+    <string name="word_edit_discard_yes">Discard</string>
+    <string name="word_edit_discard_no">Stay</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Saving…</string>
+    <string name="word_edit_op_deleting">Deleting…</string>
+    <string name="word_edit_op_save_success_new">Word added</string>
+    <string name="word_edit_op_save_success_edit">Word updated</string>
+    <string name="word_edit_op_delete_success">Word deleted</string>
+    <string name="word_edit_op_save_error">Could not save</string>
+    <string name="word_edit_op_delete_error">Could not delete</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Cancel</string>
+    <string name="word_edit_a11y_save">Save</string>
+
     <!-- Common -->
     <string name="action_save">Save</string>
     <string name="action_confirm">Confirm</string>
