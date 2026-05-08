@@ -32,6 +32,7 @@ import com.memowave.app.R
 import com.memowave.app.ui.screen.authentification.components.AuthActionButton
 import com.memowave.app.ui.screen.authentification.components.AuthNotSecuredTextField
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
+import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
@@ -128,8 +129,16 @@ fun ForgotPasswordScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navEvents.collect { event ->
-            if (event is AuthNavEvent.ToResetPassword) {
-                navController.navigate("reset_password/${event.userId}")
+            when (event) {
+                is AuthNavEvent.ToVerifyEmail -> {
+                    navController.navigate(
+                        Screen.VerifyEmail.routeFor(event.userId, event.flow.name)
+                    )
+                }
+                is AuthNavEvent.ToResetPassword -> {
+                    navController.navigate("reset_password/${event.userId}")
+                }
+                else -> Unit
             }
         }
     }

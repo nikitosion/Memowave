@@ -37,6 +37,7 @@ import com.memowave.app.ui.screen.authentification.components.AuthSecuredTextFie
 import com.memowave.app.ui.screen.authentification.components.MemowaveLogoColored
 import com.memowave.app.ui.screen.authentification.components.OAuthButtons
 import com.memowave.app.ui.screen.authentification.components.PasswordRule
+import com.memowave.app.ui.navigation.Screen
 import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.theme.MemowaveTheme
 
@@ -209,11 +210,22 @@ fun SignUpScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navEvents.collect { event ->
-            if (event is AuthNavEvent.ToMain) {
-                navController.navigate("main_page") {
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
+            when (event) {
+                is AuthNavEvent.ToMain -> {
+                    navController.navigate("main_page") {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
+                is AuthNavEvent.ToVerifyEmail -> {
+                    navController.navigate(
+                        Screen.VerifyEmail.routeFor(event.userId, event.flow.name)
+                    ) {
+                        popUpTo(Screen.Login.route)
+                        launchSingleTop = true
+                    }
+                }
+                else -> Unit
             }
         }
     }

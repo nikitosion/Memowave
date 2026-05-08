@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.memowave.app.R
 import com.memowave.app.core.util.StringProvider
 import com.memowave.app.domain.usecase.auth.GetUserByEmailUseCase
+import com.memowave.app.domain.usecase.auth.SendCodeUseCase
 import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordFormState
 import com.memowave.app.ui.screen.authentification.components.ui_state.ForgotPasswordUiState
 import com.memowave.app.ui.screen.authentification.helper.AuthFormValidator
 import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.screen.authentification.helper.AuthResult
+import com.memowave.app.ui.screen.authentification.helper.VerifyEmailFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +34,7 @@ class ForgotPasswordViewModel @Inject constructor(
     private val notificationManager: NotificationManager,
     private val strings: StringProvider,
     private val getUserByEmailUseCase: GetUserByEmailUseCase,
+    private val sendCodeUseCase: SendCodeUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ForgotPasswordUiState())
@@ -54,8 +57,20 @@ class ForgotPasswordViewModel @Inject constructor(
 
             when (val result = performGetUserByEmail(_uiState.value.form.email)) {
                 is AuthResult.Success -> {
+                    val sendResult = sendCodeUseCase(result.data)
                     _uiState.update { it.copy(isLoading = false) }
-                    _navEvents.send(AuthNavEvent.ToResetPassword(userId = result.data))
+                    if (sendResult.isSuccess) {
+                        _navEvents.send(
+                            AuthNavEvent.ToVerifyEmail(
+                                userId = result.data,
+                                flow = VerifyEmailFlow.ForgotPassword,
+                            )
+                        )
+                    } else {
+                        notificationManager.showError(
+                            strings.getString(R.string.auth_verify_email_send_failed)
+                        )
+                    }
                 }
 
                 is AuthResult.Failure -> {

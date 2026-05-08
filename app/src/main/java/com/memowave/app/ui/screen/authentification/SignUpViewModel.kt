@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memowave.app.R
 import com.memowave.app.core.util.StringProvider
+import com.memowave.app.domain.repository.UserRepository
 import com.memowave.app.domain.usecase.auth.SignUpUseCase
 import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpFormState
@@ -11,6 +12,7 @@ import com.memowave.app.ui.screen.authentification.components.ui_state.SignUpUiS
 import com.memowave.app.ui.screen.authentification.helper.AuthFormValidator
 import com.memowave.app.ui.screen.authentification.helper.AuthNavEvent
 import com.memowave.app.ui.screen.authentification.helper.AuthResult
+import com.memowave.app.ui.screen.authentification.helper.VerifyEmailFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +34,7 @@ class SignUpViewModel @Inject constructor(
     private val notificationManager: NotificationManager,
     private val strings: StringProvider,
     private val signUpUseCase: SignUpUseCase,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -71,9 +74,27 @@ class SignUpViewModel @Inject constructor(
             val form = _uiState.value.form
             when (val result = performSignUp(form.username, form.email, form.password)) {
                 is AuthResult.Success -> {
+                    val userIdResult = userRepository.getUserInfo().mapCatching { user ->
+                        checkNotNull(user.id) {
+                            strings.getString(R.string.auth_error_user_id_missing)
+                        }
+                    }
+                    val userId = userIdResult.getOrNull()
+                    if (userId == null) {
+                        _uiState.update { it.copy(isLoading = false) }
+                        notificationManager.showError(
+                            strings.getString(R.string.auth_error_user_id_missing)
+                        )
+                        return@launch
+                    }
+
                     _uiState.update { it.copy(form = SignUpFormState(), isLoading = false) }
-                    notificationManager.showSuccess(strings.getString(R.string.notification_registration_success))
-                    _navEvents.send(AuthNavEvent.ToMain)
+                    notificationManager.showSuccess(
+                        strings.getString(R.string.notification_registration_success)
+                    )
+                    _navEvents.send(
+                        AuthNavEvent.ToVerifyEmail(userId = userId, flow = VerifyEmailFlow.SignUp)
+                    )
                 }
 
                 is AuthResult.Failure -> {
