@@ -2,12 +2,7 @@ package com.memowave.app.ui.screen.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.memowave.app.domain.model.Category
-import com.memowave.app.domain.usecase.category.AddCategoryUseCase
-import com.memowave.app.domain.usecase.category.DeleteCategoryUseCase
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
-import com.memowave.app.domain.usecase.category.GetCategoryUseCase
-import com.memowave.app.domain.usecase.category.UpdateCategoryUseCase
 import com.memowave.app.domain.usecase.word.GetWordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,11 +15,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     private val getWordsUseCase: GetWordsUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val addCategoryUseCase: AddCategoryUseCase,
-    private val updateCategoryUseCase: UpdateCategoryUseCase,
-    @Suppress("unused") private val getCategoryUseCase: GetCategoryUseCase,
-    private val deleteCategoryUseCase: DeleteCategoryUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LibraryUiState())
@@ -41,35 +32,11 @@ class LibraryViewModel @Inject constructor(
             is LibraryEvent.CategorySelected -> {
                 _uiState.value = _uiState.value.copy(selectedCategoryId = event.categoryId)
             }
-
-            // Word navigation events are handled in LibraryRoute, not here.
+            // Navigation events are handled in LibraryRoute, not here.
             is LibraryEvent.AddWordClicked,
-            is LibraryEvent.EditWordClicked -> Unit
-
-            is LibraryEvent.AddCategoryClicked -> {
-                _uiState.value = _uiState.value.copy(
-                    isCategoryDialogOpen = true,
-                    editingCategory = null
-                )
-            }
-
-            is LibraryEvent.EditCategoryClicked -> {
-                _uiState.value = _uiState.value.copy(
-                    isCategoryDialogOpen = true,
-                    editingCategory = event.category
-                )
-            }
-
-            is LibraryEvent.DeleteCategoryClicked -> deleteCategory(event.categoryId)
-
-            is LibraryEvent.DismissCategoryDialog -> {
-                _uiState.value = _uiState.value.copy(
-                    isCategoryDialogOpen = false,
-                    editingCategory = null
-                )
-            }
-
-            is LibraryEvent.SaveCategory -> saveCategory(event)
+            is LibraryEvent.EditWordClicked,
+            is LibraryEvent.AddCategoryClicked,
+            is LibraryEvent.EditCategoryClicked -> Unit
         }
     }
 
@@ -100,58 +67,6 @@ class LibraryViewModel @Inject constructor(
                 words = words,
                 categories = categories
             )
-        }
-    }
-
-    private fun saveCategory(event: LibraryEvent.SaveCategory) {
-        viewModelScope.launch {
-            val currentEditing = _uiState.value.editingCategory
-            val baseCategory = currentEditing?.copy(
-                name = event.name.trim(),
-                description = event.description?.takeIf { it.isNotBlank() },
-                color = event.colorHex
-            ) ?: Category(
-                name = event.name.trim(),
-                description = event.description?.takeIf { it.isNotBlank() },
-                color = event.colorHex
-            )
-
-            val result = if (currentEditing == null) {
-                addCategoryUseCase(baseCategory)
-            } else {
-                updateCategoryUseCase(baseCategory)
-            }
-
-            result.onSuccess {
-                onEvent(LibraryEvent.DismissCategoryDialog)
-                loadData()
-            }.onFailure { error ->
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = error.message ?: "Failed to save category"
-                )
-            }
-        }
-    }
-
-    private fun deleteCategory(categoryId: Long) {
-        viewModelScope.launch {
-            // For MVP simply prevent deletion if there are still words with this category
-            val hasWordsWithCategory = _uiState.value.words.any { it.categoryId == categoryId }
-            if (hasWordsWithCategory) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Удалите или перенесите слова из категории перед удалением"
-                )
-                return@launch
-            }
-
-            val result = deleteCategoryUseCase(categoryId)
-            result.onSuccess {
-                loadData()
-            }.onFailure { error ->
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = error.message ?: "Failed to delete category"
-                )
-            }
         }
     }
 }

@@ -8,18 +8,9 @@ sealed interface LibraryEvent {
     data class SearchChanged(val query: String) : LibraryEvent
     data class CategorySelected(val categoryId: Long?) : LibraryEvent
 
-    /** Word events — navigation handled by [LibraryRoute]. */
+    /** Navigation triggers — handled by [LibraryRoute], not the ViewModel. */
     data object AddWordClicked : LibraryEvent
     data class EditWordClicked(val word: Word) : LibraryEvent
-
-    /** Category events — currently routed through dialog. */
     data object AddCategoryClicked : LibraryEvent
     data class EditCategoryClicked(val category: Category) : LibraryEvent
-    data class DeleteCategoryClicked(val categoryId: Long) : LibraryEvent
-    data object DismissCategoryDialog : LibraryEvent
-    data class SaveCategory(
-        val name: String,
-        val description: String?,
-        val colorHex: String?
-    ) : LibraryEvent
 }

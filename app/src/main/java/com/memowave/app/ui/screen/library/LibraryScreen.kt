@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 import com.memowave.app.R
 import com.memowave.app.domain.model.Word
 import com.memowave.app.ui.navigation.Screen
-import com.memowave.app.ui.screen.library.components.CategoryEditDialog
 import com.memowave.app.ui.screen.library.components.LibraryCategoriesTab
 import com.memowave.app.ui.screen.library.components.LibraryWordsTab
 import com.memowave.app.ui.theme.MemowaveTheme
@@ -60,6 +59,10 @@ fun LibraryRoute(
                     navController.navigate(Screen.WordNew.route)
                 is LibraryEvent.EditWordClicked ->
                     navController.navigate(Screen.WordEdit.routeFor(event.word.id))
+                is LibraryEvent.AddCategoryClicked ->
+                    navController.navigate(Screen.CategoryNew.route)
+                is LibraryEvent.EditCategoryClicked ->
+                    navController.navigate(Screen.CategoryEdit.routeFor(event.category.id))
                 else -> viewModel.onEvent(event)
             }
         }
@@ -78,7 +81,7 @@ fun LibraryScreen(
     onEvent: (LibraryEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedTab by remember { mutableStateOf(LibraryTab.WORDS) }
+    var selectedTab by rememberSaveable { mutableStateOf(LibraryTab.WORDS) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -176,21 +179,6 @@ fun LibraryScreen(
         }
     }
 
-    if (state.isCategoryDialogOpen) {
-        CategoryEditDialog(
-            initialCategory = state.editingCategory,
-            onDismiss = { onEvent(LibraryEvent.DismissCategoryDialog) },
-            onSave = { name, description, colorHex ->
-                onEvent(
-                    LibraryEvent.SaveCategory(
-                        name = name,
-                        description = description,
-                        colorHex = colorHex
-                    )
-                )
-            }
-        )
-    }
 }
 
 @Preview(device = "spec:width=411dp,height=891dp", showSystemUi = false, showBackground = true)

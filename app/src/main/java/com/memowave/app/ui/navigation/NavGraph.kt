@@ -41,6 +41,7 @@ import com.memowave.app.ui.screen.settings.report_bug.ReportBugRoute
 import com.memowave.app.ui.screen.settings.security.SecurityRoute
 import com.memowave.app.ui.screen.splash.SplashRoute
 import com.memowave.app.ui.screen.splash.SplashViewModel
+import com.memowave.app.ui.screen.category_edit.CategoryEditRoute
 import com.memowave.app.ui.screen.word_edit.WordEditRoute
 
 sealed class Screen(
@@ -108,6 +109,13 @@ sealed class Screen(
         fun routeFor(id: Long) = "word_edit/$id"
     }
 
+    object CategoryNew : Screen(route = "category_new", hasCustomTopBar = true)
+
+    object CategoryEdit : Screen(route = "category_edit/{categoryId}", hasCustomTopBar = true) {
+        const val CATEGORY_ID_ARG = "categoryId"
+        fun routeFor(id: Long) = "category_edit/$id"
+    }
+
     companion object {
         val allScreens =
             listOf(
@@ -116,7 +124,7 @@ sealed class Screen(
                 AppSettings, SettingsPersonal, SettingsSecurity,
                 SettingsGoals, SettingsAlgorithm, SettingsAppearance,
                 SettingsNotifications, SettingsAbout, SettingsReportBug,
-                Flashcard, WordNew, WordEdit
+                Flashcard, WordNew, WordEdit, CategoryNew, CategoryEdit
             )
         val navBarScreens = allScreens.filter { it.showInAppBar }
     }
@@ -246,6 +254,19 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             )
         ) {
             WordEditRoute(navController = navController)
+        }
+
+        composable(Screen.CategoryNew.route) {
+            CategoryEditRoute(navController = navController)
+        }
+
+        composable(
+            route = Screen.CategoryEdit.route,
+            arguments = listOf(
+                navArgument(Screen.CategoryEdit.CATEGORY_ID_ARG) { type = NavType.LongType }
+            )
+        ) {
+            CategoryEditRoute(navController = navController)
         }
     }
 }

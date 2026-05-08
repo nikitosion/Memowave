@@ -280,6 +280,68 @@
     <!-- Library word card -->
     <string name="word_card_a11y_not_synced">Not synced</string>
 
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">New category</string>
+    <string name="category_edit_title_edit">Edit category</string>
+    <string name="category_edit_field_name">Name</string>
+    <string name="category_edit_field_description">Description</string>
+    <string name="category_edit_section_color">Color</string>
+    <string name="category_edit_section_icon">Icon</string>
+    <string name="category_edit_section_stats">Statistics</string>
+    <string name="category_edit_section_words">Words</string>
+    <string name="category_edit_color_clear">No color</string>
+    <string name="category_edit_color_show_custom">Custom HEX</string>
+    <string name="category_edit_color_hide_custom">Hide HEX</string>
+    <string name="category_edit_color_custom_label">Custom HEX</string>
+    <string name="category_edit_stat_total">Total</string>
+    <string name="category_edit_stat_mastered">Mastered</string>
+    <string name="category_edit_stat_due">Due now</string>
+    <string name="category_edit_phase_new">New</string>
+    <string name="category_edit_phase_learning">Learning</string>
+    <string name="category_edit_phase_review">Review</string>
+    <string name="category_edit_phase_relearn">Relearn</string>
+    <string name="category_edit_delete">Delete category</string>
+    <string name="category_edit_delete_disabled_reason">Move or delete words from this category first.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Delete category?</string>
+    <string name="category_edit_delete_confirm_message">The category will be removed.</string>
+    <string name="category_edit_delete_confirm_yes">Delete</string>
+    <string name="category_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Discard changes?</string>
+    <string name="category_edit_discard_message">Your changes will be lost.</string>
+    <string name="category_edit_discard_yes">Discard</string>
+    <string name="category_edit_discard_no">Stay</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Saving…</string>
+    <string name="category_edit_op_deleting">Deleting…</string>
+    <string name="category_edit_op_save_success_new">Category added</string>
+    <string name="category_edit_op_save_success_edit">Category updated</string>
+    <string name="category_edit_op_delete_success">Category deleted</string>
+    <string name="category_edit_op_save_error">Could not save</string>
+    <string name="category_edit_op_delete_error">Could not delete</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Cancel</string>
+    <string name="category_edit_a11y_save">Save</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">Default</string>
+    <string name="category_icon_language">Language</string>
+    <string name="category_icon_globe">Globe</string>
+    <string name="category_icon_fire">Fire</string>
+    <string name="category_icon_star">Star</string>
+    <string name="category_icon_crown">Crown</string>
+    <string name="category_icon_palette">Palette</string>
+    <string name="category_icon_emoji">Emoji</string>
+    <string name="category_icon_cards">Cards</string>
+    <string name="category_icon_bolt">Bolt</string>
+    <string name="category_icon_extension">Extension</string>
+    <string name="category_icon_shop">Shop</string>
+
     <!-- Word edit/create screen -->
     <string name="word_edit_title_new">New word</string>
     <string name="word_edit_title_edit">Edit word</string>

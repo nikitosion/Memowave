@@ -267,6 +267,68 @@
     <!-- Library word card -->
     <string name="word_card_a11y_not_synced">Не синхронизировано</string>
 
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">Новая категория</string>
+    <string name="category_edit_title_edit">Редактировать категорию</string>
+    <string name="category_edit_field_name">Название</string>
+    <string name="category_edit_field_description">Описание</string>
+    <string name="category_edit_section_color">Цвет</string>
+    <string name="category_edit_section_icon">Иконка</string>
+    <string name="category_edit_section_stats">Статистика</string>
+    <string name="category_edit_section_words">Слова</string>
+    <string name="category_edit_color_clear">Без цвета</string>
+    <string name="category_edit_color_show_custom">Свой HEX</string>
+    <string name="category_edit_color_hide_custom">Скрыть HEX</string>
+    <string name="category_edit_color_custom_label">Свой цвет (HEX)</string>
+    <string name="category_edit_stat_total">Всего</string>
+    <string name="category_edit_stat_mastered">Изучено</string>
+    <string name="category_edit_stat_due">К повтору</string>
+    <string name="category_edit_phase_new">Новые</string>
+    <string name="category_edit_phase_learning">Изучение</string>
+    <string name="category_edit_phase_review">Повторение</string>
+    <string name="category_edit_phase_relearn">Переучивание</string>
+    <string name="category_edit_delete">Удалить категорию</string>
+    <string name="category_edit_delete_disabled_reason">Сначала перенесите или удалите слова из этой категории.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Удалить категорию?</string>
+    <string name="category_edit_delete_confirm_message">Категория будет удалена.</string>
+    <string name="category_edit_delete_confirm_yes">Удалить</string>
+    <string name="category_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Отменить изменения?</string>
+    <string name="category_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="category_edit_discard_yes">Отменить</string>
+    <string name="category_edit_discard_no">Остаться</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Сохраняем…</string>
+    <string name="category_edit_op_deleting">Удаляем…</string>
+    <string name="category_edit_op_save_success_new">Категория добавлена</string>
+    <string name="category_edit_op_save_success_edit">Категория обновлена</string>
+    <string name="category_edit_op_delete_success">Категория удалена</string>
+    <string name="category_edit_op_save_error">Не удалось сохранить</string>
+    <string name="category_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Отмена</string>
+    <string name="category_edit_a11y_save">Сохранить</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">По умолчанию</string>
+    <string name="category_icon_language">Язык</string>
+    <string name="category_icon_globe">Глобус</string>
+    <string name="category_icon_fire">Огонь</string>
+    <string name="category_icon_star">Звезда</string>
+    <string name="category_icon_crown">Корона</string>
+    <string name="category_icon_palette">Палитра</string>
+    <string name="category_icon_emoji">Эмодзи</string>
+    <string name="category_icon_cards">Карты</string>
+    <string name="category_icon_bolt">Молния</string>
+    <string name="category_icon_extension">Расширение</string>
+    <string name="category_icon_shop">Магазин</string>
+
     <!-- Word edit/create screen -->
     <string name="word_edit_title_new">Новое слово</string>
     <string name="word_edit_title_edit">Редактировать слово</string>
