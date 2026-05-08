@@ -11,6 +11,7 @@ import com.memowave.app.domain.model.user.User
 import com.memowave.app.domain.model.user.UserRegistration
 import com.memowave.app.domain.repository.AuthRepository
 import com.memowave.app.domain.usecase.auth.ChangePasswordError
+import com.memowave.app.domain.usecase.auth.VerifyEmailError
 import javax.inject.Inject
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -113,6 +114,43 @@ class AuthRepositoryImpl @Inject constructor(
                         403 -> ChangePasswordError.Forbidden
                         in 500..599 -> ChangePasswordError.ServerError
                         else -> ChangePasswordError.Unknown
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun sendCode(userId: Long): Result<Unit> {
+        return try {
+            val response = apiService.sendCode(userId)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    when (response.code()) {
+                        403 -> VerifyEmailError.Forbidden
+                        else -> VerifyEmailError.SendFailed
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun verifyEmail(userId: Long, code: String): Result<Unit> {
+        return try {
+            val response = apiService.verifyEmail(userId, code)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    when (response.code()) {
+                        401 -> VerifyEmailError.InvalidCode
+                        403 -> VerifyEmailError.Forbidden
+                        else -> VerifyEmailError.Unknown
                     }
                 )
             }

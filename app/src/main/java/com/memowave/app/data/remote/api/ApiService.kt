@@ -15,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("auth/login")
@@ -31,6 +32,15 @@ interface ApiService {
 
     @PUT("users/me/change-password")
     suspend fun changePassword(@Body passwordChangeRequest: ChangePasswordDto): Response<Unit>
+
+    @PUT("users/{id}/send-code")
+    suspend fun sendCode(@Path("id") userId: Long): Response<Unit>
+
+    @PUT("users/{id}/verify-email")
+    suspend fun verifyEmail(
+        @Path("id") userId: Long,
+        @Query("code") code: String,
+    ): Response<Unit>
 
     @GET("categories")
     suspend fun getUserCategories(): Response<List<CategoryDto>>
