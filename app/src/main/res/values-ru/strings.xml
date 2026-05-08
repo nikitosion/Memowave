@@ -47,7 +47,6 @@
     <string name="password_not_valid">Пароль не соответствует требованиям</string>
     <string name="nav_bar_main_page">Главная</string>
     <string name="nav_bar_library">Библиотека</string>
-    <string name="nav_bar_games">Игры</string>
     <string name="nav_bar_profile">Профиль</string>
     <string name="notification_login_success">Вход выполнен успешно!</string>
     <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова</string>

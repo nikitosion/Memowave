@@ -39,7 +39,6 @@ fun BottomNavigationBarContent(
                         contentDescription = when (destination) {
                             is Screen.MainPage -> "Home icon"
                             is Screen.Library -> "Library icon"
-                            is Screen.Games -> "Games icon"
                             is Screen.Profile -> "Profile icon"
                             else -> null
                         }

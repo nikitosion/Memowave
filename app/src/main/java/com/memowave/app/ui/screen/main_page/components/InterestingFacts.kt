@@ -38,7 +38,11 @@ import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun InterestingFacts(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String = "Волны заимствований",
+    body: String = "Английский язык заимствовал слова более чем из 350 разных языков, что делает его словарь одним из самых «мировых» и гибридных среди всех современных языков.",
+    onPrev: () -> Unit = {},
+    onNext: () -> Unit = {},
 ) {
     val figureColor = MaterialTheme.colorScheme.onPrimaryContainer
 
@@ -93,13 +97,13 @@ fun InterestingFacts(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "Волны заимствований",
+                        text = title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = "Английский язык заимствовал слова более чем из 350 разных языков, что делает его словарь одним из самых «мировых» и гибридных среди всех современных языков.",
+                        text = body,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -109,7 +113,7 @@ fun InterestingFacts(
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(
-                        onClick = { /* TODO: Обработчик нажатия */ },
+                        onClick = onPrev,
                         modifier = Modifier
                             .padding(top = 12.dp)
                             .height(40.dp)
@@ -130,7 +134,7 @@ fun InterestingFacts(
                         )
                     }
                     IconButton(
-                        onClick = { /* TODO: Обработчик нажатия */ },
+                        onClick = onNext,
                         modifier = Modifier
                             .padding(top = 12.dp, start = 16.dp)
                             .height(40.dp)

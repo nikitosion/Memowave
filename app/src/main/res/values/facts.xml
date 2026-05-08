@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="language_fact_titles">
+        <item>Waves of borrowing</item>
+        <item>Papua New Guinea</item>
+        <item>The longest alphabet</item>
+        <item>A language dies</item>
+        <item>Esperanto</item>
+        <item>Thousands of characters</item>
+        <item>A linguistic mystery</item>
+        <item>Finnish without gender</item>
+        <item>Six tones of Vietnamese</item>
+        <item>The longest word</item>
+        <item>Latin still lives</item>
+        <item>Languages without writing</item>
+    </string-array>
+    <string-array name="language_fact_bodies">
+        <item>English has borrowed words from more than 350 different languages, making its vocabulary one of the most \"global\" and hybrid among all modern languages.</item>
+        <item>Papua New Guinea has more than 800 living languages — roughly 12% of all languages in the world spoken in a single country.</item>
+        <item>The Khmer alphabet contains 74 letters and is considered the longest alphabet among writing systems still in active use.</item>
+        <item>Every two weeks a language dies in the world — when its last speaker passes away, an entire cultural memory disappears with them.</item>
+        <item>Esperanto is the most widely spoken constructed language. About 2 million people use it, and thousands consider it their native tongue.</item>
+        <item>The Chinese Kangxi dictionary contains over 47,000 characters, but knowing about 3,000 is enough to read a newspaper fluently.</item>
+        <item>Basque is not related to any known European language — its origin remains a mystery to linguists.</item>
+        <item>Finnish has no grammatical gender: a single pronoun \"hän\" means both \"he\" and \"she\".</item>
+        <item>Vietnamese has six tones: the same word pronounced with different intonations can have up to six different meanings.</item>
+        <item>The longest German word — \"Donaudampfschiffahrtselektrizitätenhauptbetriebswerkbauunterbeamtengesellschaft\" — is 79 letters long.</item>
+        <item>Latin is considered \"dead\", yet it remains the official language of the Vatican and is still used in science, medicine, and law.</item>
+        <item>About half of the world\'s 7,000 living languages have no writing system — they exist only in oral tradition.</item>
+    </string-array>
+</resources>

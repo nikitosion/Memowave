@@ -4,21 +4,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.runtime.DisposableEffect
 import androidx.navigation.NavController
 import com.memowave.app.AppViewModel
 import com.memowave.app.R
@@ -32,9 +32,37 @@ import com.memowave.app.ui.theme.MemowaveTheme
 @Composable
 fun MainPageRoute(
     appViewModel: AppViewModel = hiltViewModel(),
-    navController: NavController? = null
+    navController: NavController? = null,
+    viewModel: MainPageViewModel = hiltViewModel(),
 ) {
-    MainPageScreen(appViewModel, navController)
+    val state by viewModel.uiState.collectAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) viewModel.refresh()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    MainPageScreen(
+        appViewModel = appViewModel,
+        navController = navController,
+        state = state,
+        onLaunchLastMode = {
+            val mode = LEARNING_MODES.firstOrNull { it.id == state.lastLearningModeId }
+                ?: LEARNING_MODES.first()
+            viewModel.onLearningModeLaunched(mode.id)
+            mode.route?.let { navController?.navigate(it) }
+        },
+        onLaunchMode = { mode ->
+            viewModel.onLearningModeLaunched(mode.id)
+            mode.route?.let { navController?.navigate(it) }
+        },
+        onPrevFact = { total -> viewModel.cycleFact(-1, total) },
+        onNextFact = { total -> viewModel.cycleFact(+1, total) },
+    )
 }
 
 data class LearningModeConfig(
@@ -43,7 +71,7 @@ data class LearningModeConfig(
     val route: String? = null,
 )
 
-private val LEARNING_MODES = listOf(
+internal val LEARNING_MODES = listOf(
     LearningModeConfig("Каротчки", R.drawable.playing_cards_24, route = Screen.Flashcard.route),
     LearningModeConfig("Перевод", R.drawable.round_translate_24),
     LearningModeConfig("Викторина", R.drawable.electric_bolt_24),
@@ -53,8 +81,23 @@ private val LEARNING_MODES = listOf(
 @Composable
 fun MainPageScreen(
     appViewModel: AppViewModel? = null,
-    navController: NavController? = null
+    navController: NavController? = null,
+    state: MainPageUiState = MainPageUiState(),
+    onLaunchLastMode: () -> Unit = {},
+    onLaunchMode: (LearningModeConfig) -> Unit = {},
+    onPrevFact: (Int) -> Unit = {},
+    onNextFact: (Int) -> Unit = {},
 ) {
+    val factTitles = stringArrayResource(R.array.language_fact_titles)
+    val factBodies = stringArrayResource(R.array.language_fact_bodies)
+    val factsCount = minOf(factTitles.size, factBodies.size)
+    val safeIndex = if (factsCount > 0) state.factIndex.coerceIn(0, factsCount - 1) else 0
+    val factTitle = factTitles.getOrNull(safeIndex).orEmpty()
+    val factBody = factBodies.getOrNull(safeIndex).orEmpty()
+
+    val lastMode = LEARNING_MODES.firstOrNull { it.id == state.lastLearningModeId }
+        ?: LEARNING_MODES.first()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,8 +106,17 @@ fun MainPageScreen(
             .padding(horizontal = 16.dp)
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
-        ContinueLearningButton()
-        BaseWordStatictics(modifier = Modifier.padding(top = 28.dp))
+        ContinueLearningButton(
+            modeLabel = lastMode.id,
+            modeIconResId = lastMode.iconResId,
+            onClick = onLaunchLastMode,
+        )
+        BaseWordStatictics(
+            modifier = Modifier.padding(top = 28.dp),
+            newCount = state.newCount,
+            dueCount = state.dueCount,
+            learnedCount = state.learnedCount,
+        )
 
         LEARNING_MODES.chunked(2).forEach { rowModes ->
             Row(
@@ -89,34 +141,19 @@ fun MainPageScreen(
                         figureSize = 250.dp,
                         modeName = mode.id,
                         iconResId = mode.iconResId,
-                        onClick = {
-                            mode.route?.let { route ->
-                                navController?.navigate(route)
-                            }
-                        }
+                        onClick = { onLaunchMode(mode) }
                     )
                 }
             }
         }
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-                .height(70.dp),
-            shape = RoundedCornerShape(30.dp),
-            colors = buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            onClick = { /* TODO: Implement add new mode action */ }) {
-            Text(
-                "Все режимы...",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.W500
-            )
-        }
-        InterestingFacts(modifier = Modifier.padding(top = 28.dp))
+        InterestingFacts(
+            modifier = Modifier.padding(top = 28.dp),
+            title = factTitle,
+            body = factBody,
+            onPrev = { onPrevFact(factsCount) },
+            onNext = { onNextFact(factsCount) },
+        )
     }
 }
 
