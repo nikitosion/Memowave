@@ -452,5 +452,8 @@
     <string name="streak_card_subtitle_empty">Начни стрик сегодня</string>
     <string name="streak_card_today_progress">Прогресс за сегодня</string>
     <string name="streak_card_today_done">Цель на сегодня выполнена</string>
+
+    <!-- Экран профиля -->
+    <string name="profile_experience">%1$d XP</string>
 </resources>
 

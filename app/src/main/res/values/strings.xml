@@ -465,4 +465,7 @@
     <string name="streak_card_subtitle_empty">Start your streak today</string>
     <string name="streak_card_today_progress">Today\'s progress</string>
     <string name="streak_card_today_done">Goal reached for today</string>
+
+    <!-- Profile screen -->
+    <string name="profile_experience">%1$d XP</string>
 </resources>
