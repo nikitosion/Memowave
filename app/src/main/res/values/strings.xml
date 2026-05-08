@@ -47,7 +47,6 @@
     <string name="password_not_valid">Password does not meet requirements</string>
     <string name="nav_bar_main_page">Home</string>
     <string name="nav_bar_library">Library</string>
-    <string name="nav_bar_games">Games</string>
     <string name="nav_bar_profile">Profile</string>
     <string name="notification_login_success">С возвращением!</string>
     <string name="notification_logout_success">Вы вышли из аккаунта</string>

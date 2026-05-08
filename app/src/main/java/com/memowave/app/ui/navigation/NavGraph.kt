@@ -65,13 +65,6 @@ sealed class Screen(
         showInAppBar = true
     )
 
-    object Games : Screen(
-        route = "games",
-        iconResId = R.drawable.round_toys_and_games_24,
-        labelResId = R.string.nav_bar_games,
-        showInAppBar = true
-    )
-
     object Profile : Screen(
         route = "profile",
         iconResId = R.drawable.round_person_24,
@@ -119,7 +112,7 @@ sealed class Screen(
     companion object {
         val allScreens =
             listOf(
-                MainPage, Library, Games, Profile,
+                MainPage, Library, Profile,
                 Splash, Login, ForgotPassword, SignUp, ResetPassword,
                 AppSettings, SettingsPersonal, SettingsSecurity,
                 SettingsGoals, SettingsAlgorithm, SettingsAppearance,
@@ -178,9 +171,6 @@ fun NavGraph(navController: NavHostController, appViewModel: AppViewModel) {
             LibraryRoute(
                 navController = navController
             )
-        }
-        composable(Screen.Games.route) {
-            // LibraryRoute()
         }
         composable(Screen.Profile.route) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()
