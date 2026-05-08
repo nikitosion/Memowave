@@ -1,3 +1,471 @@
 <resources>
     <string name="app_name">Memowave</string>
+    <string name="forgot_password_title">Password recovery</string>
+    <string name="forgot_password_email_label">Email</string>
+    <string name="forgot_password_email_placeholder">Enter your email</string>
+    <string name="forgot_password_info">We will send you an email with instructions for recovery</string>
+    <string name="forgot_password_continue">Continue</string>
+    <string name="back">Back</string>
+    <string name="login_greeting">Hi, this is </string>
+    <string name="login_greeting_end">!</string>
+    <string name="login_subtitle">Catch the wave of new words and dive into the language!</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_email_placeholder">Enter your email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_placeholder">Enter your password</string>
+    <string name="login_button">Sign in</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_or">OR</string>
+    <string name="login_signup">No account? Sign up</string>
+    <string name="signup_title">Sign up</string>
+    <string name="signup_name_label">Your name</string>
+    <string name="signup_name_placeholder">Enter your name</string>
+    <string name="signup_email_label">Email</string>
+    <string name="signup_email_placeholder">Enter your email</string>
+    <string name="signup_password_label">Password</string>
+    <string name="signup_password_placeholder">Create a password</string>
+    <string name="signup_password_rule_min_length">At least 8 characters</string>
+    <string name="signup_password_rule_lowercase">Contains a lowercase letter</string>
+    <string name="signup_password_rule_uppercase">Contains an uppercase letter</string>
+    <string name="signup_password_rule_digit">Contains a digit</string>
+    <string name="signup_password_rule_special">Contains a special character</string>
+    <string name="signup_repeat_password_label">Confirm password</string>
+    <string name="signup_repeat_password_placeholder">Repeat password</string>
+    <string name="signup_continue">Continue</string>
+    <string name="signup_login">Already have an account? Sign in</string>
+    <string name="reset_password_title">Password recovery</string>
+    <string name="reset_password_new_label">New password</string>
+    <string name="reset_password_new_placeholder">Create a new password</string>
+    <string name="reset_password_rule_min_length">At least 8 characters</string>
+    <string name="reset_password_rule_lowercase">Contains a lowercase letter</string>
+    <string name="reset_password_rule_uppercase">Contains an uppercase letter</string>
+    <string name="reset_password_rule_digit">Contains a digit</string>
+    <string name="reset_password_rule_special">Contains a special character</string>
+    <string name="reset_password_repeat_label">Confirm password</string>
+    <string name="reset_password_repeat_placeholder">Repeat password</string>
+    <string name="reset_password_button">Reset password</string>
+    <string name="password_not_valid">Password does not meet requirements</string>
+    <string name="nav_bar_main_page">Home</string>
+    <string name="nav_bar_library">Library</string>
+    <string name="nav_bar_profile">Profile</string>
+    <string name="notification_login_success">С возвращением!</string>
+    <string name="notification_logout_success">Вы вышли из аккаунта</string>
+    <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова.</string>
+    <string name="notification_registration_success">Регистрация прошла успешно! Войдите в систему.</string>
+
+    <!-- Auth: failure / error messages -->
+    <string name="auth_error_invalid_credentials">Неверный email или пароль</string>
+    <string name="auth_error_login_failed">Ошибка при входе</string>
+    <string name="auth_error_signup_failed_generic">Что-то пошло не так при регистрации</string>
+    <string name="auth_error_signup_failed">Ошибка при регистрации</string>
+    <string name="auth_error_user_not_found">Пользователь не найден</string>
+    <string name="auth_error_invalid_email">Некорректный email</string>
+    <string name="auth_error_get_user_failed">Ошибка при поиске пользователя</string>
+    <string name="auth_error_reset_password_generic">Что-то пошло не так при сбросе пароля</string>
+    <string name="auth_error_reset_password_failed">Ошибка при сбросе пароля</string>
+    <string name="auth_error_user_id_missing">Не удалось получить идентификатор пользователя</string>
+
+    <!-- Auth: email verification -->
+    <string name="auth_verify_email_title">Подтверждение почты</string>
+    <string name="auth_verify_email_subtitle">Введите код, который мы отправили вам на почту</string>
+    <string name="auth_verify_email_submit">Подтвердить</string>
+    <string name="auth_verify_email_resend">Отправить код снова</string>
+    <string name="auth_verify_email_resend_in">Отправить код снова через %d сек</string>
+    <string name="auth_verify_email_resend_success">Код отправлен повторно</string>
+    <string name="auth_verify_email_invalid_code">Неверный или просроченный код</string>
+    <string name="auth_verify_email_failed_generic">Не удалось подтвердить почту</string>
+    <string name="auth_verify_email_send_failed">Не удалось отправить код</string>
+
+    <!-- Auth: success messages -->
+    <string name="auth_success_password_reset">Пароль успешно изменён</string>
+
+    <!-- Flashcard: FSRS rating + per-rating delta panel -->
+    <string name="flashcard_delta_stability">Stability</string>
+    <string name="flashcard_delta_difficulty">Difficulty</string>
+    <string name="flashcard_delta_interval">Interval</string>
+    <string name="flashcard_delta_due">Next review</string>
+    <string name="flashcard_delta_days_suffix">d</string>
+    <string name="flashcard_delta_a11y_change">%1$s changed from %2$s to %3$s</string>
+    <string name="flashcard_delta_learning_badge">Being studied</string>
+    <string name="flashcard_badge_new">New!</string>
+    <string name="flashcard_rating_again">Forgot</string>
+    <string name="flashcard_rating_hard">Hard</string>
+    <string name="flashcard_rating_good">OK</string>
+    <string name="flashcard_rating_easy">Easy</string>
+
+    <!-- Flashcard: lobby category selector -->
+    <string name="flashcard_lobby_category_label">Word set</string>
+    <string name="flashcard_lobby_category_all">All words</string>
+    <string name="flashcard_lobby_category_all_description">All words from your library</string>
+    <string name="flashcard_lobby_category_empty_hint">No words</string>
+    <string name="flashcard_lobby_category_loading">Loading…</string>
+    <string name="flashcard_lobby_category_error">Failed to load</string>
+    <plurals name="flashcard_lobby_category_words_count">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
+
+    <!-- Flashcard: summary -->
+    <string name="flashcard_summary_session_words_title">Session words</string>
+    <string name="flashcard_summary_show_all_button">Show all (%d)</string>
+    <string name="flashcard_summary_show_all_sheet_title">All session words</string>
+    <plurals name="flashcard_summary_streak_remaining">
+        <item quantity="one">%d word left to save your streak</item>
+        <item quantity="other">%d words left to save your streak</item>
+    </plurals>
+
+    <!-- Flashcard: NEXT_PREP screen between sessions -->
+    <string name="flashcard_next_prep_title">Next session</string>
+    <string name="flashcard_next_prep_subtitle">Pick a word set or continue with the same. The session will start automatically.</string>
+    <string name="flashcard_next_prep_continue">Continue</string>
+    <string name="flashcard_next_prep_empty_hint">This category has no words. Pick another one to continue.</string>
+    <string name="flashcard_next_prep_a11y_autostart">Auto-start in %d seconds</string>
+
+    <!-- Settings hub -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_learning">Learning</string>
+    <string name="settings_section_app">App</string>
+    <string name="settings_personal">Personal information</string>
+    <string name="settings_security">Security</string>
+
+    <!-- Settings: Security / active sessions -->
+    <string name="security_sessions_header">These are the devices currently signed in to your account. Sign out from any device you don\'t recognise.</string>
+    <string name="security_sessions_empty">No active sessions</string>
+    <string name="security_sessions_current_chip">Current</string>
+    <string name="security_sessions_revoke">Sign out</string>
+    <string name="security_sessions_revoke_confirm_title">Sign out of this device?</string>
+    <string name="security_sessions_revoke_confirm_message">The session on \"%1$s\" will be ended immediately.</string>
+    <string name="security_sessions_revoke_confirm_yes">Sign out</string>
+    <string name="security_sessions_revoke_confirm_cancel">Cancel</string>
+    <string name="security_sessions_revoke_success">Session ended</string>
+    <string name="security_sessions_revoke_error">Could not end the session. Please try again.</string>
+    <string name="security_sessions_load_error">Could not load active sessions</string>
+    <string name="security_sessions_retry">Retry</string>
+    <string name="settings_goals">Goals</string>
+    <string name="settings_algorithm">Algorithm</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_about">About</string>
+    <string name="settings_report_bug">Report a bug</string>
+    <string name="settings_logout">Sign out</string>
+    <string name="settings_logout_confirm_title">Sign out?</string>
+    <string name="settings_logout_confirm_message">You will need to sign in again to access your account.</string>
+    <string name="settings_logout_confirm_action">Sign out</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_user_unknown">Unknown user</string>
+
+    <!-- Settings: Personal information -->
+    <string name="settings_personal_section_contact">Contact</string>
+    <string name="settings_personal_section_security">Security</string>
+    <string name="settings_personal_email">Email</string>
+    <string name="settings_personal_email_tooltip">To change email, please contact support: support@memowave.app</string>
+    <string name="settings_personal_username">Username</string>
+    <string name="settings_personal_username_save">Save</string>
+    <string name="settings_personal_username_updated">Username updated</string>
+    <string name="settings_personal_username_too_short">Must be at least 2 characters</string>
+    <string name="settings_personal_username_too_long">Must be no more than 32 characters</string>
+    <string name="settings_personal_username_update_failed">Failed to update username</string>
+    <string name="settings_personal_change_password">Change password</string>
+    <string name="settings_personal_current_password">Current password</string>
+    <string name="settings_personal_new_password">New password</string>
+    <string name="settings_personal_repeat_password">Repeat new password</string>
+    <string name="settings_personal_update_password">Update password</string>
+    <string name="settings_personal_passwords_dont_match">Passwords don\'t match</string>
+    <string name="settings_personal_same_password">New password must be different from current</string>
+    <string name="settings_personal_password_updated">Password updated</string>
+    <string name="settings_personal_password_wrong">Wrong current password</string>
+    <string name="settings_personal_password_forbidden">Action not allowed</string>
+    <string name="settings_personal_password_server_error">Server error. Try again later.</string>
+    <string name="settings_personal_danger_zone">Danger zone</string>
+    <string name="settings_personal_delete_account">Delete account</string>
+    <string name="settings_personal_delete_description">All your words, progress and achievements will be permanently deleted.</string>
+    <string name="settings_personal_delete_confirm">Are you sure?</string>
+    <string name="settings_personal_delete_coming_soon">Coming soon</string>
+
+    <!-- Settings: Security -->
+
+    <!-- Settings: Appearance -->
+    <string name="settings_appearance_section_theme">Theme</string>
+    <string name="settings_appearance_section_language">Language</string>
+    <string name="settings_appearance_section_animations">Animations</string>
+    <string name="settings_appearance_theme_light">Light</string>
+    <string name="settings_appearance_theme_dark">Dark</string>
+    <string name="settings_appearance_theme_system">System</string>
+    <string name="settings_appearance_language_label">App language</string>
+    <string name="settings_appearance_language_system">System</string>
+    <string name="settings_appearance_language_ru">Русский</string>
+    <string name="settings_appearance_language_en">English</string>
+    <string name="settings_appearance_reduce_motion">Reduce motion</string>
+    <string name="settings_appearance_reduce_motion_supporting">Shorten or disable animations</string>
+
+    <!-- Settings: Goals -->
+    <string name="settings_goals_section_week">Study week</string>
+    <string name="settings_goals_days_label">Study days</string>
+    <string name="settings_goals_reminder_time">Reminder time</string>
+    <string name="settings_goals_weekly_target">Words per week</string>
+    <string name="settings_goals_words_format">%1$d words</string>
+    <string name="settings_goals_link_algorithm">Review algorithm</string>
+    <string name="day_short_mon">M</string>
+    <string name="day_short_tue">T</string>
+    <string name="day_short_wed">W</string>
+    <string name="day_short_thu">T</string>
+    <string name="day_short_fri">F</string>
+    <string name="day_short_sat">S</string>
+    <string name="day_short_sun">S</string>
+
+    <!-- Settings: Algorithm -->
+    <string name="settings_algorithm_section_basic">Basics</string>
+    <string name="settings_algorithm_section_fine">Fine-tuning</string>
+    <string name="settings_algorithm_retention">Target retention</string>
+    <string name="settings_algorithm_retention_helper_left">Comfortable</string>
+    <string name="settings_algorithm_retention_helper_right">Challenging</string>
+    <string name="settings_algorithm_max_interval">Maximum interval</string>
+    <string name="settings_algorithm_easy_bonus">Easy bonus</string>
+    <string name="settings_algorithm_hard_penalty">Hard penalty</string>
+    <string name="settings_algorithm_reset">Reset to defaults</string>
+    <string name="settings_algorithm_reset_confirm">Reset algorithm settings?</string>
+    <string name="settings_algorithm_days_format">%1$d days</string>
+    <string name="settings_algorithm_years_format">%1$.1f years</string>
+    <string name="settings_algorithm_retention_explainer">~%1$d of 100 reviews may slip</string>
+    <string name="settings_algorithm_retention_intervals_label">Interval growth</string>
+    <string name="settings_algorithm_max_interval_explainer">Cards won\'t be reviewed less often than this.</string>
+    <string name="settings_algorithm_easy_bonus_explainer">How much an "Easy" rating stretches the next interval.</string>
+    <string name="settings_algorithm_hard_penalty_explainer">How much a "Hard" rating shortens the next interval.</string>
+
+    <!-- Settings: Notifications -->
+    <string name="settings_notifications_section_main">General</string>
+    <string name="settings_notifications_section_types">Types</string>
+    <string name="settings_notifications_section_quiet">Quiet hours</string>
+    <string name="settings_notifications_master">Enable notifications</string>
+    <string name="settings_notifications_master_supporting">Master toggle. Disabling silences everything below.</string>
+    <string name="settings_notifications_study">Study reminders</string>
+    <string name="settings_notifications_study_supporting">Daily reminder at the time set in Goals.</string>
+    <string name="settings_notifications_streak_risk">Streak at risk</string>
+    <string name="settings_notifications_streak_risk_supporting">Two hours before midnight, if you haven\'t studied yet.</string>
+    <string name="settings_notifications_milestones">Achievements</string>
+    <string name="settings_notifications_milestones_supporting">Celebrate progress: 100/500/1000 words learned, streaks, etc.</string>
+    <string name="settings_notifications_quiet_enable">Enable quiet hours</string>
+    <string name="settings_notifications_quiet_supporting">No notifications during this window. The range can cross midnight.</string>
+    <string name="settings_notifications_quiet_from">From</string>
+    <string name="settings_notifications_quiet_to">To</string>
+    <string name="settings_notifications_permission_required">Notifications are blocked. Open app settings to enable.</string>
+    <string name="settings_notifications_open_app_settings">Open app settings</string>
+    <string name="settings_notifications_channel_study">Study reminders</string>
+    <string name="settings_notifications_channel_study_desc">Daily reminders to study words</string>
+    <string name="settings_notifications_channel_streak">Streak warnings</string>
+    <string name="settings_notifications_channel_streak_desc">Warns you when your streak is about to end</string>
+    <string name="settings_notifications_channel_milestone">Achievements</string>
+    <string name="settings_notifications_channel_milestone_desc">Celebrate progress milestones</string>
+    <string name="settings_notifications_reminder_title">Time to study</string>
+    <string name="settings_notifications_reminder_text">Pick up where you left off</string>
+
+    <!-- Settings: About -->
+    <string name="settings_about_version_format">Memowave %1$s (%2$d)</string>
+    <string name="settings_about_version_copied">Copied</string>
+    <string name="settings_about_section_documents">Documents</string>
+    <string name="settings_about_section_contacts">Contacts</string>
+    <string name="settings_about_terms">Terms of use</string>
+    <string name="settings_about_privacy">Privacy policy</string>
+    <string name="settings_about_licenses">Open source licenses</string>
+    <string name="settings_about_support">Support</string>
+    <string name="settings_about_support_email">support@memowave.app</string>
+    <string name="settings_about_telegram">Telegram channel</string>
+    <string name="settings_about_developer">About developer</string>
+    <string name="settings_about_coming_soon">Coming soon</string>
+
+    <!-- Settings: Report a bug -->
+    <string name="settings_report_headline">Tell us what went wrong</string>
+    <string name="settings_report_description_label">Describe the issue</string>
+    <string name="settings_report_description_placeholder">What happened? What were you doing right before it?</string>
+    <string name="settings_report_attach">Attach diagnostic data</string>
+    <string name="settings_report_send">Send report</string>
+    <string name="settings_report_category_crash">Crash</string>
+    <string name="settings_report_category_design">Design</string>
+    <string name="settings_report_category_translation">Translation</string>
+    <string name="settings_report_category_performance">Performance</string>
+    <string name="settings_report_category_other">Other</string>
+    <string name="settings_report_subject_format">[Memowave] %1$s</string>
+    <string name="settings_report_no_email_app">No email app available</string>
+
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Not synced</string>
+
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">New category</string>
+    <string name="category_edit_title_edit">Edit category</string>
+    <string name="category_edit_field_name">Name</string>
+    <string name="category_edit_field_description">Description</string>
+    <string name="category_edit_section_color">Color</string>
+    <string name="category_edit_section_icon">Icon</string>
+    <string name="category_edit_section_stats">Statistics</string>
+    <string name="category_edit_section_words">Words</string>
+    <string name="category_edit_color_clear">No color</string>
+    <string name="category_edit_color_show_custom">Custom HEX</string>
+    <string name="category_edit_color_hide_custom">Hide HEX</string>
+    <string name="category_edit_color_custom_label">Custom HEX</string>
+    <string name="category_edit_stat_total">Total</string>
+    <string name="category_edit_stat_mastered">Mastered</string>
+    <string name="category_edit_stat_due">Due now</string>
+    <string name="category_edit_phase_new">New</string>
+    <string name="category_edit_phase_learning">Learning</string>
+    <string name="category_edit_phase_review">Review</string>
+    <string name="category_edit_phase_relearn">Relearn</string>
+    <string name="category_edit_delete">Delete category</string>
+    <string name="category_edit_delete_disabled_reason">Move or delete words from this category first.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Delete category?</string>
+    <string name="category_edit_delete_confirm_message">The category will be removed.</string>
+    <string name="category_edit_delete_confirm_yes">Delete</string>
+    <string name="category_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Discard changes?</string>
+    <string name="category_edit_discard_message">Your changes will be lost.</string>
+    <string name="category_edit_discard_yes">Discard</string>
+    <string name="category_edit_discard_no">Stay</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Saving…</string>
+    <string name="category_edit_op_deleting">Deleting…</string>
+    <string name="category_edit_op_save_success_new">Category added</string>
+    <string name="category_edit_op_save_success_edit">Category updated</string>
+    <string name="category_edit_op_delete_success">Category deleted</string>
+    <string name="category_edit_op_save_error">Could not save</string>
+    <string name="category_edit_op_delete_error">Could not delete</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Cancel</string>
+    <string name="category_edit_a11y_save">Save</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">Default</string>
+    <string name="category_icon_language">Language</string>
+    <string name="category_icon_globe">Globe</string>
+    <string name="category_icon_fire">Fire</string>
+    <string name="category_icon_star">Star</string>
+    <string name="category_icon_crown">Crown</string>
+    <string name="category_icon_palette">Palette</string>
+    <string name="category_icon_emoji">Emoji</string>
+    <string name="category_icon_cards">Cards</string>
+    <string name="category_icon_bolt">Bolt</string>
+    <string name="category_icon_extension">Extension</string>
+    <string name="category_icon_shop">Shop</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">New word</string>
+    <string name="word_edit_title_edit">Edit word</string>
+    <string name="word_edit_save">Save</string>
+    <string name="word_edit_cancel">Cancel</string>
+    <string name="word_edit_delete">Delete word</string>
+    <string name="word_edit_field_original">Original</string>
+    <string name="word_edit_field_translation">Translation</string>
+    <string name="word_edit_field_example">Example (optional)</string>
+    <string name="word_edit_field_category">Category</string>
+    <string name="word_edit_category_none">No category</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Algorithm</string>
+    <string name="word_edit_algo_phase_caption">Phase</string>
+    <string name="word_edit_algo_due_caption">Next review</string>
+    <string name="word_edit_algo_review_count">Reviews</string>
+    <string name="word_edit_algo_interval">Interval</string>
+    <string name="word_edit_algo_stability">Stability</string>
+    <string name="word_edit_algo_difficulty">Difficulty</string>
+    <string name="word_edit_algo_days_format">%1$d d</string>
+    <string name="word_edit_algo_stability_format">%1$.1f d</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">New</string>
+    <string name="word_edit_algo_phase_learning">Learning</string>
+    <string name="word_edit_algo_phase_review">Review</string>
+    <string name="word_edit_algo_phase_relearn">Relearn</string>
+    <string name="word_edit_algo_due_today">Today</string>
+    <string name="word_edit_algo_due_tomorrow">Tomorrow</string>
+    <string name="word_edit_algo_due_overdue">Overdue</string>
+    <string name="word_edit_algo_due_ready">Ready to learn</string>
+    <string name="word_edit_algo_due_in_days_format">In %1$d d</string>
+    <string name="word_edit_algo_last_review_format">Last reviewed: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Not yet reviewed</string>
+    <string name="word_edit_algo_reset">Reset progress</string>
+    <string name="word_edit_algo_reset_banner">Progress will be reset on save</string>
+    <string name="word_edit_algo_reset_undo">Undo</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Created: %1$s</string>
+    <string name="word_edit_meta_updated">Updated: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Delete word?</string>
+    <string name="word_edit_delete_confirm_message">The word will be removed from your library and synced on the next online connection.</string>
+    <string name="word_edit_delete_confirm_yes">Delete</string>
+    <string name="word_edit_delete_confirm_no">Cancel</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Discard changes?</string>
+    <string name="word_edit_discard_message">Your changes will be lost.</string>
+    <string name="word_edit_discard_yes">Discard</string>
+    <string name="word_edit_discard_no">Stay</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Saving…</string>
+    <string name="word_edit_op_deleting">Deleting…</string>
+    <string name="word_edit_op_save_success_new">Word added</string>
+    <string name="word_edit_op_save_success_edit">Word updated</string>
+    <string name="word_edit_op_delete_success">Word deleted</string>
+    <string name="word_edit_op_save_error">Could not save</string>
+    <string name="word_edit_op_delete_error">Could not delete</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Cancel</string>
+    <string name="word_edit_a11y_save">Save</string>
+
+    <!-- Common -->
+    <string name="action_save">Save</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_change">Change</string>
+
+    <!-- Translation mode -->
+    <string name="translation_lobby_title">Translation</string>
+    <string name="translation_lobby_subtitle">Type the translation and press Done</string>
+    <string name="translation_prompt_label">Translate</string>
+    <string name="translation_input_hint">Your translation</string>
+    <string name="translation_done">Done</string>
+    <string name="translation_show_first_letter">Hint (%1$d)</string>
+    <string name="translation_reveal">Reveal</string>
+    <string name="translation_correct">Correct!</string>
+    <string name="translation_close_label">Close enough</string>
+    <string name="translation_wrong_label">Incorrect</string>
+    <string name="translation_correct_answer_was">Correct answer: %1$s</string>
+    <string name="translation_strictness_title">Typo strictness</string>
+    <string name="translation_strictness_strict">Strict</string>
+    <string name="translation_strictness_normal">Normal</string>
+    <string name="translation_strictness_lenient">Lenient</string>
+
+    <!-- Quiz mode -->
+    <string name="quiz_lobby_title">Quiz</string>
+    <string name="quiz_lobby_subtitle">Pick the correct translation in %1$d seconds</string>
+    <string name="quiz_time_left">%1$ds</string>
+    <string name="quiz_streak">Streak: %1$d</string>
+    <string name="quiz_finished">Time\'s up!</string>
+    <string name="quiz_duration_title">Round duration</string>
+
+    <!-- Notifications gating -->
+    <string name="coming_soon_notifications">Notifications will be implemented later</string>
+
+    <!-- Main page: streak card -->
+    <plurals name="streak_card_days">
+        <item quantity="one">%d day in a row</item>
+        <item quantity="few">%d days in a row</item>
+        <item quantity="many">%d days in a row</item>
+        <item quantity="other">%d days in a row</item>
+    </plurals>
+    <string name="streak_card_best">Best: %d days</string>
+    <string name="streak_card_subtitle_empty">Start your streak today</string>
+    <string name="streak_card_today_progress">Today\'s progress</string>
+    <string name="streak_card_today_done">Goal reached for today</string>
+
+    <!-- Profile screen -->
+    <string name="profile_experience">%1$d XP</string>
 </resources>

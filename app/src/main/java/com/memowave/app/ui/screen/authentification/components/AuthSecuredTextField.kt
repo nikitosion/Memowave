@@ -1,0 +1,132 @@
+package com.memowave.app.ui.screen.authentification.components
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.memowave.app.R
+import com.memowave.app.ui.theme.MemowaveTheme
+
+/**
+ * Password input field for authentication screens.
+ *
+ * Shows or hides password, and displays an error if [error] is not null.
+ *
+ * @param value Current password value
+ * @param onValueChange Callback for password changes
+ * @param error Error message to display, or null
+ * @param modifier Modifier for styling
+ * @param labelText Label for the text field
+ * @param placeholderText Placeholder text
+ * @param leadingIconResId Resource ID for the leading icon
+ * @param imeAction IME action for the keyboard
+ */
+@Composable
+fun AuthSecuredTextField(
+    value: String,
+    labelText: String,
+    placeholderText: String,
+    @DrawableRes
+    leadingIconResId: Int,
+    onValueChange: (String) -> Unit,
+    error: String? = null,
+    modifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Done
+) {
+    var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = true,
+            visualTransformation = if (isPasswordVisible)
+                VisualTransformation.None
+            else
+                PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction
+            ),
+            isError = error != null,
+            label = { Text(text = labelText) },
+            placeholder = { Text(text = placeholderText) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(
+                        id = leadingIconResId
+                    ),
+                    contentDescription = "Email Icon"
+                )
+            },
+            shape = RoundedCornerShape(30.dp),
+            trailingIcon = {
+                if (value.isNotEmpty()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                            Icon(
+                                contentDescription = "Toggle Password Visibility",
+                                painter = if (isPasswordVisible) {
+                                    painterResource(R.drawable.round_visibility_off_24)
+                                } else {
+                                    painterResource(R.drawable.round_visibility_24)
+                                }
+                            )
+                        }
+                    }
+                }
+            },
+        )
+
+        /*if (error != null) {
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }*/
+    }
+}
+
+/**
+ * Preview for [AuthSecuredTextField].
+ */
+@Preview
+@Composable
+fun PasswordTextFieldPreview() {
+    MemowaveTheme() {
+        AuthSecuredTextField(
+            value = "",
+            onValueChange = { },
+            labelText = "Пароль",
+            placeholderText = "Введите ваш пароль",
+            leadingIconResId = R.drawable.round_lock_24,
+            error = null,
+            modifier = Modifier
+        )
+    }
+}

@@ -1,0 +1,459 @@
+<resources>
+    <string name="app_name">Memowave</string>
+    <string name="forgot_password_title">Восстановление пароля</string>
+    <string name="forgot_password_email_label">Email</string>
+    <string name="forgot_password_email_placeholder">Введите ваш email</string>
+    <string name="forgot_password_info">Мы отправим вам письмо с инструкцией по восстановлению</string>
+    <string name="forgot_password_continue">Продолжить</string>
+    <string name="back">Назад</string>
+    <string name="login_greeting">Привет, это </string>
+    <string name="login_greeting_end">!</string>
+    <string name="login_subtitle">Лови волну новых слов и погружайся в язык с головой!</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_email_placeholder">Введите ваш email</string>
+    <string name="login_password_label">Пароль</string>
+    <string name="login_password_placeholder">Введите ваш пароль</string>
+    <string name="login_button">Войти</string>
+    <string name="login_forgot_password">Забыли пароль?</string>
+    <string name="login_or">ИЛИ</string>
+    <string name="login_signup">Нет аккаунта? Зарегистрируйтесь</string>
+    <string name="signup_title">Регистрация</string>
+    <string name="signup_name_label">Ваше имя</string>
+    <string name="signup_name_placeholder">Введите ваше имя</string>
+    <string name="signup_email_label">Email</string>
+    <string name="signup_email_placeholder">Введите ваш email</string>
+    <string name="signup_password_label">Пароль</string>
+    <string name="signup_password_placeholder">Придумайте пароль</string>
+    <string name="signup_password_rule_min_length">Содержит не менее 8 символов</string>
+    <string name="signup_password_rule_lowercase">Содержит строчную букву</string>
+    <string name="signup_password_rule_uppercase">Содержит заглавную букву</string>
+    <string name="signup_password_rule_digit">Содержит цифру</string>
+    <string name="signup_password_rule_special">Содержит специальный символ</string>
+    <string name="signup_repeat_password_label">Подтвердите пароль</string>
+    <string name="signup_repeat_password_placeholder">Повторите пароль</string>
+    <string name="signup_continue">Продолжить</string>
+    <string name="signup_login">Уже есть аккаунт? Войти</string>
+    <string name="reset_password_title">Восстановление пароля</string>
+    <string name="reset_password_new_label">Новый пароль</string>
+    <string name="reset_password_new_placeholder">Придумайте новый пароль</string>
+    <string name="reset_password_rule_min_length">Содержит не менее 8 символов</string>
+    <string name="reset_password_rule_lowercase">Содержит строчную букву</string>
+    <string name="reset_password_rule_uppercase">Содержит заглавную букву</string>
+    <string name="reset_password_rule_digit">Содержит цифру</string>
+    <string name="reset_password_rule_special">Содержит специальный символ</string>
+    <string name="reset_password_repeat_label">Подтвердите пароль</string>
+    <string name="reset_password_repeat_placeholder">Повторите пароль</string>
+    <string name="reset_password_button">Восстановить пароль</string>
+    <string name="password_not_valid">Пароль не соответствует требованиям</string>
+    <string name="nav_bar_main_page">Главная</string>
+    <string name="nav_bar_library">Библиотека</string>
+    <string name="nav_bar_profile">Профиль</string>
+    <string name="notification_login_success">Вход выполнен успешно!</string>
+    <string name="notification_session_expired">Сессия истекла. Пожалуйста, войдите снова</string>
+    <string name="notification_registration_success">Регистрация выполнена успешно!</string>
+    <string name="auth_error_user_id_missing">Не удалось получить идентификатор пользователя</string>
+
+    <!-- Auth: email verification -->
+    <string name="auth_verify_email_title">Подтверждение почты</string>
+    <string name="auth_verify_email_subtitle">Введите код, который мы отправили вам на почту</string>
+    <string name="auth_verify_email_submit">Подтвердить</string>
+    <string name="auth_verify_email_resend">Отправить код снова</string>
+    <string name="auth_verify_email_resend_in">Отправить код снова через %d сек</string>
+    <string name="auth_verify_email_resend_success">Код отправлен повторно</string>
+    <string name="auth_verify_email_invalid_code">Неверный или просроченный код</string>
+    <string name="auth_verify_email_failed_generic">Не удалось подтвердить почту</string>
+    <string name="auth_verify_email_send_failed">Не удалось отправить код</string>
+    <string name="flashcard_delta_stability">Стабильность</string>
+    <string name="flashcard_delta_difficulty">Сложность</string>
+    <string name="flashcard_delta_interval">Интервал</string>
+    <string name="flashcard_delta_due">След. повтор</string>
+    <string name="flashcard_delta_days_suffix">дн</string>
+    <string name="flashcard_delta_a11y_change">%1$s изменилось с %2$s на %3$s</string>
+    <string name="flashcard_delta_learning_badge">На изучении</string>
+    <string name="flashcard_badge_new">New!</string>
+    <string name="flashcard_rating_again">Забыл</string>
+    <string name="flashcard_rating_hard">Сложно</string>
+    <string name="flashcard_rating_good">Норм</string>
+    <string name="flashcard_rating_easy">Легко</string>
+
+    <!-- Flashcard: lobby category selector -->
+    <string name="flashcard_lobby_category_label">Набор слов</string>
+    <string name="flashcard_lobby_category_all">Все слова</string>
+    <string name="flashcard_lobby_category_all_description">Все слова из библиотеки</string>
+    <string name="flashcard_lobby_category_empty_hint">Нет слов</string>
+    <string name="flashcard_lobby_category_loading">Загрузка…</string>
+    <string name="flashcard_lobby_category_error">Ошибка загрузки</string>
+    <plurals name="flashcard_lobby_category_words_count">
+        <item quantity="one">%d слово</item>
+        <item quantity="few">%d слова</item>
+        <item quantity="many">%d слов</item>
+        <item quantity="other">%d слов</item>
+    </plurals>
+
+    <!-- Flashcard: summary -->
+    <string name="flashcard_summary_session_words_title">Слова сессии</string>
+    <string name="flashcard_summary_show_all_button">Показать все (%d)</string>
+    <string name="flashcard_summary_show_all_sheet_title">Все слова сессии</string>
+    <plurals name="flashcard_summary_streak_remaining">
+        <item quantity="one">До сохранения стрика осталось %d слово</item>
+        <item quantity="few">До сохранения стрика осталось %d слова</item>
+        <item quantity="many">До сохранения стрика осталось %d слов</item>
+        <item quantity="other">До сохранения стрика осталось %d слов</item>
+    </plurals>
+
+    <!-- Flashcard: NEXT_PREP screen between sessions -->
+    <string name="flashcard_next_prep_title">Следующая сессия</string>
+    <string name="flashcard_next_prep_subtitle">Выбери набор слов или продолжи с тем же. Сессия начнётся автоматически.</string>
+    <string name="flashcard_next_prep_continue">Продолжить</string>
+    <string name="flashcard_next_prep_empty_hint">В этой категории нет слов. Выбери другую, чтобы продолжить.</string>
+    <string name="flashcard_next_prep_a11y_autostart">Авто-старт через %d секунд</string>
+
+    <!-- Settings hub -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_section_account">Аккаунт</string>
+    <string name="settings_section_learning">Обучение</string>
+    <string name="settings_section_app">Приложение</string>
+    <string name="settings_personal">Личная информация</string>
+    <string name="settings_security">Безопасность</string>
+
+    <!-- Settings: Безопасность / активные сессии -->
+    <string name="security_sessions_header">Это устройства, на которых сейчас выполнен вход в ваш аккаунт. Выйдите из тех, что вы не узнаёте.</string>
+    <string name="security_sessions_empty">Активных сессий нет</string>
+    <string name="security_sessions_current_chip">Текущая</string>
+    <string name="security_sessions_revoke">Выйти</string>
+    <string name="security_sessions_revoke_confirm_title">Завершить сессию?</string>
+    <string name="security_sessions_revoke_confirm_message">Сессия «%1$s» будет немедленно прекращена.</string>
+    <string name="security_sessions_revoke_confirm_yes">Завершить</string>
+    <string name="security_sessions_revoke_confirm_cancel">Отмена</string>
+    <string name="security_sessions_revoke_success">Сессия завершена</string>
+    <string name="security_sessions_revoke_error">Не удалось завершить сессию. Попробуйте ещё раз.</string>
+    <string name="security_sessions_load_error">Не удалось загрузить активные сессии</string>
+    <string name="security_sessions_retry">Повторить</string>
+    <string name="settings_goals">Цели</string>
+    <string name="settings_algorithm">Алгоритм</string>
+    <string name="settings_appearance">Оформление</string>
+    <string name="settings_notifications">Уведомления</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_report_bug">Сообщить об ошибке</string>
+    <string name="settings_logout">Выйти из аккаунта</string>
+    <string name="settings_logout_confirm_title">Выйти из аккаунта?</string>
+    <string name="settings_logout_confirm_message">Чтобы продолжить, нужно будет войти снова.</string>
+    <string name="settings_logout_confirm_action">Выйти</string>
+    <string name="settings_cancel">Отмена</string>
+    <string name="settings_user_unknown">Пользователь</string>
+
+    <!-- Settings: Personal information -->
+    <string name="settings_personal_section_contact">Контакт</string>
+    <string name="settings_personal_section_security">Безопасность</string>
+    <string name="settings_personal_email">Email</string>
+    <string name="settings_personal_email_tooltip">Чтобы сменить email, обратитесь в поддержку: support@memowave.app</string>
+    <string name="settings_personal_username">Имя пользователя</string>
+    <string name="settings_personal_username_save">Сохранить</string>
+    <string name="settings_personal_username_updated">Имя пользователя обновлено</string>
+    <string name="settings_personal_username_too_short">Минимум 2 символа</string>
+    <string name="settings_personal_username_too_long">Не более 32 символов</string>
+    <string name="settings_personal_username_update_failed">Не удалось обновить имя</string>
+    <string name="settings_personal_change_password">Сменить пароль</string>
+    <string name="settings_personal_current_password">Текущий пароль</string>
+    <string name="settings_personal_new_password">Новый пароль</string>
+    <string name="settings_personal_repeat_password">Повторите новый пароль</string>
+    <string name="settings_personal_update_password">Обновить пароль</string>
+    <string name="settings_personal_passwords_dont_match">Пароли не совпадают</string>
+    <string name="settings_personal_same_password">Новый пароль должен отличаться от текущего</string>
+    <string name="settings_personal_password_updated">Пароль обновлён</string>
+    <string name="settings_personal_password_wrong">Неверный текущий пароль</string>
+    <string name="settings_personal_password_forbidden">Действие запрещено</string>
+    <string name="settings_personal_password_server_error">Ошибка сервера. Попробуйте позже.</string>
+    <string name="settings_personal_danger_zone">Опасная зона</string>
+    <string name="settings_personal_delete_account">Удалить аккаунт</string>
+    <string name="settings_personal_delete_description">Все ваши слова, прогресс и достижения будут безвозвратно удалены.</string>
+    <string name="settings_personal_delete_confirm">Вы уверены?</string>
+    <string name="settings_personal_delete_coming_soon">Скоро будет доступно</string>
+
+    <!-- Settings: Security -->
+
+    <!-- Settings: Appearance -->
+    <string name="settings_appearance_section_theme">Тема</string>
+    <string name="settings_appearance_section_language">Язык</string>
+    <string name="settings_appearance_section_animations">Анимации</string>
+    <string name="settings_appearance_theme_light">Светлая</string>
+    <string name="settings_appearance_theme_dark">Тёмная</string>
+    <string name="settings_appearance_theme_system">Системная</string>
+    <string name="settings_appearance_language_label">Язык приложения</string>
+    <string name="settings_appearance_language_system">Системный</string>
+    <string name="settings_appearance_language_ru">Русский</string>
+    <string name="settings_appearance_language_en">English</string>
+    <string name="settings_appearance_reduce_motion">Уменьшить движение</string>
+    <string name="settings_appearance_reduce_motion_supporting">Сократить или отключить анимации</string>
+
+    <!-- Settings: Goals -->
+    <string name="settings_goals_section_week">Учебная неделя</string>
+    <string name="settings_goals_days_label">Учебные дни</string>
+    <string name="settings_goals_reminder_time">Время напоминания</string>
+    <string name="settings_goals_weekly_target">Слов в неделю</string>
+    <string name="settings_goals_words_format">%1$d слов</string>
+    <string name="settings_goals_link_algorithm">Алгоритм повторений</string>
+    <string name="day_short_mon">П</string>
+    <string name="day_short_tue">В</string>
+    <string name="day_short_wed">С</string>
+    <string name="day_short_thu">Ч</string>
+    <string name="day_short_fri">П</string>
+    <string name="day_short_sat">С</string>
+    <string name="day_short_sun">В</string>
+
+    <!-- Settings: Algorithm -->
+    <string name="settings_algorithm_section_basic">Базовые</string>
+    <string name="settings_algorithm_section_fine">Тонкая настройка</string>
+    <string name="settings_algorithm_retention">Целевая запоминаемость</string>
+    <string name="settings_algorithm_retention_helper_left">Комфортно</string>
+    <string name="settings_algorithm_retention_helper_right">Сложно</string>
+    <string name="settings_algorithm_max_interval">Максимальный интервал</string>
+    <string name="settings_algorithm_easy_bonus">Бонус за «Легко»</string>
+    <string name="settings_algorithm_hard_penalty">Штраф за «Сложно»</string>
+    <string name="settings_algorithm_reset">Сбросить настройки</string>
+    <string name="settings_algorithm_reset_confirm">Сбросить настройки алгоритма?</string>
+    <string name="settings_algorithm_days_format">%1$d дн</string>
+    <string name="settings_algorithm_years_format">%1$.1f л</string>
+    <string name="settings_algorithm_retention_explainer">~%1$d из 100 повторов могут не вспомниться</string>
+    <string name="settings_algorithm_retention_intervals_label">Рост интервалов</string>
+    <string name="settings_algorithm_max_interval_explainer">Карточки не будут повторяться реже этого периода.</string>
+    <string name="settings_algorithm_easy_bonus_explainer">На сколько оценка «Легко» растягивает следующий интервал.</string>
+    <string name="settings_algorithm_hard_penalty_explainer">На сколько оценка «Сложно» сокращает следующий интервал.</string>
+
+    <!-- Settings: Notifications -->
+    <string name="settings_notifications_section_main">Главное</string>
+    <string name="settings_notifications_section_types">Типы</string>
+    <string name="settings_notifications_section_quiet">Тихие часы</string>
+    <string name="settings_notifications_master">Включить уведомления</string>
+    <string name="settings_notifications_master_supporting">Главный переключатель. Отключение глушит все уведомления ниже.</string>
+    <string name="settings_notifications_study">Напоминания об уроках</string>
+    <string name="settings_notifications_study_supporting">Ежедневное напоминание в указанное в «Целях» время.</string>
+    <string name="settings_notifications_streak_risk">Риск streak\'а</string>
+    <string name="settings_notifications_streak_risk_supporting">За 2 часа до полуночи, если сегодня ещё не было занятий.</string>
+    <string name="settings_notifications_milestones">Достижения</string>
+    <string name="settings_notifications_milestones_supporting">Поздравления: 100/500/1000 выученных слов, streak\'и и т.п.</string>
+    <string name="settings_notifications_quiet_enable">Включить тихие часы</string>
+    <string name="settings_notifications_quiet_supporting">В этот промежуток уведомления не приходят. Можно задавать через полночь.</string>
+    <string name="settings_notifications_quiet_from">С</string>
+    <string name="settings_notifications_quiet_to">До</string>
+    <string name="settings_notifications_permission_required">Уведомления заблокированы. Откройте настройки приложения.</string>
+    <string name="settings_notifications_open_app_settings">Открыть настройки</string>
+    <string name="settings_notifications_channel_study">Напоминания об уроках</string>
+    <string name="settings_notifications_channel_study_desc">Ежедневные напоминания об изучении</string>
+    <string name="settings_notifications_channel_streak">Предупреждения о streak\'е</string>
+    <string name="settings_notifications_channel_streak_desc">Уведомление, когда streak под угрозой</string>
+    <string name="settings_notifications_channel_milestone">Достижения</string>
+    <string name="settings_notifications_channel_milestone_desc">Поздравления с прогрессом</string>
+    <string name="settings_notifications_reminder_title">Время заниматься</string>
+    <string name="settings_notifications_reminder_text">Продолжите там, где остановились</string>
+
+    <!-- Settings: About -->
+    <string name="settings_about_version_format">Memowave %1$s (%2$d)</string>
+    <string name="settings_about_version_copied">Скопировано</string>
+    <string name="settings_about_section_documents">Документы</string>
+    <string name="settings_about_section_contacts">Контакты</string>
+    <string name="settings_about_terms">Условия использования</string>
+    <string name="settings_about_privacy">Политика конфиденциальности</string>
+    <string name="settings_about_licenses">Лицензии открытого ПО</string>
+    <string name="settings_about_support">Поддержка</string>
+    <string name="settings_about_support_email">support@memowave.app</string>
+    <string name="settings_about_telegram">Telegram-канал</string>
+    <string name="settings_about_developer">О разработчике</string>
+    <string name="settings_about_coming_soon">Скоро будет доступно</string>
+
+    <!-- Settings: Report a bug -->
+    <string name="settings_report_headline">Расскажите, что пошло не так</string>
+    <string name="settings_report_description_label">Опишите проблему</string>
+    <string name="settings_report_description_placeholder">Что произошло? Что вы делали перед этим?</string>
+    <string name="settings_report_attach">Прикладывать диагностические данные</string>
+    <string name="settings_report_send">Отправить отчёт</string>
+    <string name="settings_report_category_crash">Сбой</string>
+    <string name="settings_report_category_design">Дизайн</string>
+    <string name="settings_report_category_translation">Перевод</string>
+    <string name="settings_report_category_performance">Производительность</string>
+    <string name="settings_report_category_other">Другое</string>
+    <string name="settings_report_subject_format">[Memowave] %1$s</string>
+    <string name="settings_report_no_email_app">Нет приложения для отправки писем</string>
+
+    <!-- Library word card -->
+    <string name="word_card_a11y_not_synced">Не синхронизировано</string>
+
+    <!-- Category edit/create screen -->
+    <string name="category_edit_title_new">Новая категория</string>
+    <string name="category_edit_title_edit">Редактировать категорию</string>
+    <string name="category_edit_field_name">Название</string>
+    <string name="category_edit_field_description">Описание</string>
+    <string name="category_edit_section_color">Цвет</string>
+    <string name="category_edit_section_icon">Иконка</string>
+    <string name="category_edit_section_stats">Статистика</string>
+    <string name="category_edit_section_words">Слова</string>
+    <string name="category_edit_color_clear">Без цвета</string>
+    <string name="category_edit_color_show_custom">Свой HEX</string>
+    <string name="category_edit_color_hide_custom">Скрыть HEX</string>
+    <string name="category_edit_color_custom_label">Свой цвет (HEX)</string>
+    <string name="category_edit_stat_total">Всего</string>
+    <string name="category_edit_stat_mastered">Изучено</string>
+    <string name="category_edit_stat_due">К повтору</string>
+    <string name="category_edit_phase_new">Новые</string>
+    <string name="category_edit_phase_learning">Изучение</string>
+    <string name="category_edit_phase_review">Повторение</string>
+    <string name="category_edit_phase_relearn">Переучивание</string>
+    <string name="category_edit_delete">Удалить категорию</string>
+    <string name="category_edit_delete_disabled_reason">Сначала перенесите или удалите слова из этой категории.</string>
+
+    <!-- Category edit: delete confirm -->
+    <string name="category_edit_delete_confirm_title">Удалить категорию?</string>
+    <string name="category_edit_delete_confirm_message">Категория будет удалена.</string>
+    <string name="category_edit_delete_confirm_yes">Удалить</string>
+    <string name="category_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Category edit: discard confirm -->
+    <string name="category_edit_discard_title">Отменить изменения?</string>
+    <string name="category_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="category_edit_discard_yes">Отменить</string>
+    <string name="category_edit_discard_no">Остаться</string>
+
+    <!-- Category edit: operation overlay -->
+    <string name="category_edit_op_saving">Сохраняем…</string>
+    <string name="category_edit_op_deleting">Удаляем…</string>
+    <string name="category_edit_op_save_success_new">Категория добавлена</string>
+    <string name="category_edit_op_save_success_edit">Категория обновлена</string>
+    <string name="category_edit_op_delete_success">Категория удалена</string>
+    <string name="category_edit_op_save_error">Не удалось сохранить</string>
+    <string name="category_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Category edit: top bar a11y -->
+    <string name="category_edit_a11y_cancel">Отмена</string>
+    <string name="category_edit_a11y_save">Сохранить</string>
+
+    <!-- Category icons -->
+    <string name="category_icon_default">По умолчанию</string>
+    <string name="category_icon_language">Язык</string>
+    <string name="category_icon_globe">Глобус</string>
+    <string name="category_icon_fire">Огонь</string>
+    <string name="category_icon_star">Звезда</string>
+    <string name="category_icon_crown">Корона</string>
+    <string name="category_icon_palette">Палитра</string>
+    <string name="category_icon_emoji">Эмодзи</string>
+    <string name="category_icon_cards">Карты</string>
+    <string name="category_icon_bolt">Молния</string>
+    <string name="category_icon_extension">Расширение</string>
+    <string name="category_icon_shop">Магазин</string>
+
+    <!-- Word edit/create screen -->
+    <string name="word_edit_title_new">Новое слово</string>
+    <string name="word_edit_title_edit">Редактировать слово</string>
+    <string name="word_edit_save">Сохранить</string>
+    <string name="word_edit_cancel">Отмена</string>
+    <string name="word_edit_delete">Удалить слово</string>
+    <string name="word_edit_field_original">Оригинал</string>
+    <string name="word_edit_field_translation">Перевод</string>
+    <string name="word_edit_field_example">Пример (необязательно)</string>
+    <string name="word_edit_field_category">Категория</string>
+    <string name="word_edit_category_none">Без категории</string>
+
+    <!-- Word edit: algorithm section -->
+    <string name="word_edit_algorithm_title">Алгоритм</string>
+    <string name="word_edit_algo_phase_caption">Фаза</string>
+    <string name="word_edit_algo_due_caption">След. повтор</string>
+    <string name="word_edit_algo_review_count">Повторений</string>
+    <string name="word_edit_algo_interval">Интервал</string>
+    <string name="word_edit_algo_stability">Стабильность</string>
+    <string name="word_edit_algo_difficulty">Сложность</string>
+    <string name="word_edit_algo_days_format">%1$d дн</string>
+    <string name="word_edit_algo_stability_format">%1$.1f дн</string>
+    <string name="word_edit_algo_difficulty_format">%1$.1f / 10</string>
+    <string name="word_edit_algo_phase_new">Новое</string>
+    <string name="word_edit_algo_phase_learning">Изучение</string>
+    <string name="word_edit_algo_phase_review">Повторение</string>
+    <string name="word_edit_algo_phase_relearn">Переучивание</string>
+    <string name="word_edit_algo_due_today">Сегодня</string>
+    <string name="word_edit_algo_due_tomorrow">Завтра</string>
+    <string name="word_edit_algo_due_overdue">Просрочено</string>
+    <string name="word_edit_algo_due_ready">Готово к изучению</string>
+    <string name="word_edit_algo_due_in_days_format">Через %1$d дн</string>
+    <string name="word_edit_algo_last_review_format">Последний повтор: %1$s</string>
+    <string name="word_edit_algo_last_review_never">Ещё не повторялось</string>
+    <string name="word_edit_algo_reset">Сбросить прогресс</string>
+    <string name="word_edit_algo_reset_banner">Прогресс будет сброшен при сохранении</string>
+    <string name="word_edit_algo_reset_undo">Отменить</string>
+
+    <!-- Word edit: metadata -->
+    <string name="word_edit_meta_created">Создано: %1$s</string>
+    <string name="word_edit_meta_updated">Обновлено: %1$s</string>
+
+    <!-- Word edit: delete confirm -->
+    <string name="word_edit_delete_confirm_title">Удалить слово?</string>
+    <string name="word_edit_delete_confirm_message">Слово будет удалено из библиотеки и синхронизировано при следующем подключении.</string>
+    <string name="word_edit_delete_confirm_yes">Удалить</string>
+    <string name="word_edit_delete_confirm_no">Отмена</string>
+
+    <!-- Word edit: discard-changes confirm -->
+    <string name="word_edit_discard_title">Отменить изменения?</string>
+    <string name="word_edit_discard_message">Внесённые изменения не сохранятся.</string>
+    <string name="word_edit_discard_yes">Отменить</string>
+    <string name="word_edit_discard_no">Остаться</string>
+
+    <!-- Word edit: operation overlay -->
+    <string name="word_edit_op_saving">Сохраняем…</string>
+    <string name="word_edit_op_deleting">Удаляем…</string>
+    <string name="word_edit_op_save_success_new">Слово добавлено</string>
+    <string name="word_edit_op_save_success_edit">Слово обновлено</string>
+    <string name="word_edit_op_delete_success">Слово удалено</string>
+    <string name="word_edit_op_save_error">Не удалось сохранить</string>
+    <string name="word_edit_op_delete_error">Не удалось удалить</string>
+
+    <!-- Word edit: top bar a11y -->
+    <string name="word_edit_a11y_cancel">Отмена</string>
+    <string name="word_edit_a11y_save">Сохранить</string>
+
+    <!-- Common -->
+    <string name="action_save">Сохранить</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_dismiss">Закрыть</string>
+    <string name="action_change">Изменить</string>
+
+    <!-- Translation mode -->
+    <string name="translation_lobby_title">Перевод</string>
+    <string name="translation_lobby_subtitle">Введите перевод и нажмите «Готово»</string>
+    <string name="translation_prompt_label">Переведите</string>
+    <string name="translation_input_hint">Ваш перевод</string>
+    <string name="translation_done">Готово</string>
+    <string name="translation_show_first_letter">Подсказка (%1$d)</string>
+    <string name="translation_reveal">Показать</string>
+    <string name="translation_correct">Правильно!</string>
+    <string name="translation_close_label">Почти верно</string>
+    <string name="translation_wrong_label">Неправильно</string>
+    <string name="translation_correct_answer_was">Правильный ответ: %1$s</string>
+    <string name="translation_strictness_title">Строгость опечаток</string>
+    <string name="translation_strictness_strict">Строго</string>
+    <string name="translation_strictness_normal">Нормально</string>
+    <string name="translation_strictness_lenient">Мягко</string>
+
+    <!-- Quiz mode -->
+    <string name="quiz_lobby_title">Викторина</string>
+    <string name="quiz_lobby_subtitle">Выбирайте правильный перевод за %1$d секунд</string>
+    <string name="quiz_time_left">%1$dс</string>
+    <string name="quiz_streak">Серия: %1$d</string>
+    <string name="quiz_finished">Время вышло!</string>
+    <string name="quiz_duration_title">Длительность раунда</string>
+
+    <!-- Уведомления (заглушка) -->
+    <string name="coming_soon_notifications">Уведомления будут реализованы позже</string>
+
+    <!-- Главный экран: карточка стрика -->
+    <plurals name="streak_card_days">
+        <item quantity="one">%d день подряд</item>
+        <item quantity="few">%d дня подряд</item>
+        <item quantity="many">%d дней подряд</item>
+        <item quantity="other">%d дней подряд</item>
+    </plurals>
+    <string name="streak_card_best">Рекорд: %d дн.</string>
+    <string name="streak_card_subtitle_empty">Начни стрик сегодня</string>
+    <string name="streak_card_today_progress">Прогресс за сегодня</string>
+    <string name="streak_card_today_done">Цель на сегодня выполнена</string>
+
+    <!-- Экран профиля -->
+    <string name="profile_experience">%1$d XP</string>
+</resources>
+
