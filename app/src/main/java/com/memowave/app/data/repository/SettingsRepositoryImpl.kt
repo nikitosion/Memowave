@@ -103,6 +103,14 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override suspend fun setLastLearningMode(modeId: String) {
+        dataStore.updateData { it.copy(lastLearningModeId = modeId) }
+    }
+
+    override suspend fun setLastFlashcardGameMode(mode: String) {
+        dataStore.updateData { it.copy(lastFlashcardGameMode = mode) }
+    }
+
     private companion object {
         const val MIN_WEEKLY_GOAL = 5
         const val MAX_WEEKLY_GOAL = 500

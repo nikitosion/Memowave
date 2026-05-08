@@ -6,6 +6,7 @@ import com.memowave.app.domain.algorithm.CardPhase
 import com.memowave.app.domain.model.FlashcardResult
 import com.memowave.app.domain.model.Rating
 import com.memowave.app.domain.model.Word
+import com.memowave.app.domain.repository.SettingsRepository
 import com.memowave.app.domain.usecase.category.GetCategoriesUseCase
 import com.memowave.app.domain.usecase.word.CalculateGradePreviewUseCase
 import com.memowave.app.domain.usecase.word.GetWordsByCategoryUseCase
@@ -18,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private const val AUTO_ADVANCE_MILLIS = 2200L
@@ -37,7 +39,8 @@ class FlashcardGameViewModel @Inject constructor(
     private val getWordsByCategoryUseCase: GetWordsByCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val updateWordProgressUseCase: UpdateWordProgressUseCase,
-    private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase
+    private val calculateGradePreviewUseCase: CalculateGradePreviewUseCase,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardGameUiState())
@@ -46,6 +49,17 @@ class FlashcardGameViewModel @Inject constructor(
     private var allWordsCache: List<Word>? = null
     private var advanceJob: Job? = null
     private var nextPrepJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            val saved = settingsRepository.getSettings().first().lastFlashcardGameMode
+            val mode = runCatching { FlashcardGameMode.valueOf(saved) }
+                .getOrDefault(FlashcardGameMode.RECALL)
+            if (_uiState.value.gameMode != mode) {
+                _uiState.value = _uiState.value.copy(gameMode = mode)
+            }
+        }
+    }
 
     fun onEvent(event: FlashcardGameEvent) {
         when (event) {
@@ -306,6 +320,7 @@ class FlashcardGameViewModel @Inject constructor(
         if (state.gameMode == mode) return
 
         advanceJob?.cancel()
+        viewModelScope.launch { settingsRepository.setLastFlashcardGameMode(mode.name) }
 
         if (mode == FlashcardGameMode.NUMBERED && state.phase == FlashcardPhase.GAME) {
             val currentWord = state.currentWord

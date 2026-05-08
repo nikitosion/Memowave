@@ -27,4 +27,7 @@ interface SettingsRepository {
     suspend fun setMilestonesEnabled(enabled: Boolean)
     suspend fun setQuietHoursEnabled(enabled: Boolean)
     suspend fun setQuietHours(startHour: Int, startMinute: Int, endHour: Int, endMinute: Int)
+
+    suspend fun setLastLearningMode(modeId: String)
+    suspend fun setLastFlashcardGameMode(mode: String)
 }

@@ -27,4 +27,7 @@ data class AppSettings(
     val quietStartMinute: Int = 0,
     val quietEndHour: Int = 8,
     val quietEndMinute: Int = 0,
+
+    val lastLearningModeId: String = "Каротчки",
+    val lastFlashcardGameMode: String = "RECALL",
 )
