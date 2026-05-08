@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 private const val AUTO_ADVANCE_MILLIS = 2200L
+private const val NEXT_PREP_TOTAL_SECONDS = 5
+private val STREAK_TARGET_RANGE = 1..7
 
 private val XP_BY_RATING = mapOf(
     Rating.Again to 0,
@@ -43,12 +45,16 @@ class FlashcardGameViewModel @Inject constructor(
 
     private var allWordsCache: List<Word>? = null
     private var advanceJob: Job? = null
+    private var nextPrepJob: Job? = null
 
     fun onEvent(event: FlashcardGameEvent) {
         when (event) {
             is FlashcardGameEvent.LoadCategories -> loadCategories()
             is FlashcardGameEvent.SelectCategory -> {
                 _uiState.value = _uiState.value.copy(selectedCategoryId = event.categoryId)
+                if (_uiState.value.phase == FlashcardPhase.NEXT_PREP) {
+                    cancelNextPrepTimer()
+                }
             }
             is FlashcardGameEvent.ChangeGameMode -> changeGameMode(event.gameMode)
             is FlashcardGameEvent.SetWordCount -> {
@@ -72,6 +78,9 @@ class FlashcardGameViewModel @Inject constructor(
             }
             is FlashcardGameEvent.RestartGame -> restartGame()
             is FlashcardGameEvent.ShowSettings -> {
+                if (_uiState.value.phase == FlashcardPhase.NEXT_PREP) {
+                    cancelNextPrepTimer()
+                }
                 if (!_uiState.value.showSettingsSheet) {
                     _uiState.value = _uiState.value.copy(showSettingsSheet = true)
                 }
@@ -94,14 +103,34 @@ class FlashcardGameViewModel @Inject constructor(
             is FlashcardGameEvent.DismissExitDialog -> {
                 _uiState.value = _uiState.value.copy(showExitConfirmation = false)
             }
+            is FlashcardGameEvent.EnterNextPrep -> enterNextPrep()
+            is FlashcardGameEvent.CancelNextPrepTimer -> cancelNextPrepTimer()
+            is FlashcardGameEvent.ConfirmNextSession -> confirmNextSession()
         }
     }
 
     private fun loadCategories() {
         viewModelScope.launch {
-            getCategoriesUseCase().onSuccess { categories ->
-                _uiState.value = _uiState.value.copy(categories = categories)
+            _uiState.value = _uiState.value.copy(categoriesLoadState = LoadState.LOADING)
+            val categoriesResult = getCategoriesUseCase()
+            val wordsResult = getWordsUseCase()
+            if (categoriesResult.isFailure || wordsResult.isFailure) {
+                _uiState.value = _uiState.value.copy(categoriesLoadState = LoadState.ERROR)
+                return@launch
             }
+            val categories = categoriesResult.getOrNull() ?: emptyList()
+            val allWords = wordsResult.getOrNull().orEmpty()
+            allWordsCache = allWords
+            val counts = allWords
+                .mapNotNull { it.categoryId }
+                .groupingBy { it }
+                .eachCount()
+            _uiState.value = _uiState.value.copy(
+                categories = categories,
+                categoryWordCounts = counts,
+                totalWordsCount = allWords.size,
+                categoriesLoadState = LoadState.LOADED
+            )
         }
     }
 
@@ -151,13 +180,16 @@ class FlashcardGameViewModel @Inject constructor(
                     currentIndex = 0,
                     isCardFlipped = false,
                     results = emptyList(),
+                    summaries = emptyList(),
                     totalXpEarned = 0,
                     phase = FlashcardPhase.GAME,
                     numberedOptions = options,
                     correctAnswerIndex = correctIdx,
                     selectedAnswerIndex = null,
                     progressDelta = null,
-                    gradePreview = null
+                    gradePreview = null,
+                    streakWordsRemaining = 0,
+                    nextPrepCountdownSeconds = null
                 )
                 computeGradePreview()
             }.onFailure { error ->
@@ -181,14 +213,22 @@ class FlashcardGameViewModel @Inject constructor(
         val currentWord = _uiState.value.currentWord ?: return
         val wasNew = currentWord.phase == CardPhase.Added.value
         val xpGained = XP_BY_RATING[rating] ?: 0
-        recordResult(currentWord, isCorrect = rating != Rating.Again, xp = xpGained)
+        val isCorrect = rating != Rating.Again
+        recordResult(currentWord, isCorrect = isCorrect, xp = xpGained)
         _uiState.value = _uiState.value.copy(isCardFlipped = true)
         viewModelScope.launch {
             updateWordProgressUseCase(currentWord, rating)
                 .onSuccess { newWord ->
                     if (_uiState.value.currentWord?.id == currentWord.id) {
+                        val delta = WordProgressDelta.from(currentWord, newWord, wasNew)
+                        val summary = FlashcardWordSummary(
+                            word = currentWord,
+                            isCorrect = isCorrect,
+                            delta = delta
+                        )
                         _uiState.value = _uiState.value.copy(
-                            progressDelta = WordProgressDelta.from(currentWord, newWord, wasNew)
+                            progressDelta = delta,
+                            summaries = _uiState.value.summaries + summary
                         )
                     }
                 }
@@ -228,7 +268,10 @@ class FlashcardGameViewModel @Inject constructor(
         if (state.phase != FlashcardPhase.GAME) return
 
         if (state.isLastCard) {
-            _uiState.value = state.copy(phase = FlashcardPhase.SUMMARY)
+            _uiState.value = state.copy(
+                phase = FlashcardPhase.SUMMARY,
+                streakWordsRemaining = STREAK_TARGET_RANGE.random()
+            )
         } else {
             moveToNextCard()
         }
@@ -319,12 +362,14 @@ class FlashcardGameViewModel @Inject constructor(
 
     private fun restartGame() {
         advanceJob?.cancel()
+        cancelNextPrepTimer()
         _uiState.value = _uiState.value.copy(
             phase = FlashcardPhase.LOBBY,
             words = emptyList(),
             currentIndex = 0,
             isCardFlipped = false,
             results = emptyList(),
+            summaries = emptyList(),
             totalXpEarned = 0,
             showXpPopup = false,
             errorMessage = null,
@@ -332,8 +377,48 @@ class FlashcardGameViewModel @Inject constructor(
             correctAnswerIndex = 0,
             selectedAnswerIndex = null,
             progressDelta = null,
-            gradePreview = null
+            gradePreview = null,
+            streakWordsRemaining = 0
         )
+    }
+
+    private fun enterNextPrep() {
+        advanceJob?.cancel()
+        cancelNextPrepTimer()
+        _uiState.value = _uiState.value.copy(phase = FlashcardPhase.NEXT_PREP)
+        if (_uiState.value.selectedCategoryHasWords) {
+            startNextPrepTimer()
+        }
+    }
+
+    private fun startNextPrepTimer() {
+        nextPrepJob?.cancel()
+        _uiState.value = _uiState.value.copy(nextPrepCountdownSeconds = NEXT_PREP_TOTAL_SECONDS)
+        nextPrepJob = viewModelScope.launch {
+            for (s in NEXT_PREP_TOTAL_SECONDS downTo 1) {
+                _uiState.value = _uiState.value.copy(nextPrepCountdownSeconds = s)
+                delay(1000)
+            }
+            if (_uiState.value.phase == FlashcardPhase.NEXT_PREP &&
+                _uiState.value.selectedCategoryHasWords
+            ) {
+                confirmNextSession()
+            }
+        }
+    }
+
+    private fun cancelNextPrepTimer() {
+        nextPrepJob?.cancel()
+        nextPrepJob = null
+        if (_uiState.value.nextPrepCountdownSeconds != null) {
+            _uiState.value = _uiState.value.copy(nextPrepCountdownSeconds = null)
+        }
+    }
+
+    private fun confirmNextSession() {
+        cancelNextPrepTimer()
+        // startGame() resets summaries/streak/etc. and switches phase to GAME
+        startGame()
     }
 
     /**

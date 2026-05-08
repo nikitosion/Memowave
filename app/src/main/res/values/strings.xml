@@ -82,6 +82,34 @@
     <string name="flashcard_rating_good">OK</string>
     <string name="flashcard_rating_easy">Easy</string>
 
+    <!-- Flashcard: lobby category selector -->
+    <string name="flashcard_lobby_category_label">Word set</string>
+    <string name="flashcard_lobby_category_all">All words</string>
+    <string name="flashcard_lobby_category_all_description">All words from your library</string>
+    <string name="flashcard_lobby_category_empty_hint">No words</string>
+    <string name="flashcard_lobby_category_loading">Loading…</string>
+    <string name="flashcard_lobby_category_error">Failed to load</string>
+    <plurals name="flashcard_lobby_category_words_count">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
+
+    <!-- Flashcard: summary -->
+    <string name="flashcard_summary_session_words_title">Session words</string>
+    <string name="flashcard_summary_show_all_button">Show all (%d)</string>
+    <string name="flashcard_summary_show_all_sheet_title">All session words</string>
+    <plurals name="flashcard_summary_streak_remaining">
+        <item quantity="one">%d word left to save your streak</item>
+        <item quantity="other">%d words left to save your streak</item>
+    </plurals>
+
+    <!-- Flashcard: NEXT_PREP screen between sessions -->
+    <string name="flashcard_next_prep_title">Next session</string>
+    <string name="flashcard_next_prep_subtitle">Pick a word set or continue with the same. The session will start automatically.</string>
+    <string name="flashcard_next_prep_continue">Continue</string>
+    <string name="flashcard_next_prep_empty_hint">This category has no words. Pick another one to continue.</string>
+    <string name="flashcard_next_prep_a11y_autostart">Auto-start in %d seconds</string>
+
     <!-- Settings hub -->
     <string name="settings_title">Settings</string>
     <string name="settings_section_account">Account</string>

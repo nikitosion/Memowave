@@ -65,6 +65,38 @@
     <string name="flashcard_rating_good">Норм</string>
     <string name="flashcard_rating_easy">Легко</string>
 
+    <!-- Flashcard: lobby category selector -->
+    <string name="flashcard_lobby_category_label">Набор слов</string>
+    <string name="flashcard_lobby_category_all">Все слова</string>
+    <string name="flashcard_lobby_category_all_description">Все слова из библиотеки</string>
+    <string name="flashcard_lobby_category_empty_hint">Нет слов</string>
+    <string name="flashcard_lobby_category_loading">Загрузка…</string>
+    <string name="flashcard_lobby_category_error">Ошибка загрузки</string>
+    <plurals name="flashcard_lobby_category_words_count">
+        <item quantity="one">%d слово</item>
+        <item quantity="few">%d слова</item>
+        <item quantity="many">%d слов</item>
+        <item quantity="other">%d слов</item>
+    </plurals>
+
+    <!-- Flashcard: summary -->
+    <string name="flashcard_summary_session_words_title">Слова сессии</string>
+    <string name="flashcard_summary_show_all_button">Показать все (%d)</string>
+    <string name="flashcard_summary_show_all_sheet_title">Все слова сессии</string>
+    <plurals name="flashcard_summary_streak_remaining">
+        <item quantity="one">До сохранения стрика осталось %d слово</item>
+        <item quantity="few">До сохранения стрика осталось %d слова</item>
+        <item quantity="many">До сохранения стрика осталось %d слов</item>
+        <item quantity="other">До сохранения стрика осталось %d слов</item>
+    </plurals>
+
+    <!-- Flashcard: NEXT_PREP screen between sessions -->
+    <string name="flashcard_next_prep_title">Следующая сессия</string>
+    <string name="flashcard_next_prep_subtitle">Выбери набор слов или продолжи с тем же. Сессия начнётся автоматически.</string>
+    <string name="flashcard_next_prep_continue">Продолжить</string>
+    <string name="flashcard_next_prep_empty_hint">В этой категории нет слов. Выбери другую, чтобы продолжить.</string>
+    <string name="flashcard_next_prep_a11y_autostart">Авто-старт через %d секунд</string>
+
     <!-- Settings hub -->
     <string name="settings_title">Настройки</string>
     <string name="settings_section_account">Аккаунт</string>

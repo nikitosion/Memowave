@@ -10,12 +10,20 @@ import java.time.LocalDateTime
 enum class FlashcardPhase {
     LOBBY,
     GAME,
-    SUMMARY
+    SUMMARY,
+    NEXT_PREP
 }
 
 enum class FlashcardGameMode {
     RECALL,
     NUMBERED
+}
+
+enum class LoadState {
+    IDLE,
+    LOADING,
+    LOADED,
+    ERROR
 }
 
 data class FlashcardGameUiState(
@@ -27,6 +35,9 @@ data class FlashcardGameUiState(
 
     // Settings
     val categories: List<Category> = emptyList(),
+    val categoryWordCounts: Map<Long, Int> = emptyMap(),
+    val totalWordsCount: Int = 0,
+    val categoriesLoadState: LoadState = LoadState.IDLE,
     val selectedCategoryId: Long? = null,
     val wordCount: Int = 10,
     val isShuffled: Boolean = true,
@@ -37,6 +48,7 @@ data class FlashcardGameUiState(
     val currentIndex: Int = 0,
     val isCardFlipped: Boolean = false,
     val results: List<FlashcardResult> = emptyList(),
+    val summaries: List<FlashcardWordSummary> = emptyList(),
     val totalXpEarned: Int = 0,
     val showXpPopup: Boolean = false,
     val xpPopupAmount: Int = 0,
@@ -53,6 +65,13 @@ data class FlashcardGameUiState(
     // null while being calculated or before card is flipped.
     val gradePreview: Map<Rating, WordGrade>? = null,
 
+    // SUMMARY phase: how many words remain to save the current streak (placeholder until
+    // the real streak feature lands — randomized once when entering SUMMARY).
+    val streakWordsRemaining: Int = 0,
+
+    // NEXT_PREP phase countdown. null means no timer (cancelled or phase not active).
+    val nextPrepCountdownSeconds: Int? = null,
+
     // UI
     val showSettingsSheet: Boolean = false,
     val showExitConfirmation: Boolean = false,
@@ -64,6 +83,11 @@ data class FlashcardGameUiState(
     val correctCount: Int get() = results.count { it.isCorrect }
     val wrongCount: Int get() = results.count { !it.isCorrect }
     val isLastCard: Boolean get() = currentIndex >= words.size - 1
+
+    val selectedCategoryWordCount: Int
+        get() = if (selectedCategoryId == null) totalWordsCount
+        else categoryWordCounts[selectedCategoryId] ?: 0
+    val selectedCategoryHasWords: Boolean get() = selectedCategoryWordCount > 0
 }
 
 data class WordProgressDelta(
@@ -91,3 +115,14 @@ data class WordProgressDelta(
         )
     }
 }
+
+/**
+ * Per-card snapshot used by the SUMMARY screen to render a list with each word's
+ * before/after dynamics. The `word` field carries the pre-update state so the row
+ * displays the original/translation/imageUrl the user just saw.
+ */
+data class FlashcardWordSummary(
+    val word: Word,
+    val isCorrect: Boolean,
+    val delta: WordProgressDelta
+)

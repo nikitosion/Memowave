@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,7 +56,8 @@ fun FlashcardCard(
     isFlipped: Boolean,
     showTranslationFirst: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isNewWord: Boolean = false
 ) {
     val density = LocalDensity.current
 
@@ -101,7 +104,8 @@ fun FlashcardCard(
                     displayText = frontText,
                     label = frontLabel,
                     showTranslationFirst = showTranslationFirst,
-                    imageFileName = word.imageUrl
+                    imageFileName = word.imageUrl,
+                    isNewWord = isNewWord
                 )
             } else {
                 // Back side (mirrored due to rotation)
@@ -115,7 +119,8 @@ fun FlashcardCard(
                         displayText = backText,
                         label = backLabel,
                         translatedWord = frontText,
-                        imageFileName = word.imageUrl
+                        imageFileName = word.imageUrl,
+                        isNewWord = isNewWord
                     )
                 }
             }
@@ -129,7 +134,8 @@ private fun CardFrontContent(
     displayText: String,
     label: String,
     showTranslationFirst: Boolean,
-    imageFileName: String?
+    imageFileName: String?,
+    isNewWord: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -147,14 +153,25 @@ private fun CardFrontContent(
             color = MaterialTheme.colorScheme.outline
         )
 
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            text = displayText,
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.W600,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = displayText,
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.W600,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (isNewWord) {
+                Spacer(Modifier.width(12.dp))
+                NewWordBadge()
+            }
+        }
 
         // Transcription slot (for future use)
         // word.transcription?.let { ... }
@@ -206,7 +223,8 @@ private fun CardBackContent(
     displayText: String,
     label: String,
     translatedWord: String,
-    imageFileName: String?
+    imageFileName: String?,
+    isNewWord: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -223,14 +241,25 @@ private fun CardBackContent(
             color = MaterialTheme.colorScheme.outline
         )
 
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            text = displayText,
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.W600,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = displayText,
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.W600,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (isNewWord) {
+                Spacer(Modifier.width(12.dp))
+                NewWordBadge()
+            }
+        }
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
@@ -282,7 +311,8 @@ private fun FlashcardCardFrontPreview() {
             isFlipped = false,
             showTranslationFirst = false,
             onClick = {},
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            isNewWord = true
         )
     }
 }
@@ -296,7 +326,8 @@ private fun FlashcardCardFlippedPreview() {
             isFlipped = true,
             showTranslationFirst = false,
             onClick = {},
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            isNewWord = true
         )
     }
 }

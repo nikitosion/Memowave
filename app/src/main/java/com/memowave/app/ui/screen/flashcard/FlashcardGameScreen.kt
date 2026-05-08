@@ -4,13 +4,17 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -37,10 +41,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.memowave.app.AppViewModel
 import com.memowave.app.R
+import com.memowave.app.domain.algorithm.CardPhase
 import com.memowave.app.ui.common.MemowaveTopBar
 import com.memowave.app.ui.common.notification.NotificationManager
 import com.memowave.app.ui.screen.flashcard.components.AnimatedPlayButton
+import com.memowave.app.ui.screen.flashcard.components.CategorySelector
 import com.memowave.app.ui.screen.flashcard.components.FlashcardCard
+import com.memowave.app.ui.screen.flashcard.components.FlashcardNextPrepContent
 import com.memowave.app.ui.screen.flashcard.components.FlashcardNumberedAnswerButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardRatingButtons
 import com.memowave.app.ui.screen.flashcard.components.FlashcardSettingsSheet
@@ -48,6 +55,7 @@ import com.memowave.app.ui.screen.flashcard.components.FlashcardSummaryContent
 import com.memowave.app.ui.screen.flashcard.components.FlashcardTopBar
 import com.memowave.app.ui.screen.flashcard.components.WordProgressDeltaBlocks
 import com.memowave.app.ui.screen.flashcard.components.XpPopup
+import com.memowave.app.domain.model.Category
 import androidx.compose.ui.zIndex
 import com.memowave.app.domain.model.Word
 import com.memowave.app.ui.theme.MemowaveTheme
@@ -110,7 +118,13 @@ private fun FlashcardScreen(
                 onSettingsClick = { onEvent(FlashcardGameEvent.ShowSettings) },
                 onBackClick = onNavigateBack,
                 isLoading = state.isLoading,
-                errorMessage = state.errorMessage
+                errorMessage = state.errorMessage,
+                categories = state.categories,
+                selectedCategoryId = state.selectedCategoryId,
+                categoryWordCounts = state.categoryWordCounts,
+                totalWordsCount = state.totalWordsCount,
+                categoriesLoadState = state.categoriesLoadState,
+                onCategorySelected = { onEvent(FlashcardGameEvent.SelectCategory(it)) }
             )
 
             FlashcardPhase.GAME -> FlashcardGameContent(
@@ -130,8 +144,24 @@ private fun FlashcardScreen(
                 wrongCount = state.wrongCount,
                 totalXp = state.totalXpEarned,
                 totalWords = state.words.size,
-                onPlayAgain = { onEvent(FlashcardGameEvent.RestartGame) },
+                summaries = state.summaries,
+                streakWordsRemaining = state.streakWordsRemaining,
+                onPlayAgain = { onEvent(FlashcardGameEvent.EnterNextPrep) },
                 onGoBack = onNavigateBack
+            )
+
+            FlashcardPhase.NEXT_PREP -> FlashcardNextPrepContent(
+                categories = state.categories,
+                selectedCategoryId = state.selectedCategoryId,
+                categoryWordCounts = state.categoryWordCounts,
+                totalWordsCount = state.totalWordsCount,
+                categoriesLoadState = state.categoriesLoadState,
+                selectedCategoryHasWords = state.selectedCategoryHasWords,
+                countdownSeconds = state.nextPrepCountdownSeconds,
+                onCategorySelected = { onEvent(FlashcardGameEvent.SelectCategory(it)) },
+                onSettingsClick = { onEvent(FlashcardGameEvent.ShowSettings) },
+                onContinueClick = { onEvent(FlashcardGameEvent.ConfirmNextSession) },
+                onBackClick = onNavigateBack
             )
         }
 
@@ -238,7 +268,13 @@ private fun FlashcardLobbyContent(
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     isLoading: Boolean,
-    errorMessage: String?
+    errorMessage: String?,
+    categories: List<Category>,
+    selectedCategoryId: Long?,
+    categoryWordCounts: Map<Long, Int>,
+    totalWordsCount: Int,
+    categoriesLoadState: LoadState,
+    onCategorySelected: (Long?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -246,66 +282,87 @@ private fun FlashcardLobbyContent(
     ) {
         MemowaveTopBar(onBackClick = onBackClick)
 
-        // Center content
-        Column(
+        // Use BoxWithConstraints + heightIn(min = container height) so the inner
+        // column is centered while it fits, but grows and scrolls once the
+        // category selector expands and the layout exceeds the available space.
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .weight(1f)
         ) {
-            Text(
-                text = "Карточки",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.W600
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 8.dp),
-                text = "Запоминай слова с помощью карточек",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.outline
-            )
-
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .size(48.dp)
-                )
-            } else {
-                AnimatedPlayButton(
-                    onClick = onStartGame,
-                    modifier = Modifier.padding(top = 40.dp)
-                )
-            }
-
-            if (errorMessage != null) {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = errorMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            // Settings button
-            IconButton(
+            val containerHeight = maxHeight
+            Column(
                 modifier = Modifier
-                    .padding(top = 24.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = CircleShape
-                    ),
-                onClick = onSettingsClick
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .heightIn(min = containerHeight)
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    modifier = Modifier.size(26.dp),
-                    painter = painterResource(R.drawable.round_settings_24),
-                    contentDescription = "Настройки",
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                Text(
+                    text = "Карточки",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.W600
                 )
+
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = "Запоминай слова с помощью карточек",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(top = 40.dp)
+                            .size(48.dp)
+                    )
+                } else {
+                    AnimatedPlayButton(
+                        onClick = onStartGame,
+                        modifier = Modifier.padding(top = 40.dp)
+                    )
+                }
+
+                if (errorMessage != null) {
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = errorMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                CategorySelector(
+                    modifier = Modifier.padding(top = 24.dp),
+                    categories = categories,
+                    selectedCategoryId = selectedCategoryId,
+                    wordCounts = categoryWordCounts,
+                    totalWordsCount = totalWordsCount,
+                    loadState = categoriesLoadState,
+                    onCategorySelected = onCategorySelected
+                )
+
+                // Settings button
+                IconButton(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = CircleShape
+                        ),
+                    onClick = onSettingsClick
+                ) {
+                    Icon(
+                        modifier = Modifier.size(26.dp),
+                        painter = painterResource(R.drawable.round_settings_24),
+                        contentDescription = "Настройки",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
             }
         }
     }
@@ -356,6 +413,7 @@ private fun FlashcardGameContent(
                         word = currentWord,
                         isFlipped = state.isCardFlipped,
                         showTranslationFirst = state.showTranslationFirst,
+                        isNewWord = currentWord.phase == CardPhase.Added.value,
                         onClick = {
                             when (state.gameMode) {
                                 FlashcardGameMode.RECALL ->

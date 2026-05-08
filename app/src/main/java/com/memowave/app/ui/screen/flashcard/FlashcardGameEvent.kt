@@ -26,4 +26,9 @@ sealed interface FlashcardGameEvent {
     data object RequestExit : FlashcardGameEvent
     data object ConfirmExit : FlashcardGameEvent
     data object DismissExitDialog : FlashcardGameEvent
+
+    // NEXT_PREP between-sessions screen
+    data object EnterNextPrep : FlashcardGameEvent
+    data object CancelNextPrepTimer : FlashcardGameEvent
+    data object ConfirmNextSession : FlashcardGameEvent
 }
