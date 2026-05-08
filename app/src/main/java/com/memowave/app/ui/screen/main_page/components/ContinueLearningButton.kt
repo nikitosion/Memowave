@@ -30,12 +30,15 @@ import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun ContinueLearningButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    modeLabel: String = "Карточки",
+    modeIconResId: Int = R.drawable.playing_cards_24,
+    onClick: () -> Unit = {}
 ) {
     val textColor = Color(0xFF9EEFFE)
 
     Button(
-        onClick = { /* TODO: Обработчик нажатия */ },
+        onClick = onClick,
         modifier = modifier
             .height(100.dp)
             .fillMaxWidth()
@@ -77,13 +80,13 @@ fun ContinueLearningButton(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Icon(
-                        painter = painterResource(id = R.drawable.playing_cards_24),
+                        painter = painterResource(id = modeIconResId),
                         contentDescription = "Продолжить",
                         tint = textColor,
                         modifier = Modifier.padding(horizontal = 4.dp).size(20.dp).rotate(180f)
                     )
                     Text(
-                        text = " Изучение новых слов",
+                        text = " $modeLabel",
                         color = textColor,
                         style = MaterialTheme.typography.bodyMedium,
                     )

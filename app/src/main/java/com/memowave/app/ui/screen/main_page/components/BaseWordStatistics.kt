@@ -16,7 +16,10 @@ import com.memowave.app.ui.theme.MemowaveTheme
 
 @Composable
 fun BaseWordStatictics(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    newCount: Int = 0,
+    dueCount: Int = 0,
+    learnedCount: Int = 0,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -28,9 +31,9 @@ fun BaseWordStatictics(
             )
             .padding(24.dp)
     ) {
-        WordStatistics(Color(0xFF00363D))
-        WordStatistics(Color(0xFF0F4E57), "345", "Изучение")
-        WordStatistics(Color(0xFF006875), "8", "Повторение")
+        WordStatistics(Color(0xFF00363D), newCount.toString(), "Новые")
+        WordStatistics(Color(0xFF0F4E57), dueCount.toString(), "На повторении")
+        WordStatistics(Color(0xFF006875), learnedCount.toString(), "Изучено")
     }
 }
 
@@ -38,6 +41,6 @@ fun BaseWordStatictics(
 @Composable
 fun BaseWordStaticticsPreview() {
     MemowaveTheme {
-        BaseWordStatictics()
+        BaseWordStatictics(newCount = 12, dueCount = 5, learnedCount = 87)
     }
 }
