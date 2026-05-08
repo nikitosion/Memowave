@@ -118,7 +118,7 @@ fun LoginScreenContent(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
-            OAuthButtons(modifier = Modifier.padding(top = 24.dp))
+//            OAuthButtons(modifier = Modifier.padding(top = 24.dp))
             AuthNotSecuredTextField(
                 value = email,
                 onValueChange = onEmailChange,
